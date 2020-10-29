@@ -18,7 +18,7 @@ class MainScreen extends StatelessWidget {
                     min: 0.0,
                     max: 100.0,
                     value: context.watch<MainProvider>().volume().toDouble(),
-                    onChangeEnd: (newValue) {
+                    onChanged: (newValue) {
                       final vol = newValue.round();
                       if (vol != context.read<MainProvider>().volume()) {
                         context.read<MainProvider>().setVolume(vol);

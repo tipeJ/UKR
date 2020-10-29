@@ -4,12 +4,14 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:hive/hive.dart';
 import 'package:UKR/ui/screens/screens.dart';
 import 'package:UKR/ui/providers/providers.dart';
 import 'package:provider/provider.dart';
 import 'package:UKR/models/models.dart';
 
 void main() {
+  Hive.registerAdapter(PlayerAdapter());
   runApp(MyApp());
 }
 

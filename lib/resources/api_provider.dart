@@ -21,6 +21,11 @@ class ApiProvider {
 
   ApiProvider._internal();
 
+  Future<bool> testPlayerConnection(Player player) async {
+    final response = await http.post(url(player), headers: headers, body: "");
+    return response.statusCode == 200;
+  }
+
   Future<String> _getApplicationProperties(Player player) async {
     final body = jsonEncode({
       "method": "Application.getProperties",
