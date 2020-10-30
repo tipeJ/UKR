@@ -1,23 +1,22 @@
-import 'dart:async';
-import 'dart:math';
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:UKR/resources/resources.dart';
 import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:UKR/ui/screens/screens.dart';
 import 'package:UKR/ui/providers/providers.dart';
 import 'package:provider/provider.dart';
 import 'package:UKR/models/models.dart';
 
-void main() {
+void main() async {
   Hive.registerAdapter(PlayerAdapter());
+  await Hive.initFlutter();
+  await Hive.openBox<Player>(BOX_PLAYERS);
+
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
-  @override
+  // This widget is the root of your application.  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'UKR DEMO',
@@ -65,9 +64,9 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return ChangeNotifierProvider<MainProvider>(
-      create: (context) => MainProvider(
-          Player(name: "TIPEP", address: "192.168.100.16", port: 8080)),
+
+    return ChangeNotifierProvider<PlayersProvider>(
+      create: (context) => PlayersProvider(),
       builder: (context, widget) => MainScreen(),
     );
   }

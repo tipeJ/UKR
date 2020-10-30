@@ -28,10 +28,11 @@ class ApiProvider {
 
   Future<String> _getApplicationProperties(Player player) async {
     final body = jsonEncode({
-      "method": "Application.getProperties",
+      "method": "Application.GetProperties",
       "params": {
         "properties": ["muted", "name", "version", "volume"]
-      }
+      },
+      ...defParams
     });
     final response = await http.post(url(player), headers: headers, body: body);
     if (response.statusCode == 200) {
@@ -75,7 +76,7 @@ class ApiProvider {
     }
   }
 
-  Future<int> adjustVolume(Player player, {double newVolume}) async {
+  Future<int> adjustVolume(Player player, {int newVolume}) async {
     final body = jsonEncode({
       "method": "Application.SetVolume",
       "params": {"volume": newVolume},
@@ -93,7 +94,7 @@ class ApiProvider {
 
 ApplicationProperties _parseApplicationProperties(String jsonSource) {
   final json = jsonDecode(jsonSource);
-  return ApplicationProperties.fromJson(json);
+  return ApplicationProperties.fromJson(json['result']);
 }
 
 PlayerProperties _parsePlayerProperties(String jsonSource) {

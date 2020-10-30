@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:UKR/models/models.dart';
 import 'package:provider/provider.dart';
 import 'package:UKR/ui/providers/providers.dart';
+import 'package:UKR/ui/screens/screens.dart';
 
 class PlayersScreen extends StatelessWidget {
   @override
@@ -9,6 +10,16 @@ class PlayersScreen extends StatelessWidget {
     final players = context.watch<PlayersProvider>().players;
     return Scaffold(
         appBar: AppBar(title: const Text("Manage Players")),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            final result = await showDialog(
+                context: context, builder: (_) => AddPlayerDialog());
+            if (result != null) {
+              context.read<PlayersProvider>().addPlayer(result);
+            }
+          },
+          child: const Icon(Icons.add),
+        ),
         body: ListView(
             children: List<Widget>.generate(
                 players.length, (i) => _PlayerListItem(players[i]))));
@@ -48,7 +59,7 @@ class _PlayerListItemState extends State<_PlayerListItem> {
                 builder: (context, snapshot) {
                   Widget child;
                   if (snapshot.connectionState == ConnectionState.done &&
-                      snapshot.hasData()) {
+                      snapshot.hasData) {
                     child = snapshot.data
                         ? const Icon(Icons.check, color: Colors.greenAccent)
                         : const Icon(Icons.train, color: Colors.redAccent);

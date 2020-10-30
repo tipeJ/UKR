@@ -29,13 +29,14 @@ class MainProvider with ChangeNotifier {
   PlayerProperties playerProperties = EmptyPlayerProperties;
   ApplicationProperties applicationProperties = EmptyApplicationProperties;
 
-  int volume() => applicationProperties.volume;
+  int get volume =>
+      applicationProperties != null ? applicationProperties.volume : 0;
 
   void update() async {
     _properties = StreamZip([_applicationPropsStream, _playerPropsStream])
         .listen((props) {
-      this.applicationProperties = props[0];
-      this.playerProperties = props[1];
+      this.applicationProperties = props[0] as ApplicationProperties;
+      this.playerProperties = props[1] as PlayerProperties;
       notifyListeners();
     });
   }
