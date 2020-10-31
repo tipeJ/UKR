@@ -14,6 +14,7 @@ class MainProvider with ChangeNotifier {
 
   Stream<ApplicationProperties> _applicationPropsStream;
   Stream<PlayerProperties> _playerPropsStream;
+  Stream<Item> _playerItemStream;
 
   StreamSubscription<List<dynamic>> _properties;
 
@@ -21,17 +22,20 @@ class MainProvider with ChangeNotifier {
   MainProvider(this._player) {
     _applicationPropsStream = _api.applicationPropertiesStream(_player);
     _playerPropsStream = _api.playerPropertiesStream(_player);
+    _playerItemStream = _api.playerItemStream(_player);
     update();
   }
 
   @override
   void dispose() {
     _properties.cancel();
+    _volAdjustTimer?.cancel();
     super.dispose();
   }
 
   PlayerProperties playerProperties = EmptyPlayerProperties;
   ApplicationProperties applicationProperties = EmptyApplicationProperties;
+  Item playerItem;
 
   int get volume =>
       applicationProperties != null ? applicationProperties.volume : 0;

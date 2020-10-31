@@ -8,15 +8,22 @@ class PlayerProperties {
   final String type;
 
   final List<VideoStream> videoStreams;
+  final VideoStream currentVideoStream;
 
   const PlayerProperties(
-      {this.hours, this.minutes, this.seconds, this.type, this.videoStreams});
+      {this.hours,
+      this.minutes,
+      this.seconds,
+      this.type,
+      this.videoStreams,
+      this.currentVideoStream});
 
   factory PlayerProperties.fromJson(dynamic j) => PlayerProperties(
       hours: j['time']['hours'],
       minutes: j['time']['minutes'],
       seconds: j['time']['seconds'],
       type: j['type'],
+      currentVideoStream: VideoStream.fromJson(j['currentvideostream']),
       videoStreams: j['videostreams']
           .map<VideoStream>((v) => VideoStream.fromJson(v))
           .toList());

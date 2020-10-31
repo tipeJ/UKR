@@ -22,9 +22,14 @@ class ApiProvider {
   ApiProvider._internal();
 
   Future<bool> testPlayerConnection(Player player) async {
-    final response = await http.post(url(player), headers: headers, body: "");
+    final body = jsonEncode({"method": "JSONRPC.Ping"});
+    final response = await http.post(url(player), headers: headers, body: body);
     return response.statusCode == 200;
   }
+
+  static String _handleHTTPResponse(http.Response r) => r.statusCode == 200
+      ? r.body
+      : "An error occurred: " + r.statusCode.toString();
 
   Future<String> _getApplicationProperties(Player player) async {
     final body = jsonEncode({
@@ -35,10 +40,7 @@ class ApiProvider {
       ...defParams
     });
     final response = await http.post(url(player), headers: headers, body: body);
-    if (response.statusCode == 200) {
-      return response.body;
-    }
-    return "An error occurred: ${response.statusCode}";
+    return _handleHTTPResponse(response);
   }
 
   Future<String> _getPlayerProperties(Player player) async {
@@ -46,15 +48,40 @@ class ApiProvider {
       "method": "Player.getProperties",
       "params": {
         "playerid": 1,
-        "properties": ["position", "repeat", "type", "time", "videostreams"]
+        "properties": [
+          "position",
+          "repeat",
+          "type",
+          "time",
+          "videostreams",
+          "currentvideostream"
+        ]
       },
       ...defParams
     });
     final response = await http.post(url(player), headers: headers, body: body);
-    if (response.statusCode == 200) {
-      return response.body;
-    }
-    return "An error occurred" + response.statusCode.toString();
+    return _handleHTTPResponse(response);
+  }
+
+  Future<String> _getPlayerItem(Player player) async {
+    final body = jsonEncode({
+      "method": "Player.GetItem",
+      "params": {
+        "playerid": 1,
+        "properties": [
+          "director",
+          "year",
+          "disc",
+          "albumartist",
+          "albumreleasetype",
+          "duration",
+          "streamdetails"
+        ]
+      },
+      ...defParams
+    });
+    final response = await http.post(url(player), headers: headers, body: body);
+    return _handleHTTPResponse(response);
   }
 
   Stream<ApplicationProperties> applicationPropertiesStream(Player p) async* {
@@ -73,6 +100,16 @@ class ApiProvider {
       final response = await _getPlayerProperties(p);
       final parsedProperties = await compute(_parsePlayerProperties, response);
       yield parsedProperties;
+    }
+  }
+
+  Stream<Item> playerItemStream(Player p) async* {
+    while (true) {
+      await Future.delayed(_refreshInterval);
+      final response = await _getPlayerItem(p);
+      print(response);
+      final parsedItem = await compute(_parsePlayerItem, response);
+      yield parsedItem;
     }
   }
 
@@ -100,4 +137,9 @@ ApplicationProperties _parseApplicationProperties(String jsonSource) {
 PlayerProperties _parsePlayerProperties(String jsonSource) {
   final json = jsonDecode(jsonSource);
   return PlayerProperties.fromJson(json['result']);
+}
+
+Item _parsePlayerItem(String jsonSource) {
+  final result = jsonDecode(jsonSource);
+  return VideoItem.fromJson(result['result']['item']);
 }

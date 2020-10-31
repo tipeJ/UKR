@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:UKR/ui/screens/screens.dart';
 import 'package:provider/provider.dart';
 import 'package:UKR/ui/providers/providers.dart';
 
@@ -6,7 +7,8 @@ class RemoteScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text("UKR")),
+        appBar: AppBar(title: _durationtest()),
+        bottomSheet: RemoteControlsBar(),
         body: Stack(
           children: [
             Align(
@@ -14,16 +16,15 @@ class RemoteScreen extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(10.0),
                   width: MediaQuery.of(context).size.width,
-                  child: Slider(
-                    min: 0.0,
-                    max: 100.0,
-                    value: context.watch<MainProvider>().currentTemporaryVolume,
-                    onChanged: (newValue) {
-                      context.read<MainProvider>().setVolume(newValue);
-                    },
-                  ),
                 ))
           ],
         ));
+  }
+}
+
+class _durationtest extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Text(context.watch<MainProvider>().playerItem?.duration.toString());
   }
 }
