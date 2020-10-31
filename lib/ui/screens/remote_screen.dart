@@ -17,12 +17,9 @@ class RemoteScreen extends StatelessWidget {
                   child: Slider(
                     min: 0.0,
                     max: 100.0,
-                    value: context.watch<MainProvider>().volume.toDouble(),
+                    value: context.watch<MainProvider>().currentTemporaryVolume,
                     onChanged: (newValue) {
-                      final vol = newValue.round();
-                      if (vol != context.read<MainProvider>().volume) {
-                        context.read<MainProvider>().setVolume(vol);
-                      }
+                      context.read<MainProvider>().setVolume(newValue);
                     },
                   ),
                 ))

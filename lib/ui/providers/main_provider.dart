@@ -8,6 +8,10 @@ import 'package:UKR/resources/resources.dart';
 class MainProvider with ChangeNotifier {
   final ApiProvider _api = ApiProvider();
 
+  Timer _volAdjustTimer;
+  double currentTemporaryVolume = 0.0;
+  static const _volumeSetTimeout = const Duration(milliseconds: 300);
+
   Stream<ApplicationProperties> _applicationPropsStream;
   Stream<PlayerProperties> _playerPropsStream;
 
@@ -37,16 +41,24 @@ class MainProvider with ChangeNotifier {
         .listen((props) {
       this.applicationProperties = props[0] as ApplicationProperties;
       this.playerProperties = props[1] as PlayerProperties;
+      this.currentTemporaryVolume = applicationProperties.volume.toDouble();
       notifyListeners();
     });
   }
 
-  void setVolume(int newVolume) async {
-    final vol = newVolume.clamp(0, 100);
-    await _api.adjustVolume(_player, newVolume: vol);
+  void setVolume(double newVolume) {
+    currentTemporaryVolume = newVolume;
+    if (_volAdjustTimer == null) {
+      _volAdjustTimer = new Timer(_volumeSetTimeout, () {
+        _api.adjustVolume(_player,
+            newVolume: currentTemporaryVolume.round().clamp(0, 100));
+        _volAdjustTimer = null;
+      });
+    }
+    notifyListeners();
   }
 
-  void adjustVolume(int diff) async {
+  void adjustVolume(double diff) {
     final newVolume = (applicationProperties.volume + diff);
     setVolume(newVolume);
   }
