@@ -13,6 +13,7 @@ class ApiProvider {
   static const jsonRPCVersion = "2.0";
 
   static const defParams = {"jsonrpc": jsonRPCVersion, "id": 27928};
+  static const _playerID = 1;
   static String url(Player p) => "http://${p.address}:${p.port}/jsonrpc";
 
   factory ApiProvider() {
@@ -47,7 +48,7 @@ class ApiProvider {
     final body = jsonEncode({
       "method": "Player.getProperties",
       "params": {
-        "playerid": 1,
+        "playerid": _playerID,
         "properties": [
           "position",
           "repeat",
@@ -67,7 +68,7 @@ class ApiProvider {
     final body = jsonEncode({
       "method": "Player.GetItem",
       "params": {
-        "playerid": 1,
+        "playerid": _playerID,
         "properties": [
           "director",
           "year",
