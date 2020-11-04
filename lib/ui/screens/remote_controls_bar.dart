@@ -148,12 +148,19 @@ class _BottomControlButtons extends StatelessWidget {
                             size: _lerp(0.0, _maxSize)))),
                 InkWell(
                     onTap: () {
-                      print("Play");
+                      print("PlayPause");
+                      context.read<MainProvider>().togglePlay();
                     },
                     child: Container(
                         width: _contSize,
                         margin: _containerPadding,
-                        child: Icon(Icons.play_arrow,
+                        child: Icon(
+                            context
+                                    .watch<MainProvider>()
+                                    .playerProperties
+                                    .playing
+                                ? Icons.pause
+                                : Icons.play_arrow,
                             size: _lerp(_minSize, _maxSize * 1.2)))),
                 InkWell(
                     onTap: () {
@@ -176,7 +183,8 @@ class _BottomControlButtons extends StatelessWidget {
                             size: _lerp(_minSize, _maxSize)))),
                 InkWell(
                     onTap: () {
-                      print("PPPP");
+                      print("STOP");
+                      context.read<MainProvider>().stop();
                     },
                     child: Container(
                         width: _lerp(0.0, _contSize),
@@ -194,16 +202,46 @@ class _BottomVolumeSlider extends StatelessWidget {
     return Container(
         width: MediaQuery.of(context).size.width,
         child: Row(mainAxisSize: MainAxisSize.max, children: [
-          Text(context.watch<MainProvider>().volume.toString()),
+          Text(context.watch<ApplicationProvider>().volume.toString()),
           Expanded(
-              child: Slider(
-            min: 0.0,
-            max: 100.0,
-            value: context.watch<MainProvider>().currentTemporaryVolume,
-            onChanged: (newValue) {
-              context.read<MainProvider>().setVolume(newValue);
+            child: Slider(
+              min: 0.0,
+              max: 100.0,
+              value:
+                  context.watch<ApplicationProvider>().currentTemporaryVolume,
+              onChanged: (newValue) {
+                context.read<ApplicationProvider>().setVolume(newValue);
+              },
+            ),
+          ),
+          IconButton(
+            icon: Icon(context.watch<ApplicationProvider>().properties.muted
+                ? Icons.volume_off
+                : Icons.volume_up),
+            onPressed: () {
+              print("TOGGLEMUTE");
             },
-          ))
+          )
         ]));
+  }
+}
+
+class _SeekBar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final props = context.watch<MainProvider>().playerProperties;
+    final progress = props.time.inSeconds / props.totalTime.inSeconds;
+
+    return progress > 1.0
+        ? const Text("LIVE")
+        : Slider(
+            min: 0.0,
+            max: 1.0,
+            value: progress,
+            onChanged: (_) {},
+            onChangeEnd: (newValue) {
+              context.read<MainProvider>().seek(newValue);
+            },
+          );
   }
 }

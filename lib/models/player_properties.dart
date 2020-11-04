@@ -1,32 +1,49 @@
 const EmptyPlayerProperties = PlayerProperties(
-    hours: 0, minutes: 0, seconds: 0, type: "Null", videoStreams: []);
+    time: PlayerTime(0, 0, 0),
+    totalTime: PlayerTime(0, 0, 0),
+    type: "Null",
+    videoStreams: []);
 
 class PlayerProperties {
-  final int hours;
-  final int minutes;
-  final int seconds;
+  final PlayerTime time;
+  final PlayerTime totalTime;
+  final int speed;
   final String type;
 
   final List<VideoStream> videoStreams;
   final VideoStream currentVideoStream;
 
+  bool get playing => speed > 0;
+
   const PlayerProperties(
-      {this.hours,
-      this.minutes,
-      this.seconds,
+      {this.time,
+      this.totalTime,
       this.type,
+      this.speed,
       this.videoStreams,
       this.currentVideoStream});
 
   factory PlayerProperties.fromJson(dynamic j) => PlayerProperties(
-      hours: j['time']['hours'],
-      minutes: j['time']['minutes'],
-      seconds: j['time']['seconds'],
+      time: PlayerTime.fromJson(j['time']),
+      totalTime: PlayerTime.fromJson(j['totaltime']),
       type: j['type'],
+      speed: j['speed'],
       currentVideoStream: VideoStream.fromJson(j['currentvideostream']),
       videoStreams: j['videostreams']
           .map<VideoStream>((v) => VideoStream.fromJson(v))
           .toList());
+}
+
+class PlayerTime {
+  final int hours;
+  final int minutes;
+  final int seconds;
+
+  int get inSeconds => (this.hours * minutes + minutes) * 60 + seconds;
+
+  const PlayerTime(this.seconds, this.minutes, this.hours);
+  factory PlayerTime.fromJson(dynamic j) =>
+      PlayerTime(j['seconds'], j['minutes'], j['hours']);
 }
 
 class VideoStream {

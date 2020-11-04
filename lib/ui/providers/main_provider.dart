@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:async/async.dart' show StreamZip;
+import 'package:async/async.dart';
 
 import 'package:UKR/models/models.dart';
 import 'package:flutter/material.dart';
@@ -7,20 +7,13 @@ import 'package:UKR/resources/resources.dart';
 
 class MainProvider with ChangeNotifier {
   final ApiProvider _api = ApiProvider();
-
-  Timer _volAdjustTimer;
-  double currentTemporaryVolume = 0.0;
-  static const _volumeSetTimeout = const Duration(milliseconds: 300);
-
-  Stream<ApplicationProperties> _applicationPropsStream;
   Stream<PlayerProperties> _playerPropsStream;
   Stream<Item> _playerItemStream;
 
-  StreamSubscription<List<dynamic>> _properties;
+  StreamSubscription<PlayerProperties> _properties;
 
   final Player _player;
   MainProvider(this._player) {
-    _applicationPropsStream = _api.applicationPropertiesStream(_player);
     _playerPropsStream = _api.playerPropertiesStream(_player);
     _playerItemStream = _api.playerItemStream(_player);
     update();
@@ -29,41 +22,24 @@ class MainProvider with ChangeNotifier {
   @override
   void dispose() {
     _properties.cancel();
-    _volAdjustTimer?.cancel();
     super.dispose();
   }
 
   PlayerProperties playerProperties = EmptyPlayerProperties;
-  ApplicationProperties applicationProperties = EmptyApplicationProperties;
+
+  bool get playing => playerProperties.playing;
   Item playerItem;
 
-  int get volume =>
-      applicationProperties != null ? applicationProperties.volume : 0;
-
   void update() async {
-    _properties = StreamZip([_applicationPropsStream, _playerPropsStream])
-        .listen((props) {
-      this.applicationProperties = props[0] as ApplicationProperties;
-      this.playerProperties = props[1] as PlayerProperties;
-      this.currentTemporaryVolume = applicationProperties.volume.toDouble();
-      notifyListeners();
+    _properties = _playerPropsStream.listen((props) {
+      if (props != playerProperties) {
+        playerProperties = props;
+        notifyListeners();
+      }
     });
   }
 
-  void setVolume(double newVolume) {
-    currentTemporaryVolume = newVolume;
-    if (_volAdjustTimer == null) {
-      _volAdjustTimer = new Timer(_volumeSetTimeout, () {
-        _api.adjustVolume(_player,
-            newVolume: currentTemporaryVolume.round().clamp(0, 100));
-        _volAdjustTimer = null;
-      });
-    }
-    notifyListeners();
-  }
-
-  void adjustVolume(double diff) {
-    final newVolume = (applicationProperties.volume + diff);
-    setVolume(newVolume);
-  }
+  void togglePlay() => _api.playPause(_player);
+  void stop() => _api.stop(_player);
+  void seek(double percentage) => _api.seek(_player, percentage: percentage);
 }

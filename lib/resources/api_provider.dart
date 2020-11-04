@@ -53,6 +53,8 @@ class ApiProvider {
           "position",
           "repeat",
           "type",
+          "speed",
+          "totaltime",
           "time",
           "videostreams",
           "currentvideostream"
@@ -127,6 +129,36 @@ class ApiProvider {
     } catch (e) {
       return -1;
     }
+  }
+
+  Future<int> playPause(Player player) async {
+    final body = jsonEncode({
+      "method": "Player.PlayPause",
+      "params": {"playerid": _playerID, "play": "toggle"},
+      ...defParams
+    });
+    final response = await http.post(url(player), headers: headers, body: body);
+    return response.statusCode == 200 ? 200 : -1;
+  }
+
+  Future<int> seek(Player player, {double percentage}) async {
+    final percent = (percentage * 100).round();
+    final body = jsonEncode({
+      "method": "Player.Seek",
+      "params": {"playerid": _playerID, "value": percent},
+      ...defParams
+    });
+    final response = await http.post(url(player), headers: headers, body: body);
+    return response.statusCode;
+  }
+  Future<int> stop(Player player) async {
+    final body = jsonEncode({
+        "method": "Player.Stop",
+        "params": {"playerid": _playerID},
+        ...defParams
+    });
+    final response = await http.post(url(player), headers: headers, body: body);
+    return response.statusCode;
   }
 }
 
