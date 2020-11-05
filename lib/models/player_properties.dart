@@ -13,6 +13,8 @@ class PlayerProperties {
   final List<VideoStream> videoStreams;
   final VideoStream currentVideoStream;
 
+  final Repeat repeat;
+
   bool get playing => speed > 0;
 
   const PlayerProperties(
@@ -20,6 +22,7 @@ class PlayerProperties {
       this.totalTime,
       this.type,
       this.speed,
+      this.repeat,
       this.videoStreams,
       this.currentVideoStream});
 
@@ -28,11 +31,17 @@ class PlayerProperties {
       totalTime: PlayerTime.fromJson(j['totaltime']),
       type: j['type'],
       speed: j['speed'],
+      repeat: enumFromString(Repeat.values, j['repeat']),
       currentVideoStream: VideoStream.fromJson(j['currentvideostream']),
       videoStreams: j['videostreams']
           .map<VideoStream>((v) => VideoStream.fromJson(v))
           .toList());
 }
+
+T enumFromString<T>(Iterable<T> values, String value) =>
+    values.firstWhere((type) => type.toString().split('.').last == value,
+        orElse: null);
+enum Repeat { Off, One, All }
 
 class PlayerTime {
   final int hours;
@@ -42,8 +51,9 @@ class PlayerTime {
   int get inSeconds => (this.hours * minutes + minutes) * 60 + seconds;
 
   const PlayerTime(this.seconds, this.minutes, this.hours);
-  factory PlayerTime.fromJson(dynamic j) =>
-      PlayerTime(j['seconds'], j['minutes'], j['hours']);
+  factory PlayerTime.fromJson(dynamic j) => j == null
+      ? PlayerTime(0, 0, 0)
+      : PlayerTime(j['seconds'], j['minutes'], j['hours']);
 }
 
 class VideoStream {

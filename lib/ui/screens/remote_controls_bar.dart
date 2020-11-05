@@ -202,7 +202,14 @@ class _BottomVolumeSlider extends StatelessWidget {
     return Container(
         width: MediaQuery.of(context).size.width,
         child: Row(mainAxisSize: MainAxisSize.max, children: [
-          Text(context.watch<ApplicationProvider>().volume.toString()),
+          Container(
+            width: 35.0,
+            alignment: Alignment.center,
+            child: InkWell(
+                onTap: () => context.read<ApplicationProvider>().toggleMute(),
+                child: context.watch<ApplicationProvider>().muted ? const Icon(Icons.volume_off) : Text(context.watch<ApplicationProvider>().volume.toString())
+              ),
+          ),
           Expanded(
             child: Slider(
               min: 0.0,
@@ -214,14 +221,6 @@ class _BottomVolumeSlider extends StatelessWidget {
               },
             ),
           ),
-          IconButton(
-            icon: Icon(context.watch<ApplicationProvider>().properties.muted
-                ? Icons.volume_off
-                : Icons.volume_up),
-            onPressed: () {
-              print("TOGGLEMUTE");
-            },
-          )
         ]));
   }
 }

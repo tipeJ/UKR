@@ -14,9 +14,17 @@ class ApplicationProvider extends ChangeNotifier {
   double currentTemporaryVolume = 0.0;
   static const _volumeSetTimeout = const Duration(milliseconds: 300);
 
-  ApplicationProperties properties = EmptyApplicationProperties;
+  String _name = "";
+  String get name => _name;
 
-  int get volume => properties.volume;
+  String _version = "";
+  String get version => _version;
+
+  int _volume = 0;
+  int get volume => _volume;
+
+  bool _muted = false;
+  bool get muted => _muted;
 
   @override
   void dispose() {
@@ -27,8 +35,15 @@ class ApplicationProvider extends ChangeNotifier {
 
   ApplicationProvider(this._player) {
     this._stream = _api.applicationPropertiesStream(_player).listen((props) {
-      if (this.properties != props) {
-        this.properties = props;
+      if (_volAdjustTimer != null &&
+          (name != props.name ||
+              _version != props.version ||
+              _volume != props.volume ||
+              _muted != props.muted)) {
+        _name = props.name;
+        _version = props.version;
+        _volume = props.volume;
+        _muted = props.muted;
         notifyListeners();
       }
     });
@@ -46,7 +61,15 @@ class ApplicationProvider extends ChangeNotifier {
   }
 
   void adjustVolume(double diff) {
-    final newVolume = (properties.volume + diff);
+    final newVolume = (_volume + diff);
     setVolume(newVolume);
+  }
+
+  void toggleMute() async {
+    final response = await _api.toggleMute(_player, !this._muted);
+    if (response != _muted) {
+      _muted = response;
+      notifyListeners();
+    }
   }
 }

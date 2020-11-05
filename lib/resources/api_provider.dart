@@ -116,6 +116,7 @@ class ApiProvider {
     }
   }
 
+  // * Application API endpoints
   Future<int> adjustVolume(Player player, {int newVolume}) async {
     final body = jsonEncode({
       "method": "Application.SetVolume",
@@ -131,6 +132,18 @@ class ApiProvider {
     }
   }
 
+  Future<bool> toggleMute(Player player, [bool value]) async {
+    final body = jsonEncode({
+      "method": "Application.SetMute",
+      "params": {"mute": value ?? "toggle"},
+      ...defParams
+    });
+    final response = await http.post(url(player), headers: headers, body: body);
+    final parsedJson = jsonDecode(response.body);
+    return parsedJson['result'];
+  }
+
+  // * Player API endpoints
   Future<int> playPause(Player player) async {
     final body = jsonEncode({
       "method": "Player.PlayPause",
@@ -151,14 +164,30 @@ class ApiProvider {
     final response = await http.post(url(player), headers: headers, body: body);
     return response.statusCode;
   }
+
   Future<int> stop(Player player) async {
     final body = jsonEncode({
-        "method": "Player.Stop",
-        "params": {"playerid": _playerID},
-        ...defParams
+      "method": "Player.Stop",
+      "params": {"playerid": _playerID},
+      ...defParams
     });
     final response = await http.post(url(player), headers: headers, body: body);
     return response.statusCode;
+  }
+
+  Future<Repeat> toggleRepeat(Player player, {Repeat repeat}) async {
+    final body = jsonEncode({
+      "method": "Player.SetRepeat",
+      "params": {
+        "playerid": _playerID,
+        "repeat": repeat.toString().split('.').last
+      },
+      ...defParams
+    });
+    final response = await http.post(url(player), headers: headers, body: body);
+    final parsed = jsonDecode(response.body);
+    print(response.body);
+    return enumFromString(Repeat.values, parsed['result']);
   }
 }
 
