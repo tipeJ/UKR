@@ -110,14 +110,13 @@ class ApiProvider {
     while (true) {
       await Future.delayed(_refreshInterval);
       final response = await _getPlayerItem(p);
-      print(response);
       final parsedItem = await compute(_parsePlayerItem, response);
       yield parsedItem;
     }
   }
 
   // * Application API endpoints
-  Future<int> adjustVolume(Player player, {int newVolume}) async {
+  Future<int> adjustVolume(Player player, {@required int newVolume}) async {
     final body = jsonEncode({
       "method": "Application.SetVolume",
       "params": {"volume": newVolume},
@@ -132,7 +131,7 @@ class ApiProvider {
     }
   }
 
-  Future<bool> toggleMute(Player player, [bool value]) async {
+  Future<bool> toggleMute(Player player, [@required bool value]) async {
     final body = jsonEncode({
       "method": "Application.SetMute",
       "params": {"mute": value ?? "toggle"},
@@ -154,7 +153,7 @@ class ApiProvider {
     return response.statusCode == 200 ? 200 : -1;
   }
 
-  Future<int> seek(Player player, {double percentage}) async {
+  Future<int> seek(Player player, {@required double percentage}) async {
     final percent = (percentage * 100).round();
     final body = jsonEncode({
       "method": "Player.Seek",
@@ -175,19 +174,13 @@ class ApiProvider {
     return response.statusCode;
   }
 
-  Future<Repeat> toggleRepeat(Player player, {Repeat repeat}) async {
+  void toggleRepeat(Player player) async {
     final body = jsonEncode({
       "method": "Player.SetRepeat",
-      "params": {
-        "playerid": _playerID,
-        "repeat": repeat.toString().split('.').last
-      },
+      "params": {"playerid": _playerID, "repeat": "cycle"},
       ...defParams
     });
-    final response = await http.post(url(player), headers: headers, body: body);
-    final parsed = jsonDecode(response.body);
-    print(response.body);
-    return enumFromString(Repeat.values, parsed['result']);
+    await http.post(url(player), headers: headers, body: body);
   }
 }
 

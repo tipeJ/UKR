@@ -42,4 +42,6 @@ class MainProvider with ChangeNotifier {
   void togglePlay() => _api.playPause(_player);
   void stop() => _api.stop(_player);
   void seek(double percentage) => _api.seek(_player, percentage: percentage);
+
+  void toggleRepeat() => _api.toggleRepeat(_player);
 }

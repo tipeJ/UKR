@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'dart:math';
+import 'package:UKR/models/models.dart';
 import 'package:provider/provider.dart';
 import 'package:UKR/ui/providers/providers.dart';
 import 'package:flutter/material.dart';
@@ -107,6 +108,15 @@ class _BottomControlButtons extends StatelessWidget {
 
   const _BottomControlButtons(this._lerp);
 
+  static IconData _getRepeatIcon(Repeat repeat) {
+    switch (repeat) {
+      case Repeat.One:
+        return Icons.repeat_one;
+      default:
+        return Icons.repeat;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final _contSize = min(40.0, MediaQuery.of(context).size.width / 6 - 20.0);
@@ -120,13 +130,15 @@ class _BottomControlButtons extends StatelessWidget {
               children: [
                 InkWell(
                     onTap: () {
-                      print("PPPP");
+                      context.read<MainProvider>().toggleRepeat();
                     },
                     child: Container(
                         width: _lerp(0.0, _contSize),
                         margin:
                             EdgeInsets.symmetric(horizontal: _lerp(0.0, 10.0)),
-                        child: Icon(Icons.repeat, size: _lerp(0.0, _maxSize)))),
+                        child: Icon(
+                            _getRepeatIcon(context.watch<MainProvider>().playerProperties.repeat),
+                            size: _lerp(0.0, _maxSize)))),
                 InkWell(
                     onTap: () {
                       print("ss");
@@ -148,7 +160,6 @@ class _BottomControlButtons extends StatelessWidget {
                             size: _lerp(0.0, _maxSize)))),
                 InkWell(
                     onTap: () {
-                      print("PlayPause");
                       context.read<MainProvider>().togglePlay();
                     },
                     child: Container(
@@ -207,8 +218,12 @@ class _BottomVolumeSlider extends StatelessWidget {
             alignment: Alignment.center,
             child: InkWell(
                 onTap: () => context.read<ApplicationProvider>().toggleMute(),
-                child: context.watch<ApplicationProvider>().muted ? const Icon(Icons.volume_off) : Text(context.watch<ApplicationProvider>().volume.toString())
-              ),
+                child: context.watch<ApplicationProvider>().muted
+                    ? const Icon(Icons.volume_off)
+                    : Text(context
+                        .watch<ApplicationProvider>()
+                        .volume
+                        .toString())),
           ),
           Expanded(
             child: Slider(

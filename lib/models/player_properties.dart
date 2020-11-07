@@ -2,6 +2,9 @@ const EmptyPlayerProperties = PlayerProperties(
     time: PlayerTime(0, 0, 0),
     totalTime: PlayerTime(0, 0, 0),
     type: "Null",
+    speed: 0,
+    repeat: Repeat.Off,
+    currentVideoStream: null,
     videoStreams: []);
 
 class PlayerProperties {
@@ -39,8 +42,8 @@ class PlayerProperties {
 }
 
 T enumFromString<T>(Iterable<T> values, String value) =>
-    values.firstWhere((type) => type.toString().split('.').last == value,
-        orElse: null);
+values.firstWhere((type) => type.toString().split('.').last.toLowerCase() == value,
+  orElse: null);
 enum Repeat { Off, One, All }
 
 class PlayerTime {
