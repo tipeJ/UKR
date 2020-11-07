@@ -222,7 +222,7 @@ class _BottomVolumeSlider extends StatelessWidget {
                     ? const Icon(Icons.volume_off)
                     : Text(context
                         .watch<ApplicationProvider>()
-                        .volume
+                        .currentTemporaryVolume.round()
                         .toString())),
           ),
           Expanded(

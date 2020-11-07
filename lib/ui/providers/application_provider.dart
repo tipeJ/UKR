@@ -35,7 +35,7 @@ class ApplicationProvider extends ChangeNotifier {
 
   ApplicationProvider(this._player) {
     this._stream = _api.applicationPropertiesStream(_player).listen((props) {
-      if (_volAdjustTimer != null &&
+      if (_volAdjustTimer == null &&
           (name != props.name ||
               _version != props.version ||
               _volume != props.volume ||
@@ -43,6 +43,7 @@ class ApplicationProvider extends ChangeNotifier {
         _name = props.name;
         _version = props.version;
         _volume = props.volume;
+        currentTemporaryVolume = _volume.toDouble();
         _muted = props.muted;
         notifyListeners();
       }
