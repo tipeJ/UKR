@@ -1,3 +1,4 @@
+import 'package:UKR/ui/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:UKR/ui/screens/screens.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +17,14 @@ class RemoteScreen extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(10.0),
                   width: MediaQuery.of(context).size.width,
-                ))
+              )),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  padding: EdgeInsets.only(bottom: 50.0),
+                  child: RemoteButtons()
+                )
+                ,)
           ],
         ));
   }
