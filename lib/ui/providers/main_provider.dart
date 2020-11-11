@@ -8,14 +8,12 @@ import 'package:UKR/resources/resources.dart';
 class MainProvider with ChangeNotifier {
   final ApiProvider _api = ApiProvider();
   Stream<PlayerProperties> _playerPropsStream;
-  Stream<Item> _playerItemStream;
 
   StreamSubscription<PlayerProperties> _properties;
 
   final Player _player;
   MainProvider(this._player) {
     _playerPropsStream = _api.playerPropertiesStream(_player);
-    _playerItemStream = _api.playerItemStream(_player);
     update();
   }
 
@@ -28,7 +26,6 @@ class MainProvider with ChangeNotifier {
   PlayerProperties playerProperties = EmptyPlayerProperties;
 
   bool get playing => playerProperties.playing;
-  Item playerItem;
 
   void update() async {
     _properties = _playerPropsStream.listen((props) {

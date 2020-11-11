@@ -14,6 +14,7 @@ class MainScreen extends StatelessWidget {
             body: MultiProvider(
               providers: [
                 ChangeNotifierProvider<MainProvider>(create: (_) => MainProvider(prov.selectedPlayer)),
+                ChangeNotifierProvider<ItemProvider>(create: (_) => ItemProvider(prov.selectedPlayer)),
                 ChangeNotifierProvider<ApplicationProvider>(create: (_) => ApplicationProvider(prov.selectedPlayer))
               ],
               builder: (context, child) => RemoteScreen(),

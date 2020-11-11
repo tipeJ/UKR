@@ -8,31 +8,21 @@ class RemoteScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: _durationtest()),
-        bottomSheet: RemoteControlsBar(),
-        body: Stack(
-          children: [
+      appBar: AppBar(title: Text("TITLE")),
+      bottomSheet: RemoteControlsBar(),
+      body: Stack(
+        children: [
+          Align(
+              alignment: Alignment.topCenter,
+              child: CurrentItem()),
             Align(
-                alignment: Alignment.topCenter,
-                child: Container(
-                  padding: const EdgeInsets.all(10.0),
-                  width: MediaQuery.of(context).size.width,
-              )),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  padding: EdgeInsets.only(bottom: 50.0),
-                  child: RemoteButtons()
-                )
-                ,)
-          ],
-        ));
-  }
-}
-
-class _durationtest extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Text(context.watch<MainProvider>().playerItem?.duration.toString());
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                padding: EdgeInsets.only(bottom: 50.0),
+                child: RemoteButtons()
+              )
+              ,)
+        ],
+      ));
   }
 }

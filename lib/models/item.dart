@@ -2,7 +2,12 @@ import 'models.dart';
 
 abstract class Item {
   final int duration;
-  const Item(this.duration);
+  final String label;
+  const Item(this.duration, this.label);
+
+  @override
+  bool operator ==(other) =>
+      other is Item && other.duration == duration && other.label == label;
 }
 
 enum AlbumReleaseType { Album, Single }
@@ -12,10 +17,11 @@ class AudioItem extends Item {
   final AlbumReleaseType releaseType;
   final int disc;
 
-  const AudioItem(duration, {this.albumArtist, this.releaseType, this.disc})
-      : super(duration);
+  const AudioItem(duration, label,
+      {this.albumArtist, this.releaseType, this.disc})
+      : super(duration, label);
 
-  factory AudioItem.fromJson(dynamic j) => AudioItem(j['duration'],
+  factory AudioItem.fromJson(dynamic j) => AudioItem(j['duration'], j['label'],
       albumArtist: j['albumartist'],
       releaseType: _getReleaseType(j['releasetype']),
       disc: j['disc']);
@@ -27,10 +33,18 @@ class AudioItem extends Item {
 class VideoItem extends Item {
   final List<String> director;
   final VideoStreams videoStreams;
+  final String banner;
+  final String fanart;
+  final String poster;
+  final String thumb;
 
-  const VideoItem(duration, {this.director, this.videoStreams})
-      : super(duration);
-  factory VideoItem.fromJson(dynamic j) => VideoItem(j['duration'],
+  const VideoItem(duration, label, {this.director, this.videoStreams, this.banner, this.fanart, this.poster, this.thumb})
+      : super(duration, label);
+  factory VideoItem.fromJson(dynamic j) => VideoItem(j['duration'], j['label'],
+      banner: j['art']['banner'],
+      fanart: j['art']['fanart'],
+      poster: j['art']['poster'],
+      thumb: j['art']['thumb'],
       director: j['director'].map<String>((d) => d.toString()).toList(),
       videoStreams: VideoStreams.fromJson(j['streamdetails']));
 }

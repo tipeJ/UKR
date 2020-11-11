@@ -76,6 +76,7 @@ class ApiProvider {
           "year",
           "disc",
           "albumartist",
+          "art",
           "albumreleasetype",
           "duration",
           "streamdetails"
@@ -117,8 +118,11 @@ class ApiProvider {
 
   // * Input API endpoints
   void navigate(Player p, String a) => http.post(url(p),
-      body: jsonEncode(
-        {"method": "Input.ExecuteAction", "params": {"action": a}, ...defParams}),
+      body: jsonEncode({
+        "method": "Input.ExecuteAction",
+        "params": {"action": a},
+        ...defParams
+      }),
       headers: headers);
 
   // * Application API endpoints
