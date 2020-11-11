@@ -73,4 +73,6 @@ class ApplicationProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void navigate(String action) => _api.navigate(_player, action);
 }

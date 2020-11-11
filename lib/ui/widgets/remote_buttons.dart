@@ -1,36 +1,39 @@
 import 'dart:ui';
 
 import 'package:provider/provider.dart';
-import 'package:UKR/ui/providers/main_provider.dart';
+import 'package:UKR/ui/providers/providers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class RemoteButtons extends StatelessWidget {
-  MainProvider _getProvider(BuildContext context) =>
-      context.read<MainProvider>();
+  void _executeAction(BuildContext context, String action) =>
+  context.read<ApplicationProvider>().navigate(action);
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        _RemoteButton(Icons.keyboard_arrow_up, () {}),
+        _RemoteButton(Icons.keyboard_arrow_up, () => _executeAction(context, "up")),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _RemoteButton(Icons.keyboard_arrow_left, () {}),
-            _RemoteButton(Icons.circle, () {}),
-            _RemoteButton(Icons.keyboard_arrow_right, () {}),
+            _RemoteButton(Icons.keyboard_arrow_left, () => _executeAction(context, "left")),
+            _RemoteButton(Icons.trip_origin, () => _executeAction(context, "select")),
+            _RemoteButton(Icons.keyboard_arrow_right, () => _executeAction(context, "right")),
           ],
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _RemoteButton(Icons.arrow_back, () {}, 30.0),
-            _RemoteButton(Icons.notes_outlined, () {}, 30.0),
-            _RemoteButton(Icons.keyboard_arrow_down, () {}),
-            _RemoteButton(Icons.info_outline_rounded, () {}, 30.0),
-            _RemoteButton(Icons.menu_outlined, () {}, 30.0),
+            _RemoteButton(Icons.arrow_back, () => _executeAction(context, "back"), 30.0),
+            _RemoteButton(Icons.notes_outlined, () => _executeAction(context, "left"), 30.0),
+            _RemoteButton(Icons.keyboard_arrow_down, () 
+              => _executeAction(context, "down")),
+            _RemoteButton(Icons.info_outline_rounded, () 
+              => _executeAction(context, "info"), 30.0),
+            _RemoteButton(Icons.menu_outlined, () 
+              => _executeAction(context, "contextmenu"), 30.0),
           ],
         )
       ],

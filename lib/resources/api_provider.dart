@@ -115,6 +115,12 @@ class ApiProvider {
     }
   }
 
+  // * Input API endpoints
+  void navigate(Player p, String a) => http.post(url(p),
+      body: jsonEncode(
+        {"method": "Input.ExecuteAction", "params": {"action": a}, ...defParams}),
+      headers: headers);
+
   // * Application API endpoints
   Future<int> adjustVolume(Player player, {@required int newVolume}) async {
     final body = jsonEncode({
