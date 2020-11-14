@@ -1,22 +1,28 @@
-import 'package:UKR/models/item.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:UKR/ui/providers/providers.dart';
+import 'package:UKR/models/models.dart';
 
 class CurrentItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final item = context.watch<ItemProvider>().item;
-    return item == null
-        ? Text("Nothing is Playing")
-        : Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(item.label),
-              // Text((item as VideoItem).fanart)
-            ],
-          );
+    var currentItem = context.watch<ItemProvider>().item;
+    switch (currentItem.runtimeType) {
+      case VideoItem:
+        final item = currentItem as VideoItem;
+        return Container(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(item.label),
+              ]),
+        );
+      case AudioItem:
+        return Text("Audio");
+      default:
+        return const Text("Nothing is Playing");
+    }
   }
 }

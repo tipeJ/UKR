@@ -50,7 +50,7 @@ class ApplicationProvider extends ChangeNotifier {
     });
   }
   void setVolume(double newVolume) {
-    currentTemporaryVolume = newVolume;
+    currentTemporaryVolume = newVolume.clamp(0.0, 100.0);
     if (_volAdjustTimer == null) {
       _volAdjustTimer = new Timer(_volumeSetTimeout, () {
         _api.adjustVolume(_player,
@@ -65,6 +65,9 @@ class ApplicationProvider extends ChangeNotifier {
     final newVolume = (_volume + diff);
     setVolume(newVolume);
   }
+
+  void increaseVolumeSmall() => setVolume(currentTemporaryVolume + 5 );
+  void decreaseVolumeSmall() => setVolume(currentTemporaryVolume - 5 );
 
   void toggleMute() async {
     final response = await _api.toggleMute(_player, !this._muted);

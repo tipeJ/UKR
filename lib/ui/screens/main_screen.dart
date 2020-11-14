@@ -10,7 +10,6 @@ class MainScreen extends StatelessWidget {
     return prov.selectedPlayer == null
         ? PlayersScreen()
         : Scaffold(
-            appBar: AppBar(title: const Text("Remote Screen Titlte")),
             body: MultiProvider(
               providers: [
                 ChangeNotifierProvider<MainProvider>(create: (_) => MainProvider(prov.selectedPlayer)),

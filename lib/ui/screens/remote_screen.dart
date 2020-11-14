@@ -12,6 +12,7 @@ class RemoteScreen extends StatelessWidget {
       bottomSheet: RemoteControlsBar(),
       body: Stack(
         children: [
+          BackgroundVolume(),
           Align(
               alignment: Alignment.topCenter,
               child: CurrentItem()),

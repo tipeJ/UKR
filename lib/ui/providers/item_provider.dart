@@ -15,6 +15,10 @@ class ItemProvider with ChangeNotifier {
     _subscription = _stream.listen((newItem) {
       if (newItem != item) {
         item = newItem;
+        print((item as VideoItem).banner);
+        print((item as VideoItem).fanart);
+        print((item as VideoItem).thumb);
+        print((item as VideoItem).poster);
         notifyListeners();
       }
     });
