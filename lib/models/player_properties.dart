@@ -41,9 +41,9 @@ class PlayerProperties {
           .toList());
 }
 
-T enumFromString<T>(Iterable<T> values, String value) =>
-values.firstWhere((type) => type.toString().split('.').last.toLowerCase() == value,
-  orElse: null);
+T enumFromString<T>(Iterable<T> values, String value) => values.firstWhere(
+    (type) => type.toString().split('.').last.toLowerCase() == value,
+    orElse: null);
 enum Repeat { Off, One, All }
 
 class PlayerTime {
@@ -52,6 +52,10 @@ class PlayerTime {
   final int seconds;
 
   int get inSeconds => (this.hours * minutes + minutes) * 60 + seconds;
+
+  @override
+  String toString() =>
+  [hours > 9 ? hours.toString() : "0$hours", minutes > 9 ? minutes.toString() : "0$minutes", seconds > 9 ? seconds.toString() : "0$seconds"].join(":");
 
   const PlayerTime(this.seconds, this.minutes, this.hours);
   factory PlayerTime.fromJson(dynamic j) => j == null

@@ -17,8 +17,6 @@ const maxSize = 200.0;
 
 class _RemoteControlsBarState extends State<RemoteControlsBar>
     with SingleTickerProviderStateMixin {
-  static const _startTextStyle = TextStyle(fontSize: 14.0);
-  static const _endTextStyle = TextStyle(fontSize: 20.0);
   static const _tapAnimateDuration = const Duration(milliseconds: 350);
   AnimationController _controller;
   double _lerp(double min, double max) =>
@@ -65,15 +63,7 @@ class _RemoteControlsBarState extends State<RemoteControlsBar>
               child: Stack(
                 children: [
                   _BottomBackground(_lerp),
-                  Container(
-                    alignment: Alignment.topLeft,
-                    padding: EdgeInsets.only(left: _lerp(minSize + 5.0, 5.0)),
-                    child: Text(
-                      "TEST VIDEO LABELL",
-                      style: TextStyle.lerp(
-                          _startTextStyle, _endTextStyle, _controller.value),
-                    ),
-                  ),
+                  _BottomPlaybackInfo(_lerp),
                   Align(
                       alignment: Alignment.lerp(Alignment.centerRight,
                           Alignment.center, _controller.value),
@@ -260,6 +250,29 @@ class _SeekBar extends StatelessWidget {
   }
 }
 
+class _BottomPlaybackInfo extends StatelessWidget {
+  final Function(double, double) _lerp;
+
+  const _BottomPlaybackInfo(this._lerp);
+
+  @override
+  Widget build(BuildContext context) {
+    final state = context.watch<MainProvider>().playerProperties;
+    if (state.totalTime == null || state.time == null) return Container();
+    return Positioned(
+        left: _lerp(minSize, 0.0),
+        child: Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: Column(
+              children: [
+                Text(state.time.toString(),
+                    style: TextStyle(fontWeight: FontWeight.w300, fontSize: _lerp(14.0, 20.0))),
+                Text(state.totalTime.toString())
+              ],
+            )));
+  }
+}
+
 class _BottomBackground extends StatelessWidget {
   final Function(double, double) _lerp;
 
@@ -285,18 +298,21 @@ class _BottomBackground extends StatelessWidget {
       return Container();
     }
     return Container(
-      //TODO: MONITOR PERFORMANCE OF SHADERMASK, CONSIDER STATIC SWITCH INSTEAD
+        //TODO: MONITOR PERFORMANCE OF SHADERMASK, CONSIDER STATIC SWITCH INSTEAD
         padding: EdgeInsets.all(_lerp(5.0, 0.0)),
         height: _lerp(minSize, maxSize),
         width: _lerp(minSize, maxSize),
         child: ShaderMask(
-          shaderCallback: (rect) => LinearGradient(
-            begin: Alignment.center,
-            end: Alignment.centerRight,
-            colors: [Colors.black, Color.fromRGBO(0,0,0,_lerp(1.0, 0.0))]).createShader(Rect.fromLTRB(0,0,rect.width, rect.height)),
-          blendMode: BlendMode.dstIn,
+            shaderCallback: (rect) => LinearGradient(
+                        begin: Alignment.center,
+                        end: Alignment.centerRight,
+                        colors: [
+                      Colors.black,
+                      Color.fromRGBO(0, 0, 0, _lerp(1.0, 0.0))
+                    ])
+                    .createShader(Rect.fromLTRB(0, 0, rect.width, rect.height)),
+            blendMode: BlendMode.dstIn,
             child: CachedNetworkImage(
-              imageUrl: decodeExternalImageUrl(url),
-              fit: BoxFit.fitHeight)));
+                imageUrl: decodeExternalImageUrl(url), fit: BoxFit.fitHeight)));
   }
 }
