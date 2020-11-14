@@ -1,6 +1,8 @@
 import 'dart:ui';
+import 'package:UKR/utils/utils.dart';
 import 'dart:math';
 import 'package:UKR/models/models.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
 import 'package:UKR/ui/providers/providers.dart';
 import 'package:flutter/material.dart';
@@ -10,10 +12,11 @@ class RemoteControlsBar extends StatefulWidget {
   State<StatefulWidget> createState() => _RemoteControlsBarState();
 }
 
+const minSize = 56.0;
+const maxSize = 200.0;
+
 class _RemoteControlsBarState extends State<RemoteControlsBar>
     with SingleTickerProviderStateMixin {
-  static const minSize = 50.0;
-  static const maxSize = 200.0;
   static const _startTextStyle = TextStyle(fontSize: 14.0);
   static const _endTextStyle = TextStyle(fontSize: 20.0);
   static const _tapAnimateDuration = const Duration(milliseconds: 350);
@@ -58,17 +61,10 @@ class _RemoteControlsBarState extends State<RemoteControlsBar>
               _controller.fling(velocity: -details.primaryVelocity / maxSize);
             },
             child: Container(
-              color: Colors.grey,
-              padding: const EdgeInsets.all(10.0),
+              color: Colors.transparent,
               child: Stack(
                 children: [
-                  Container(
-                    color: Colors.red,
-                    width: minSize,
-                    height: minSize,
-                    alignment: Alignment.lerp(
-                        Alignment.topLeft, Alignment.center, _controller.value),
-                  ),
+                  _BottomBackground(_lerp),
                   Container(
                     alignment: Alignment.topLeft,
                     padding: EdgeInsets.only(left: _lerp(minSize + 5.0, 5.0)),
@@ -79,7 +75,7 @@ class _RemoteControlsBarState extends State<RemoteControlsBar>
                     ),
                   ),
                   Align(
-                      alignment: Alignment.lerp(Alignment.topRight,
+                      alignment: Alignment.lerp(Alignment.centerRight,
                           Alignment.center, _controller.value),
                       child: _BottomControlButtons(_lerp)),
                   Positioned(
@@ -137,7 +133,10 @@ class _BottomControlButtons extends StatelessWidget {
                         margin:
                             EdgeInsets.symmetric(horizontal: _lerp(0.0, 10.0)),
                         child: Icon(
-                            _getRepeatIcon(context.watch<MainProvider>().playerProperties.repeat),
+                            _getRepeatIcon(context
+                                .watch<MainProvider>()
+                                .playerProperties
+                                .repeat),
                             size: _lerp(0.0, _maxSize)))),
                 InkWell(
                     onTap: () {
@@ -222,7 +221,8 @@ class _BottomVolumeSlider extends StatelessWidget {
                     ? const Icon(Icons.volume_off)
                     : Text(context
                         .watch<ApplicationProvider>()
-                        .currentTemporaryVolume.round()
+                        .currentTemporaryVolume
+                        .round()
                         .toString())),
           ),
           Expanded(
@@ -257,5 +257,46 @@ class _SeekBar extends StatelessWidget {
               context.read<MainProvider>().seek(newValue);
             },
           );
+  }
+}
+
+class _BottomBackground extends StatelessWidget {
+  final Function(double, double) _lerp;
+
+  const _BottomBackground(this._lerp);
+
+  @override
+  Widget build(BuildContext context) {
+    final currentItem = context.watch<ItemProvider>().item;
+    String url;
+    switch (currentItem.runtimeType) {
+      case VideoItem:
+        final item = currentItem as VideoItem;
+        url = item.thumb ?? item.poster ?? item.fanart ?? item.banner;
+        break;
+      case AudioItem:
+        final item = currentItem as AudioItem;
+        //TODO: Add audio item thumbnail/ album art
+        break;
+      default:
+        break;
+    }
+    if (url == null || url.isEmpty) {
+      return Container();
+    }
+    return Container(
+      //TODO: MONITOR PERFORMANCE OF SHADERMASK, CONSIDER STATIC SWITCH INSTEAD
+        padding: EdgeInsets.all(_lerp(5.0, 0.0)),
+        height: _lerp(minSize, maxSize),
+        width: _lerp(minSize, maxSize),
+        child: ShaderMask(
+          shaderCallback: (rect) => LinearGradient(
+            begin: Alignment.center,
+            end: Alignment.centerRight,
+            colors: [Colors.black, Color.fromRGBO(0,0,0,_lerp(1.0, 0.0))]).createShader(Rect.fromLTRB(0,0,rect.width, rect.height)),
+          blendMode: BlendMode.dstIn,
+            child: CachedNetworkImage(
+              imageUrl: decodeExternalImageUrl(url),
+              fit: BoxFit.fitHeight)));
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:UKR/utils/utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:UKR/models/models.dart';
 import 'package:UKR/ui/providers/providers.dart';
@@ -81,9 +82,8 @@ class _BackgroundImageWrapper extends StatelessWidget {
           return Container();
         } else {
           child = CachedNetworkImage(
-              fit: BoxFit.fill,
-              imageUrl: Uri.decodeComponent(
-                  item.poster.replaceFirst("image://", "")));
+              fit: BoxFit.fitHeight,
+              imageUrl: decodeExternalImageUrl(item.poster));
         }
         return Container(
             width: MediaQuery.of(context).size.width,
