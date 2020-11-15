@@ -203,7 +203,9 @@ class _BottomVolumeSlider extends StatelessWidget {
         width: MediaQuery.of(context).size.width,
         child: Row(mainAxisSize: MainAxisSize.max, children: [
           Container(
-            width: 35.0,
+            width: 20.0,
+            height: 20.0,
+            margin: EdgeInsets.only(left: 10.0),
             alignment: Alignment.center,
             child: InkWell(
                 onTap: () => context.read<ApplicationProvider>().toggleMute(),
@@ -234,7 +236,8 @@ class _SeekBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final props = context.watch<MainProvider>().playerProperties;
-    final progress = props.time.inSeconds / props.totalTime.inSeconds;
+    final totalTime = props.totalTime.inSeconds;
+    final progress = props.time.inSeconds / ( totalTime == 0 ? 0.00001 : totalTime );
 
     return progress > 1.0
         ? const Text("LIVE")
@@ -257,17 +260,29 @@ class _BottomPlaybackInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _contSize = min(40.0, MediaQuery.of(context).size.width / 6 - 20.0);
     final state = context.watch<MainProvider>().playerProperties;
     if (state.totalTime == null || state.time == null) return Container();
     return Positioned(
         left: _lerp(minSize, 0.0),
-        child: Padding(
+        child: Container(
+            width: MediaQuery.of(context).size.width,
             padding: const EdgeInsets.all(5.0),
-            child: Column(
+            child: Row(
               children: [
-                Text(state.time.toString(),
-                    style: TextStyle(fontWeight: FontWeight.w300, fontSize: _lerp(14.0, 20.0))),
-                Text(state.totalTime.toString())
+                Container(
+                  width: _lerp(65.0, 100.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(state.time.toString(),
+                          style: TextStyle(fontWeight: FontWeight.w500, fontSize: _lerp(14.0, 20.0))),
+                      Text(state.totalTime.toString(), style: TextStyle(fontWeight: FontWeight.w300))
+                    ],
+                  ),
+                ),
+                Expanded(child: Slider(min: 0.0, max: 1.0, value: 0.5, onChanged: (n){})),
+                Container(width: ( _contSize + 30.0) * _lerp(3.0, 0.2))
               ],
             )));
   }
@@ -299,7 +314,6 @@ class _BottomBackground extends StatelessWidget {
     }
     return Container(
         //TODO: MONITOR PERFORMANCE OF SHADERMASK, CONSIDER STATIC SWITCH INSTEAD
-        padding: EdgeInsets.all(_lerp(5.0, 0.0)),
         height: _lerp(minSize, maxSize),
         width: _lerp(minSize, maxSize),
         child: ShaderMask(
