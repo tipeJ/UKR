@@ -32,4 +32,9 @@ class PlayersProvider extends ChangeNotifier {
     //_box.put(DATA_MOST_RECENT_PLAYERID, player.id);
     notifyListeners();
   }
+
+  void remotePlayerSelection() {
+    selectedPlayer = null;
+    notifyListeners();
+  }
 }

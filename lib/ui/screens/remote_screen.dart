@@ -8,22 +8,39 @@ class RemoteScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("TITLE")),
-      bottomSheet: RemoteControlsBar(),
-      body: Stack(
-        children: [
-          BackgroundVolume(),
-          Align(
-              alignment: Alignment.topCenter,
-              child: CurrentItem()),
+        appBar: _buildAppBar(context),
+        bottomSheet: RemoteControlsBar(),
+        body: Stack(
+          children: [
+            BackgroundVolume(),
+            Align(alignment: Alignment.topCenter, child: CurrentItem()),
             Align(
               alignment: Alignment.bottomCenter,
               child: Container(
-                padding: EdgeInsets.only(bottom: 50.0),
-                child: RemoteButtons()
-              )
-              ,)
-        ],
-      ));
+                  padding: EdgeInsets.only(bottom: 50.0),
+                  child: RemoteButtons()),
+            )
+          ],
+        ));
+  }
+
+  AppBar _buildAppBar(BuildContext context) {
+    Widget leading = IconButton(
+      icon: const Icon(Icons.menu),
+      onPressed: (){
+
+      },
+    );
+    Widget title;
+    List<Widget> actions = [];
+    final player = context.watch<PlayersProvider>().selectedPlayer;
+    if (player == null) {
+      title = const Text("TEST");
+    } else {
+      title = Text(player.address);
+      actions.add(
+          IconButton(icon: const Icon(Icons.power_outlined), onPressed: () {}));
+    }
+    return AppBar(leading: leading, title: title, actions: actions);
   }
 }

@@ -103,6 +103,11 @@ class _BottomControlButtons extends StatelessWidget {
     }
   }
 
+  static Color _getRepeatColor(Repeat repeat, BuildContext context) {
+    if (repeat == Repeat.Off) return Colors.white;
+    return Theme.of(context).accentColor;
+  }
+
   @override
   Widget build(BuildContext context) {
     final _contSize = min(40.0, MediaQuery.of(context).size.width / 6 - 20.0);
@@ -127,6 +132,7 @@ class _BottomControlButtons extends StatelessWidget {
                                 .watch<MainProvider>()
                                 .playerProperties
                                 .repeat),
+                              color: _getRepeatColor(context.watch<MainProvider>().playerProperties.repeat, context),
                             size: _lerp(0.0, _maxSize)))),
                 InkWell(
                     onTap: () {
@@ -203,9 +209,9 @@ class _BottomVolumeSlider extends StatelessWidget {
         width: MediaQuery.of(context).size.width,
         child: Row(mainAxisSize: MainAxisSize.max, children: [
           Container(
-            width: 20.0,
-            height: 20.0,
-            margin: EdgeInsets.only(left: 10.0),
+            width: 15.0,
+            height: 15.0,
+            margin: const EdgeInsets.only(left: 10.0),
             alignment: Alignment.center,
             child: InkWell(
                 onTap: () => context.read<ApplicationProvider>().toggleMute(),
@@ -237,7 +243,8 @@ class _SeekBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final props = context.watch<MainProvider>().playerProperties;
     final totalTime = props.totalTime.inSeconds;
-    final progress = props.time.inSeconds / ( totalTime == 0 ? 0.00001 : totalTime );
+    final progress =
+        props.time.inSeconds / (totalTime == 0 ? 0.00001 : totalTime);
 
     return progress > 1.0
         ? const Text("LIVE")
@@ -276,13 +283,18 @@ class _BottomPlaybackInfo extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(state.time.toString(),
-                          style: TextStyle(fontWeight: FontWeight.w500, fontSize: _lerp(14.0, 20.0))),
-                      Text(state.totalTime.toString(), style: TextStyle(fontWeight: FontWeight.w300))
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: _lerp(14.0, 20.0))),
+                      Text(state.totalTime.toString(),
+                          style: TextStyle(fontWeight: FontWeight.w300))
                     ],
                   ),
                 ),
-                Expanded(child: Slider(min: 0.0, max: 1.0, value: 0.5, onChanged: (n){})),
-                Container(width: ( _contSize + 30.0) * _lerp(3.0, 0.2))
+                Expanded(
+                    child: Slider(
+                        min: 0.0, max: 1.0, value: 0.5, onChanged: (n) {})),
+                Container(width: (_contSize + 30.0) * _lerp(3.0, 0.2))
               ],
             )));
   }
