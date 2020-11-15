@@ -307,8 +307,8 @@ class _BottomBackground extends StatelessWidget {
                         begin: Alignment.center,
                         end: Alignment.centerRight,
                         colors: [
-                      Colors.black,
-                      Color.fromRGBO(0, 0, 0, _lerp(1.0, 0.0))
+                      Color.fromRGBO(0, 0, 0, 0.5),
+                      Color.fromRGBO(0, 0, 0, _lerp(0.5, 0.0))
                     ])
                     .createShader(Rect.fromLTRB(0, 0, rect.width, rect.height)),
             blendMode: BlendMode.dstIn,
