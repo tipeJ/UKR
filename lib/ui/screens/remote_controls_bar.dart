@@ -151,7 +151,7 @@ class _BottomControlButtons extends StatelessWidget {
                         width: _lerp(0.0, _contSize),
                         margin:
                             EdgeInsets.symmetric(horizontal: _lerp(0.0, 10.0)),
-                        child: Icon(Icons.skip_previous_sharp,
+                        child: Icon(Icons.replay_10,
                             size: _lerp(0.0, _maxSize)))),
                 InkWell(
                     onTap: () {
@@ -176,7 +176,7 @@ class _BottomControlButtons extends StatelessWidget {
                         width: _lerp(0.0, _contSize),
                         margin:
                             EdgeInsets.symmetric(horizontal: _lerp(0.0, 10.0)),
-                        child: Icon(Icons.skip_next_sharp,
+                        child: Icon(Icons.forward_10,
                             size: _lerp(0.0, _maxSize)))),
                 InkWell(
                     onTap: () {
@@ -209,7 +209,7 @@ class _BottomVolumeSlider extends StatelessWidget {
         width: MediaQuery.of(context).size.width,
         child: Row(mainAxisSize: MainAxisSize.max, children: [
           Container(
-            width: 15.0,
+            width: 25.0,
             height: 15.0,
             margin: const EdgeInsets.only(left: 10.0),
             alignment: Alignment.center,

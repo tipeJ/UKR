@@ -39,50 +39,56 @@ class PlayerListItemState extends State<PlayerListItem> {
   get _player => widget.player;
   @override
   Widget build(BuildContext context) => InkWell(
-    onTap: () => context.watch<PlayersProvider>().setPlayer(_player),
-    child: Container(
-        padding: const EdgeInsets.all(10.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
+        onTap: () => context.watch<PlayersProvider>().setPlayer(_player),
+        child: Container(
+            padding: const EdgeInsets.all(10.0),
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(_player.name, style: Theme.of(context).textTheme.headline6),
-                Text(_player.address, style: const TextStyle(fontWeight: FontWeight.w300)),
-                Text(_player.port.toString(), style: const TextStyle(fontWeight: FontWeight.w200))
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(_player.name,
+                        style: Theme.of(context).textTheme.headline6),
+                    Text(_player.address,
+                        style: const TextStyle(fontWeight: FontWeight.w300)),
+                    Text(_player.port.toString(),
+                        style: const TextStyle(fontWeight: FontWeight.w200))
+                  ],
+                ),
+                Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Center(
+                        child: FutureBuilder(
+                          future: context.watch<PlayersProvider>().testPlayer(_player),
+                          builder: (context, snapshot) {
+                            Widget child;
+                            if (snapshot.connectionState == ConnectionState.done &&
+                                snapshot.hasData) {
+                              child = snapshot.data
+                                  ? const Icon(Icons.check,
+                                      color: Colors.greenAccent)
+                                  : const Icon(Icons.close,
+                                      color: Colors.redAccent);
+                            } else {
+                              child = Container();
+                            }
+                            return Container(
+                              width: 35.0,
+                              height: 35.0,
+                              alignment: Alignment.center,
+                              child: AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 750),
+                                child: child,
+                              ),
+                            );
+                          },
+                        )
+                ))
               ],
-            ),
-            Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Center(
-                    child: FutureBuilder(
-                  future: context.watch<PlayersProvider>().testPlayer(_player),
-                  builder: (context, snapshot) {
-                    Widget child;
-                    if (snapshot.connectionState == ConnectionState.done &&
-                        snapshot.hasData) {
-                      child = snapshot.data
-                          ? const Icon(Icons.check, color: Colors.greenAccent)
-                          : const Icon(Icons.cancel, color: Colors.redAccent);
-                    } else {
-                      child = Container();
-                    }
-                    return Container(
-                      width: 35.0,
-                      height: 35.0,
-                      alignment: Alignment.center,
-                      child: AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 750),
-                        child: child,
-                      ),
-                    );
-                  },
-                )))
-          ],
-        )),
-  );
+            )),
+      );
 }

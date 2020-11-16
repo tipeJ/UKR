@@ -24,6 +24,7 @@ class ApiProvider {
   ApiProvider._internal();
 
   Future<bool> testPlayerConnection(Player player) async {
+    //TODO: Implement check with kodi-server that doesn't have JSONRPC enabled
     final body = jsonEncode({"method": "JSONRPC.Ping"});
     final request = await http.post(url(player), headers: headers, body: body).timeout(_pingTimeOut, onTimeout: () => http.Response("", 404));
     return request.statusCode == 200;
