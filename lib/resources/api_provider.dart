@@ -6,6 +6,7 @@ import 'dart:convert';
 class ApiProvider {
   static final ApiProvider _apiProvider = ApiProvider._internal();
   static const _refreshInterval = Duration(milliseconds: 750);
+  static const _pingTimeOut = Duration(milliseconds: 500);
 
   static const headers = {
     "Content-Type": "application/json",
@@ -24,8 +25,8 @@ class ApiProvider {
 
   Future<bool> testPlayerConnection(Player player) async {
     final body = jsonEncode({"method": "JSONRPC.Ping"});
-    final response = await http.post(url(player), headers: headers, body: body);
-    return response.statusCode == 200;
+    final request = await http.post(url(player), headers: headers, body: body).timeout(_pingTimeOut, onTimeout: () => http.Response("", 404));
+    return request.statusCode == 200;
   }
 
   static String _handleHTTPResponse(http.Response r) => r.statusCode == 200

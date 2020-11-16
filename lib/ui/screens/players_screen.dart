@@ -22,56 +22,67 @@ class PlayersScreen extends StatelessWidget {
         ),
         body: ListView(
             children: List<Widget>.generate(
-                players.length, (i) => _PlayerListItem(players[i]))));
+                players.length, (i) => PlayerListItem(players[i]))));
   }
 }
 
-class _PlayerListItem extends StatefulWidget {
+class PlayerListItem extends StatefulWidget {
   final Player player;
-  const _PlayerListItem(this.player);
+  const PlayerListItem(this.player);
 
   @override
-  State<StatefulWidget> createState() => _PlayerListItemState();
+  State<StatefulWidget> createState() => PlayerListItemState();
 }
 
-class _PlayerListItemState extends State<_PlayerListItem> {
+class PlayerListItemState extends State<PlayerListItem> {
   bool verified;
   get _player => widget.player;
   @override
-  Widget build(BuildContext context) => Container(
-      width: MediaQuery.of(context).size.width,
-      padding: const EdgeInsets.all(10),
-      child: Row(
-        children: [
-          Column(
-            children: [
-              Text(_player.name, style: Theme.of(context).textTheme.headline6),
-              const Spacer(),
-              Text(_player.address),
-              Text(_player.port.toString())
-            ],
-          ),
-          Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Center(
-                  child: FutureBuilder(
-                future: context.read<PlayersProvider>().testPlayer(_player),
-                builder: (context, snapshot) {
-                  Widget child;
-                  if (snapshot.connectionState == ConnectionState.done &&
-                      snapshot.hasData) {
-                    child = snapshot.data
-                        ? const Icon(Icons.check, color: Colors.greenAccent)
-                        : const Icon(Icons.train, color: Colors.redAccent);
-                  } else {
-                    child = Container();
-                  }
-                  return AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 750),
-                    child: child,
-                  );
-                },
-              )))
-        ],
-      ));
+  Widget build(BuildContext context) => InkWell(
+    onTap: () => context.watch<PlayersProvider>().setPlayer(_player),
+    child: Container(
+        padding: const EdgeInsets.all(10.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(_player.name, style: Theme.of(context).textTheme.headline6),
+                Text(_player.address, style: const TextStyle(fontWeight: FontWeight.w300)),
+                Text(_player.port.toString(), style: const TextStyle(fontWeight: FontWeight.w200))
+              ],
+            ),
+            Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Center(
+                    child: FutureBuilder(
+                  future: context.watch<PlayersProvider>().testPlayer(_player),
+                  builder: (context, snapshot) {
+                    Widget child;
+                    if (snapshot.connectionState == ConnectionState.done &&
+                        snapshot.hasData) {
+                      child = snapshot.data
+                          ? const Icon(Icons.check, color: Colors.greenAccent)
+                          : const Icon(Icons.cancel, color: Colors.redAccent);
+                    } else {
+                      child = Container();
+                    }
+                    return Container(
+                      width: 35.0,
+                      height: 35.0,
+                      alignment: Alignment.center,
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 750),
+                        child: child,
+                      ),
+                    );
+                  },
+                )))
+          ],
+        )),
+  );
 }
