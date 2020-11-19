@@ -1,4 +1,5 @@
 import 'package:UKR/ui/providers/providers.dart';
+import 'package:UKR/utils/utils.dart';
 import 'package:UKR/ui/screens/screens.dart';
 import 'package:UKR/ui/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -33,10 +34,43 @@ class RemoteScreen extends StatelessWidget {
       title = const Text("TEST");
     } else {
       title = Text(player.address);
-      actions.add(
-          IconButton(icon: const Icon(Icons.power_outlined), onPressed: () {}));
+      actions.add(_PlayerPowerOptions());
     }
     return AppBar(title: title, actions: actions);
+  }
+}
+
+class _PlayerPowerOptions extends StatelessWidget {
+  const _PlayerPowerOptions({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Selector<ApplicationProvider, Map<String, bool>>(
+        selector: (context, provider) => provider.systemProps,
+        builder: (_, values, __) {
+          print("REBUILDT");
+          if (values != null && values.values.contains(true)) {
+            return PopupMenuButton<String>(
+                icon: const Icon(Icons.power_settings_new),
+                tooltip: "Power Menu",
+                onSelected: (newValue) {
+                  context
+                      .read<ApplicationProvider>()
+                      .toggleSystemProperty(newValue);
+                },
+                itemBuilder: (_) => values.keys.map((String property) {
+                      if (values[property]) {
+                        return PopupMenuItem<String>(
+                            value: property,
+                            child: Text(property.substring(3).capitalize()));
+                      }
+                      return null;
+                    }).toList());
+          }
+          return Container();
+        });
   }
 }
 
@@ -50,40 +84,45 @@ class _PlayersBar extends StatelessWidget {
         Expanded(
           child: CustomScrollView(
             slivers: [
-              SliverToBoxAdapter(child: Padding(
+              SliverToBoxAdapter(
+                  child: Padding(
                 padding: const EdgeInsets.all(10.0),
-                child: Text("Players", style: Theme.of(context).textTheme.headline5),
+                child: Text("Players",
+                    style: Theme.of(context).textTheme.headline5),
               )),
               SliverList(
-                delegate: SliverChildListDelegate(
-                  List<PlayerListItem>.generate(players.length, (i) => PlayerListItem(players[i]))
-              )),
+                  delegate: SliverChildListDelegate(
+                      List<PlayerListItem>.generate(
+                          players.length, (i) => PlayerListItem(players[i])))),
               SliverToBoxAdapter(
                   child: InkWell(
-                    onTap: () async {
-                      final result = await showDialog(
-                        context: context, builder: (_) => AddPlayerDialog());
-                      if (result != null) {
-                        context.read<PlayersProvider>().addPlayer(result);
-                      }
-                    },
+                      onTap: () async {
+                        final result = await showDialog(
+                            context: context,
+                            builder: (_) => AddPlayerDialog());
+                        if (result != null) {
+                          context.read<PlayersProvider>().addPlayer(result);
+                        }
+                      },
                       child: Padding(
-                          padding: const EdgeInsets.all(10.0), child: const Text("Add Player", style: TextStyle(fontWeight: FontWeight.w200)))))
+                          padding: const EdgeInsets.all(10.0),
+                          child: const Text("Add Player",
+                              style: TextStyle(fontWeight: FontWeight.w200)))))
             ],
           ),
         ),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-          height: kBottomNavigationBarHeight,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Text("UKR (BETA)", style: TextStyle(fontWeight: FontWeight.w200)),
-              IconButton(icon: const Icon(Icons.settings), onPressed: (){})
-            ],
-          )
-        )
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            height: kBottomNavigationBarHeight,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Text("UKR (BETA)",
+                    style: TextStyle(fontWeight: FontWeight.w200)),
+                IconButton(icon: const Icon(Icons.settings), onPressed: () {})
+              ],
+            ))
       ],
     );
   }

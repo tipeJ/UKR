@@ -23,13 +23,40 @@ class ApiProvider {
 
   ApiProvider._internal();
 
+  // System API endpoints
   Future<bool> testPlayerConnection(Player player) async {
     //TODO: Implement check with kodi-server that doesn't have JSONRPC enabled
     final body = jsonEncode({"method": "JSONRPC.Ping"});
-    final request = await http.post(url(player), headers: headers, body: body).timeout(_pingTimeOut, onTimeout: () => http.Response("", 404));
+    final request = await http
+        .post(url(player), headers: headers, body: body)
+        .timeout(_pingTimeOut, onTimeout: () => http.Response("", 404));
     return request.statusCode == 200;
   }
 
+  Future<Map<String, bool>> getSystemProperties(Player player) async {
+    final body = jsonEncode({
+      "method": "System.GetProperties",
+      "params": {
+        "properties": const [
+          "canshutdown",
+          "canhibernate",
+          "canreboot",
+          "cansuspend"
+        ]
+      },
+      ...defParams
+    });
+    final response = await http.post(url(player), body: body, headers: headers);
+    final json = jsonDecode(response.body);
+    return Map<String, bool>.from(json['result']);
+  }
+
+  void toggleSystemProperty(Player player, String property) async {
+    final body = jsonEncode({"method": "System.$property", ...defParams});
+    http.post(url(player), body: body, headers: headers);
+  }
+
+  // Properties endpoints
   static String _handleHTTPResponse(http.Response r) => r.statusCode == 200
       ? r.body
       : "An error occurred: " + r.statusCode.toString();
@@ -38,7 +65,7 @@ class ApiProvider {
     final body = jsonEncode({
       "method": "Application.GetProperties",
       "params": {
-        "properties": ["muted", "name", "version", "volume"]
+        "properties": const ["muted", "name", "version", "volume"]
       },
       ...defParams
     });
@@ -51,7 +78,7 @@ class ApiProvider {
       "method": "Player.getProperties",
       "params": {
         "playerid": _playerID,
-        "properties": [
+        "properties": const [
           "position",
           "repeat",
           "type",
@@ -73,7 +100,7 @@ class ApiProvider {
       "method": "Player.GetItem",
       "params": {
         "playerid": _playerID,
-        "properties": [
+        "properties": const [
           "director",
           "year",
           "disc",

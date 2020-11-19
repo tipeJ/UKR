@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:UKR/utils/utils.dart';
 import 'package:UKR/models/models.dart';
 import 'package:UKR/models/player.dart';
 import 'package:UKR/resources/api_provider.dart';
@@ -26,6 +26,17 @@ class ApplicationProvider extends ChangeNotifier {
   bool _muted = false;
   bool get muted => _muted;
 
+  // System Properties
+  Map<String, bool> systemProps;
+
+  bool get canHibernate => systemProps['canhibernate'] ?? false;
+
+  bool get canReboot => systemProps['canreboot'] ?? false;
+
+  bool get canShutdown => systemProps['canshutdown'] ?? false;
+
+  bool get canSuspend => systemProps['cansuspend'] ?? false;
+
   @override
   void dispose() {
     _stream.cancel();
@@ -48,6 +59,15 @@ class ApplicationProvider extends ChangeNotifier {
         notifyListeners();
       }
     });
+    _fetchSystemProperties();
+  }
+
+  void _fetchSystemProperties() async =>
+      systemProps = await _api.getSystemProperties(_player);
+
+  void toggleSystemProperty(String property) {
+    if (systemProps[property])
+      _api.toggleSystemProperty(_player, property.substring(3).capitalize());
   }
 
   void setVolume(double newVolume) {
