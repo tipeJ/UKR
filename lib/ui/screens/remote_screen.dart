@@ -55,9 +55,9 @@ class _PlayersBar extends StatelessWidget {
                 child: Text("Players", style: Theme.of(context).textTheme.headline5),
               )),
               SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                      (context, i) => PlayerListItem(players[i]),
-                      childCount: players.length)),
+                delegate: SliverChildListDelegate(
+                  List<PlayerListItem>.generate(players.length, (i) => PlayerListItem(players[i]))
+              )),
               SliverToBoxAdapter(
                   child: InkWell(
                     onTap: () async {
