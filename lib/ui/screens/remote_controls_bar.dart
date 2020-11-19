@@ -110,7 +110,7 @@ class _BottomControlButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _contSize = min(40.0, MediaQuery.of(context).size.width / 6 - 20.0);
+    final _contSize = min(40.0, MediaQuery.of(context).size.width / 6 - 28.0);
     return Material(
         color: Colors.transparent,
         child: Container(
@@ -132,7 +132,12 @@ class _BottomControlButtons extends StatelessWidget {
                                 .watch<MainProvider>()
                                 .playerProperties
                                 .repeat),
-                              color: _getRepeatColor(context.watch<MainProvider>().playerProperties.repeat, context),
+                            color: _getRepeatColor(
+                                context
+                                    .watch<MainProvider>()
+                                    .playerProperties
+                                    .repeat,
+                                context),
                             size: _lerp(0.0, _maxSize)))),
                 InkWell(
                     onTap: () {
@@ -151,8 +156,8 @@ class _BottomControlButtons extends StatelessWidget {
                         width: _lerp(0.0, _contSize),
                         margin:
                             EdgeInsets.symmetric(horizontal: _lerp(0.0, 10.0)),
-                        child: Icon(Icons.replay_10,
-                            size: _lerp(0.0, _maxSize)))),
+                        child:
+                            Icon(Icons.replay_10, size: _lerp(0.0, _maxSize)))),
                 InkWell(
                     onTap: () {
                       context.read<MainProvider>().togglePlay();
@@ -267,13 +272,14 @@ class _BottomPlaybackInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _contSize = min(40.0, MediaQuery.of(context).size.width / 6 - 20.0);
+    final width = MediaQuery.of(context).size.width;
+    final _contSize = min(40.0, width / 6 - 28.0);
     final state = context.watch<MainProvider>().playerProperties;
     if (state.totalTime == null || state.time == null) return Container();
     return Positioned(
         left: _lerp(minSize, 0.0),
         child: Container(
-            width: MediaQuery.of(context).size.width,
+            width: width, 
             padding: const EdgeInsets.all(5.0),
             child: Row(
               children: [
@@ -292,8 +298,12 @@ class _BottomPlaybackInfo extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                    child: Slider(
-                        min: 0.0, max: 1.0, value: 0.5, onChanged: (n) {})),
+                    child: Visibility(
+                      // Do not show the bottom seekbar preview if the window width is too small (especially on 9:21 screens)
+                      visible: width > 400 || _lerp(0.0, 1.0) > 0.5,
+                      child: Slider(
+                          min: 0.0, max: 1.0, value: 0.5, onChanged: (n) {}),
+                    )),
                 Container(width: (_contSize + 30.0) * _lerp(3.0, 0.2))
               ],
             )));
