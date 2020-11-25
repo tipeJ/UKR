@@ -2,8 +2,9 @@
 #+AUTHOR: Tiitus Järvinen
 
 * Objectives
-
-** TODO Poster background completion
+** TODO [#A] Migrate to Sound null safety
+   
+** TODO [#B] Poster background completion
    Currently the poster background contains only the label for the currently playing item.
 
 *** [#A] Movies

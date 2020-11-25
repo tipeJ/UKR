@@ -8,9 +8,9 @@ import 'package:flutter/material.dart';
 class ApplicationProvider extends ChangeNotifier {
   final _api = ApiProvider();
   final Player _player;
-  StreamSubscription<ApplicationProperties> _stream;
+  late final StreamSubscription<ApplicationProperties> _stream;
 
-  Timer _volAdjustTimer;
+  Timer? _volAdjustTimer;
   double currentTemporaryVolume = 0.0;
   static const _volumeSetTimeout = const Duration(milliseconds: 300);
 
@@ -27,7 +27,7 @@ class ApplicationProvider extends ChangeNotifier {
   bool get muted => _muted;
 
   // System Properties
-  Map<String, bool> systemProps;
+  Map<String, bool> systemProps = const {};
 
   bool get canHibernate => systemProps['canhibernate'] ?? false;
 
@@ -40,7 +40,7 @@ class ApplicationProvider extends ChangeNotifier {
   @override
   void dispose() {
     _stream.cancel();
-    _volAdjustTimer.cancel();
+    _volAdjustTimer?.cancel();
     super.dispose();
   }
 
@@ -66,7 +66,7 @@ class ApplicationProvider extends ChangeNotifier {
       systemProps = await _api.getSystemProperties(_player);
 
   void toggleSystemProperty(String property) {
-    if (systemProps[property])
+    if (systemProps[property] ?? false)
       _api.toggleSystemProperty(_player, property.substring(3).capitalize());
   }
 

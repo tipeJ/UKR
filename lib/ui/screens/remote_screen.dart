@@ -50,7 +50,6 @@ class _PlayerPowerOptions extends StatelessWidget {
     return Selector<ApplicationProvider, Map<String, bool>>(
         selector: (context, provider) => provider.systemProps,
         builder: (_, values, __) {
-          print("REBUILDT");
           if (values != null && values.values.contains(true)) {
             return PopupMenuButton<String>(
                 icon: const Icon(Icons.power_settings_new),
