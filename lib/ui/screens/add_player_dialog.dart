@@ -52,7 +52,7 @@ class _AddPlayerDialogState extends State<AddPlayerDialog> {
                   labelText: "Port",
                 ),
                 keyboardType: TextInputType.number,
-                maxLength: 4,
+                maxLength: 5,
               ),
               Row(
                 children: [
