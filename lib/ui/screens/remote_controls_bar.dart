@@ -110,7 +110,7 @@ class _BottomControlButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _contSize = min(40.0, ( MediaQuery.of(context).size.width / 6 ) - 32.0);
+    final _contSize = min(40.0, (MediaQuery.of(context).size.width / 6) - 32.0);
     return Material(
         color: Colors.transparent,
         child: Container(
@@ -243,10 +243,48 @@ class _BottomVolumeSlider extends StatelessWidget {
   }
 }
 
-class _SeekBar extends StatelessWidget {
+class _BottomPlaybackInfo extends StatelessWidget {
+  final Function(double, double) _lerp;
+
+  const _BottomPlaybackInfo(this._lerp);
+
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final _contSize = min(40.0, width / 6 - 28.0);
     final props = context.watch<MainProvider>().playerProperties;
+    if (props.type != "Null") {
+      return Positioned(
+          left: _lerp(minSize, 0.0),
+          child: Container(
+              width: width,
+              padding: const EdgeInsets.all(5.0),
+              child: Row(
+                children: [
+                  Container(
+                    width: _lerp(65.0, 100.0),
+                    child: _TimeDisplay(props, _lerp),
+                  ),
+                  Visibility(
+                    visible: width > 400 || _lerp(0.0, 1.0) > 0.5,
+                    child: _SeekBar(props),
+                  ),
+                  Container(width: (_contSize + 30.0) * _lerp(3.0, 0.2))
+                ],
+              )));
+    } else {
+      return Container();
+    }
+  }
+}
+
+class _SeekBar extends StatelessWidget {
+  final PlayerProperties props;
+
+  const _SeekBar(this.props);
+
+  @override
+  Widget build(BuildContext context) {
     if (props.canSeek) {
       final totalTime = props.totalTime.inSeconds;
       final progress =
@@ -266,7 +304,8 @@ class _SeekBar extends StatelessWidget {
     }
     return Container(
       child: const Text("LIVE"),
-      padding: const EdgeInsets.only(left: 5.0, right: 5.0, top: 3.0, bottom: 3.0),
+      padding:
+          const EdgeInsets.only(left: 5.0, right: 5.0, top: 3.0, bottom: 3.0),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10.0),
           color: Theme.of(context).errorColor),
@@ -274,55 +313,21 @@ class _SeekBar extends StatelessWidget {
   }
 }
 
-class _BottomPlaybackInfo extends StatelessWidget {
-  final Function(double, double) _lerp;
-
-  const _BottomPlaybackInfo(this._lerp);
-
-  @override
-  Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final _contSize = min(40.0, width / 6 - 28.0);
-    return Positioned(
-        left: _lerp(minSize, 0.0),
-        child: Container(
-            width: width,
-            padding: const EdgeInsets.all(5.0),
-            child: Row(
-              children: [
-                Container(
-                  width: _lerp(65.0, 100.0),
-                  child: _TimeDisplay(lerp: _lerp),
-                ),
-                Visibility(
-                  visible: width > 400 || _lerp(0.0, 1.0) > 0.5,
-                  child: _SeekBar(),
-                ),
-                Container(width: (_contSize + 30.0) * _lerp(3.0, 0.2))
-              ],
-            )));
-  }
-}
-
 class _TimeDisplay extends StatelessWidget {
-  const _TimeDisplay({
-    Key? key,
-    required Function(double p1, double p2) lerp,
-  })   : _lerp = lerp,
-        super(key: key);
+  const _TimeDisplay(this.props, this._lerp);
 
+  final PlayerProperties props;
   final Function(double p1, double p2) _lerp;
 
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<MainProvider>().playerProperties;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(state.time.toString(),
+        Text(props.time.toString(),
             style: TextStyle(
                 fontWeight: FontWeight.w500, fontSize: _lerp(14.0, 20.0))),
-        Text(state.totalTime.toString(),
+        Text(props.totalTime.toString(),
             style: TextStyle(fontWeight: FontWeight.w300))
       ],
     );
