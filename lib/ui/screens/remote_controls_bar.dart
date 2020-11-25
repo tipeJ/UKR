@@ -110,7 +110,7 @@ class _BottomControlButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _contSize = min(40.0, MediaQuery.of(context).size.width / 6 - 28.0);
+    final _contSize = min(40.0, ( MediaQuery.of(context).size.width / 6 ) - 32.0);
     return Material(
         color: Colors.transparent,
         child: Container(

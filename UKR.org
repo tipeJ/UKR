@@ -40,7 +40,7 @@
 ** TODO [#B] Playlist Support
 
 ** TODO Content browsing
-
+   
 *** TODO [#C] Add-Ons
     Browse All add-ons quickly and efficiently.
     Should be quickly accessible from the remote screen.
@@ -55,7 +55,8 @@
    Flashes for a little while when opening the application for the first time. Should be easily fixed by implementing null player item check.
 
    
-** TODO Playback controls overflow error
+** DONE Playback controls overflow error
+   CLOSED: [2020-11-25 ke 15:26]
    Control buttons overflow on very narrow screen. As this is written, implemented by the following line:
 
     #+BEGIN_SRC dart

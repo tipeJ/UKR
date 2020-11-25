@@ -111,7 +111,7 @@ class _PlayersBar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text("UKR (BETA)",
+                const Text("UKR (ALPHA)",
                     style: TextStyle(fontWeight: FontWeight.w200)),
                 IconButton(icon: const Icon(Icons.settings), onPressed: () {})
               ],
