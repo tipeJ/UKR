@@ -247,21 +247,30 @@ class _SeekBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final props = context.watch<MainProvider>().playerProperties;
-    final totalTime = props.totalTime.inSeconds;
-    final progress =
-        props.time.inSeconds / (totalTime == 0 ? 0.00001 : totalTime);
-
-    return progress > 1.0
-        ? const Text("LIVE")
-        : Slider(
+    if (props.canSeek) {
+      final totalTime = props.totalTime.inSeconds;
+      final progress =
+          props.time.inSeconds / (totalTime == 0 ? 0.00001 : totalTime);
+      if (progress < 1.0)
+        return Expanded(
+          child: Slider(
             min: 0.0,
             max: 1.0,
-            value: progress,
+            value: 0.5,
             onChanged: (_) {},
             onChangeEnd: (newValue) {
               context.read<MainProvider>().seek(newValue);
             },
-          );
+          ),
+        );
+    }
+    return Container(
+      child: const Text("LIVE"),
+      padding: const EdgeInsets.only(left: 5.0, right: 5.0, top: 3.0, bottom: 3.0),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.0),
+          color: Theme.of(context).errorColor),
+    );
   }
 }
 
@@ -274,7 +283,6 @@ class _BottomPlaybackInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final _contSize = min(40.0, width / 6 - 28.0);
-    final state = context.watch<MainProvider>().playerProperties;
     return Positioned(
         left: _lerp(minSize, 0.0),
         child: Container(
@@ -284,28 +292,40 @@ class _BottomPlaybackInfo extends StatelessWidget {
               children: [
                 Container(
                   width: _lerp(65.0, 100.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(state.time.toString(),
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: _lerp(14.0, 20.0))),
-                      Text(state.totalTime.toString(),
-                          style: TextStyle(fontWeight: FontWeight.w300))
-                    ],
-                  ),
+                  child: _TimeDisplay(lerp: _lerp),
                 ),
-                Expanded(
-                    child: Visibility(
-                      // Do not show the bottom seekbar preview if the window width is too small (especially on 9:21 screens)
-                      visible: width > 400 || _lerp(0.0, 1.0) > 0.5,
-                      child: Slider(
-                          min: 0.0, max: 1.0, value: 0.5, onChanged: (n) {}),
-                    )),
+                Visibility(
+                  visible: width > 400 || _lerp(0.0, 1.0) > 0.5,
+                  child: _SeekBar(),
+                ),
                 Container(width: (_contSize + 30.0) * _lerp(3.0, 0.2))
               ],
             )));
+  }
+}
+
+class _TimeDisplay extends StatelessWidget {
+  const _TimeDisplay({
+    Key? key,
+    required Function(double p1, double p2) lerp,
+  })   : _lerp = lerp,
+        super(key: key);
+
+  final Function(double p1, double p2) _lerp;
+
+  @override
+  Widget build(BuildContext context) {
+    final state = context.watch<MainProvider>().playerProperties;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(state.time.toString(),
+            style: TextStyle(
+                fontWeight: FontWeight.w500, fontSize: _lerp(14.0, 20.0))),
+        Text(state.totalTime.toString(),
+            style: TextStyle(fontWeight: FontWeight.w300))
+      ],
+    );
   }
 }
 

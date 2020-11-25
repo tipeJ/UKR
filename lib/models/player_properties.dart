@@ -3,6 +3,7 @@ class PlayerProperties {
   final PlayerTime totalTime;
   final int speed;
   final String type;
+  final bool canSeek;
 
   final List<VideoStream> videoStreams;
   final VideoStream currentVideoStream;
@@ -13,9 +14,10 @@ class PlayerProperties {
 
   const PlayerProperties(
       {this.time = const PlayerTime(0, 0, 0),
-      this.totalTime = const PlayerTime(0, 0 , 0),
+      this.totalTime = const PlayerTime(0, 0, 0),
       this.type = "Null",
       this.speed = 0,
+      this.canSeek = false,
       this.repeat = Repeat.Off,
       this.videoStreams = const [],
       this.currentVideoStream = const VideoStream()});
@@ -25,6 +27,7 @@ class PlayerProperties {
       totalTime: PlayerTime.fromJson(j['totaltime']),
       type: j['type'],
       speed: j['speed'],
+      canSeek: j['canseek'],
       repeat: enumFromString(Repeat.values, j['repeat']),
       currentVideoStream: VideoStream.fromJson(j['currentvideostream']),
       videoStreams: j['videostreams']
@@ -45,8 +48,11 @@ class PlayerTime {
   int get inSeconds => (this.hours * minutes + minutes) * 60 + seconds;
 
   @override
-  String toString() =>
-  [hours > 9 ? hours.toString() : "0$hours", minutes > 9 ? minutes.toString() : "0$minutes", seconds > 9 ? seconds.toString() : "0$seconds"].join(":");
+  String toString() => [
+        hours > 9 ? hours.toString() : "0$hours",
+        minutes > 9 ? minutes.toString() : "0$minutes",
+        seconds > 9 ? seconds.toString() : "0$seconds"
+      ].join(":");
 
   const PlayerTime(this.seconds, this.minutes, this.hours);
   factory PlayerTime.fromJson(dynamic j) => j == null

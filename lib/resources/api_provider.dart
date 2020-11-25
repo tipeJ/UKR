@@ -85,6 +85,7 @@ class ApiProvider {
           "speed",
           "totaltime",
           "time",
+          "canseek",
           "videostreams",
           "currentvideostream"
         ]

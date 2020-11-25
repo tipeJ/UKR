@@ -31,6 +31,12 @@
 ** TODO [#A] Seekbar
    Implement the seekbar properly. Currently has a placeholder but does not work.
 
+*** DONE [#A] Implement LIVE tag
+    CLOSED: [2020-11-25 ke 15:20]
+    For when the stream is not seekable.
+
+*** TODO [#B] Seek
+
 ** TODO [#B] Playlist Support
 
 ** TODO Content browsing
