@@ -8,7 +8,7 @@ class ApplicationProperties {
   final int volume;
 
   const ApplicationProperties(
-      {this.muted, this.name, this.version, this.volume});
+      {required this.muted, required this.name, required this.version, required this.volume});
 
   factory ApplicationProperties.fromJson(dynamic j) => ApplicationProperties(
       muted: j['muted'],

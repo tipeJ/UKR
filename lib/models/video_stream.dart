@@ -5,7 +5,7 @@ class VideoStreams {
   final List<String> subtitles;
   final List<VideoStream> videoChannels;
 
-  const VideoStreams({this.audioChannels, this.subtitles, this.videoChannels});
+  const VideoStreams({this.audioChannels = const [], this.subtitles = const [], this.videoChannels = const []});
   factory VideoStreams.fromJson(dynamic j) => VideoStreams(
       audioChannels: j['audio']
           .map<AudioChannel>((aj) => AudioChannel.fromJson(aj))

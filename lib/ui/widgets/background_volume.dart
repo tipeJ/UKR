@@ -60,10 +60,13 @@ class _BackgroundVolumeWrapper extends StatelessWidget {
         color: Color.lerp(Colors.black12, Colors.black26,
             context.watch<ApplicationProvider>().currentTemporaryVolume / 100),
         width: MediaQuery.of(context).size.width,
-        height: ( maxHeight -
-            (maxHeight *
-                (context.watch<ApplicationProvider>().currentTemporaryVolume /
-                    100)) ).clamp(0.0, maxHeight),
+        height: (maxHeight -
+                (maxHeight *
+                    (context
+                            .watch<ApplicationProvider>()
+                            .currentTemporaryVolume /
+                        100)))
+            .clamp(0.0, maxHeight),
       ),
     );
   }
@@ -73,7 +76,6 @@ class _BackgroundImageWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var currentItem = context.watch<ItemProvider>().item;
-
     switch (currentItem.runtimeType) {
       case VideoItem:
         final item = currentItem as VideoItem;
@@ -83,12 +85,14 @@ class _BackgroundImageWrapper extends StatelessWidget {
         } else {
           child = CachedNetworkImage(
               fit: BoxFit.fitHeight,
-              imageUrl: decodeExternalImageUrl(item.poster));
+              imageUrl: decodeExternalImageUrl(item.poster!));
         }
         return Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
             child: child);
+      default:
+        return Container();
     }
   }
 }

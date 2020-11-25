@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:async/async.dart';
 
 import 'package:UKR/models/models.dart';
 import 'package:flutter/material.dart';
@@ -7,14 +6,19 @@ import 'package:UKR/resources/resources.dart';
 
 class MainProvider with ChangeNotifier {
   final ApiProvider _api = ApiProvider();
-  Stream<PlayerProperties> _playerPropsStream;
-
-  StreamSubscription<PlayerProperties> _properties;
-
   final Player _player;
+
+  late final Stream<PlayerProperties> _playerPropsStream;
+  late final StreamSubscription<PlayerProperties> _properties;
+
   MainProvider(this._player) {
     _playerPropsStream = _api.playerPropertiesStream(_player);
-    update();
+    _properties = _playerPropsStream.listen((props) {
+      if (props != playerProperties) {
+        playerProperties = props;
+        notifyListeners();
+      }
+    });
   }
 
   @override
@@ -23,18 +27,10 @@ class MainProvider with ChangeNotifier {
     super.dispose();
   }
 
-  PlayerProperties playerProperties = EmptyPlayerProperties;
+  /// Initialized with empty player properties
+  PlayerProperties playerProperties = PlayerProperties();
 
   bool get playing => playerProperties.playing;
-
-  void update() async {
-    _properties = _playerPropsStream.listen((props) {
-      if (props != playerProperties) {
-        playerProperties = props;
-        notifyListeners();
-      }
-    });
-  }
 
   void togglePlay() => _api.playPause(_player);
   void stop() => _api.stop(_player);

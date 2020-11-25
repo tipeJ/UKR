@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 class ItemProvider with ChangeNotifier {
   final ApiProvider _api = ApiProvider();
   final Player _player;
-  Stream<Item> _stream;
-  StreamSubscription<Item> _subscription;
+  late final Stream<Item> _stream;
+  late final StreamSubscription<Item> _subscription;
 
   ItemProvider(this._player) {
     _stream = _api.playerItemStream(_player);
@@ -29,5 +29,5 @@ class ItemProvider with ChangeNotifier {
     super.dispose();
   }
 
-  Item item;
+  Item? item;
 }

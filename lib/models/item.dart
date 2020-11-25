@@ -18,7 +18,7 @@ class AudioItem extends Item {
   final int disc;
 
   const AudioItem(duration, label,
-      {this.albumArtist, this.releaseType, this.disc})
+      {required this.albumArtist, required this.releaseType, required this.disc})
       : super(duration, label);
 
   factory AudioItem.fromJson(dynamic j) => AudioItem(j['duration'], j['label'],
@@ -32,19 +32,19 @@ class AudioItem extends Item {
 
 class VideoItem extends Item {
   final List<String> director;
-  final VideoStreams videoStreams;
-  final String banner;
-  final String fanart;
-  final String poster;
-  final String thumb;
+  final VideoStreams? videoStreams;
+  final String? banner;
+  final String? fanart;
+  final String? poster;
+  final String? thumb;
 
-  const VideoItem(duration, label, {this.director, this.videoStreams, this.banner, this.fanart, this.poster, this.thumb})
+  const VideoItem(duration, label, {required this.director, required this.videoStreams, this.banner, this.fanart, this.poster, this.thumb})
       : super(duration, label);
   factory VideoItem.fromJson(dynamic j) => VideoItem(j['duration'], j['label'],
-      banner: j['art']['banner'],
-      fanart: j['art']['fanart'],
-      poster: j['art']['poster'],
-      thumb: j['art']['thumb'],
-      director: j['director'].map<String>((d) => d.toString()).toList(),
-      videoStreams: VideoStreams.fromJson(j['streamdetails']));
+      banner: j['art']['banner'] ,
+      fanart: j['art']['fanart'] ,
+      poster: j['art']['poster'] ,
+      thumb: j['art']['thumb']   ,
+      director: j['director'] != null ? j['director'].map<String>((d) => d.toString()).toList() : const [],
+      videoStreams: j['streamdetails'] != null ? VideoStreams.fromJson(j['streamdetails']) : null);
 }

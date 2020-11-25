@@ -155,7 +155,7 @@ class ApiProvider {
       headers: headers);
 
   // * Application API endpoints
-  Future<int> adjustVolume(Player player, {@required int newVolume}) async {
+  Future<int> adjustVolume(Player player, {required int newVolume}) async {
     final body = jsonEncode({
       "method": "Application.SetVolume",
       "params": {"volume": newVolume},
@@ -170,7 +170,7 @@ class ApiProvider {
     }
   }
 
-  Future<bool> toggleMute(Player player, [@required bool value]) async {
+  Future<bool> toggleMute(Player player, [bool? value]) async {
     final body = jsonEncode({
       "method": "Application.SetMute",
       "params": {"mute": value ?? "toggle"},
@@ -192,7 +192,7 @@ class ApiProvider {
     return response.statusCode == 200 ? 200 : -1;
   }
 
-  Future<int> seek(Player player, {@required double percentage}) async {
+  Future<int> seek(Player player, {required double percentage}) async {
     final percent = (percentage * 100).round();
     final body = jsonEncode({
       "method": "Player.Seek",

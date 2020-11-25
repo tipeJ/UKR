@@ -8,7 +8,7 @@ class PlayersProvider extends ChangeNotifier {
   final _api = ApiProvider();
   get _box => Hive.box<Player>(BOX_PLAYERS);
   final List<Player> players = [];
-  Player selectedPlayer;
+  Player? selectedPlayer;
 
   PlayersProvider() {
     this.players.addAll(_box.values);
@@ -16,7 +16,7 @@ class PlayersProvider extends ChangeNotifier {
     if (id == null) {
       selectedPlayer = players.isEmpty ? null : players.first;
     } else {
-      selectedPlayer = players.firstWhere((p) => p.id == id) ?? players.first;
+      selectedPlayer = players.firstWhere((p) => p.id == id, orElse: () => players.first);
     }
   }
   Future<bool> testPlayer(Player player) => _api.testPlayerConnection(player);

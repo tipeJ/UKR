@@ -18,9 +18,9 @@ const maxSize = 200.0;
 class _RemoteControlsBarState extends State<RemoteControlsBar>
     with SingleTickerProviderStateMixin {
   static const _tapAnimateDuration = const Duration(milliseconds: 350);
-  AnimationController _controller;
+  late final AnimationController _controller;
   double _lerp(double min, double max) =>
-      lerpDouble(min, max, _controller.value);
+      lerpDouble(min, max, _controller.value) ?? 0.0;
 
   @override
   void initState() {
@@ -56,7 +56,7 @@ class _RemoteControlsBarState extends State<RemoteControlsBar>
               _controller.value -= (details.delta.dy / maxSize);
             },
             onVerticalDragEnd: (details) {
-              _controller.fling(velocity: -details.primaryVelocity / maxSize);
+              _controller.fling(velocity: -details.primaryVelocity! / maxSize);
             },
             child: Container(
               color: Colors.transparent,
@@ -66,7 +66,7 @@ class _RemoteControlsBarState extends State<RemoteControlsBar>
                   _BottomPlaybackInfo(_lerp),
                   Align(
                       alignment: Alignment.lerp(Alignment.centerRight,
-                          Alignment.center, _controller.value),
+                          Alignment.center, _controller.value)!,
                       child: _BottomControlButtons(_lerp)),
                   Positioned(
                       bottom: 0.0,
@@ -275,11 +275,10 @@ class _BottomPlaybackInfo extends StatelessWidget {
     final width = MediaQuery.of(context).size.width;
     final _contSize = min(40.0, width / 6 - 28.0);
     final state = context.watch<MainProvider>().playerProperties;
-    if (state.totalTime == null || state.time == null) return Container();
     return Positioned(
         left: _lerp(minSize, 0.0),
         child: Container(
-            width: width, 
+            width: width,
             padding: const EdgeInsets.all(5.0),
             child: Row(
               children: [
@@ -318,7 +317,7 @@ class _BottomBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentItem = context.watch<ItemProvider>().item;
-    String url;
+    String? url;
     switch (currentItem.runtimeType) {
       case VideoItem:
         final item = currentItem as VideoItem;

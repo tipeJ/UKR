@@ -1,12 +1,3 @@
-const EmptyPlayerProperties = PlayerProperties(
-    time: PlayerTime(0, 0, 0),
-    totalTime: PlayerTime(0, 0, 0),
-    type: "Null",
-    speed: 0,
-    repeat: Repeat.Off,
-    currentVideoStream: null,
-    videoStreams: []);
-
 class PlayerProperties {
   final PlayerTime time;
   final PlayerTime totalTime;
@@ -21,13 +12,13 @@ class PlayerProperties {
   bool get playing => speed > 0;
 
   const PlayerProperties(
-      {this.time,
-      this.totalTime,
-      this.type,
-      this.speed,
-      this.repeat,
-      this.videoStreams,
-      this.currentVideoStream});
+      {this.time = const PlayerTime(0, 0, 0),
+      this.totalTime = const PlayerTime(0, 0 , 0),
+      this.type = "Null",
+      this.speed = 0,
+      this.repeat = Repeat.Off,
+      this.videoStreams = const [],
+      this.currentVideoStream = const VideoStream()});
 
   factory PlayerProperties.fromJson(dynamic j) => PlayerProperties(
       time: PlayerTime.fromJson(j['time']),
@@ -68,7 +59,7 @@ class VideoStream {
   final int height;
   final String codec;
 
-  const VideoStream({this.width, this.height, this.codec});
+  const VideoStream({this.width = 0, this.height = 0, this.codec = "h264"});
   factory VideoStream.fromJson(dynamic j) =>
       VideoStream(width: j['width'], height: j['height'], codec: j['codec']);
 }

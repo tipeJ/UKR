@@ -11,7 +11,7 @@ class Player {
   @HiveField(3)
   final int port;
 
-  const Player({this.id, this.name, this.address, this.port});
+  const Player({required this.id, required this.name, required this.address, required this.port});
 }
 
 class PlayerAdapter extends TypeAdapter<Player> {

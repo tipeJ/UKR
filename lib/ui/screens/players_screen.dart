@@ -35,7 +35,7 @@ class PlayerListItem extends StatefulWidget {
 }
 
 class PlayerListItemState extends State<PlayerListItem> {
-  bool verified;
+  bool? verified;
   get _player => widget.player;
   @override
   Widget build(BuildContext context) => InkWell(
@@ -62,13 +62,13 @@ class PlayerListItemState extends State<PlayerListItem> {
                 Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: Center(
-                        child: FutureBuilder(
+                        child: FutureBuilder<bool>(
                           future: context.watch<PlayersProvider>().testPlayer(_player),
                           builder: (context, snapshot) {
                             Widget child;
                             if (snapshot.connectionState == ConnectionState.done &&
                                 snapshot.hasData) {
-                              child = snapshot.data
+                              child = snapshot.data ?? false
                                   ? const Icon(Icons.check,
                                       color: Colors.greenAccent)
                                   : const Icon(Icons.close,

@@ -30,14 +30,14 @@ class _AddPlayerDialogState extends State<AddPlayerDialog> {
             child: Column(children: [
               TextFormField(
                 validator: (value) =>
-                    value.isEmpty ? "Please enter a name" : null,
+                    value!.isEmpty ? "Please enter a name" : null,
                 controller: _nameController,
                 decoration: const InputDecoration(
                     hintText: "Name of the server", labelText: "Name"),
               ),
               TextFormField(
                 validator: (value) =>
-                    value.isEmpty ? "Please enter an address" : null,
+                    value!.isEmpty ? "Please enter an address" : null,
                 controller: _addressController,
                 decoration: const InputDecoration(
                     hintText: "Address of the server i.e. 192.168.xxx.xxx",
@@ -45,7 +45,7 @@ class _AddPlayerDialogState extends State<AddPlayerDialog> {
               ),
               TextFormField(
                 validator: (value) =>
-                    value.isEmpty ? "Plase enter a valid port number" : null,
+                    value!.isEmpty ? "Plase enter a valid port number" : null,
                 controller: _portController,
                 decoration: const InputDecoration(
                   hintText: "Port of the Kodi instance",
@@ -65,7 +65,7 @@ class _AddPlayerDialogState extends State<AddPlayerDialog> {
                   ElevatedButton(
                     child: const Text("OK"),
                     onPressed: () {
-                      if (_formKey.currentState.validate()) {
+                      if (_formKey.currentState!.validate()) {
                         final newPlayer = Player(
                             id: uuid.v1(),
                             name: _nameController.text,
