@@ -2,7 +2,8 @@
 #+AUTHOR: Tiitus Järvinen
 
 * Objectives
-** TODO [#A] Migrate to Sound null safety
+** DONE [#A] Migrate to Sound null safety
+   CLOSED: [2020-11-25 ke 14:54]
    
 ** TODO [#B] Poster background completion
    Currently the poster background contains only the label for the currently playing item.
@@ -43,8 +44,10 @@
     
 * Known Issues / Bugs
 
-** TODO Launch Screen render error
+** DONE Launch Screen render error
+   CLOSED: [2020-11-25 ke 14:56]
    Flashes for a little while when opening the application for the first time. Should be easily fixed by implementing null player item check.
+
    
 ** TODO Playback controls overflow error
    Control buttons overflow on very narrow screen. As this is written, implemented by the following line:
