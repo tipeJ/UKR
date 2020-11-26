@@ -6,13 +6,18 @@ import 'package:flutter/material.dart';
 
 class ItemProvider with ChangeNotifier {
   final ApiProvider _api = ApiProvider();
-  final Player _player;
-  late final Stream<Item> _stream;
-  late final StreamSubscription<Item> _subscription;
+  Player? _player;
+  Player get player => _player!;
+  StreamSubscription<Item>? _subscription;
 
-  ItemProvider(this._player) {
-    _stream = _api.playerItemStream(_player);
-    _subscription = _stream.listen((newItem) {
+  ItemProvider(Player player) {
+    initialize(player);
+  }
+
+  void initialize(Player player) {
+    this._player = player;
+    _subscription?.pause();
+    _subscription = _api.playerItemStream(player).listen((newItem) {
       if (newItem != item) {
         item = newItem;
         print((item as VideoItem).banner);
@@ -22,10 +27,12 @@ class ItemProvider with ChangeNotifier {
         notifyListeners();
       }
     });
+    _subscription?.resume();
   }
+
   @override
   void dispose() {
-    _subscription.cancel();
+    _subscription?.cancel();
     super.dispose();
   }
 

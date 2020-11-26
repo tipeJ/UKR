@@ -39,7 +39,7 @@ class PlayerListItemState extends State<PlayerListItem> {
   get _player => widget.player;
   @override
   Widget build(BuildContext context) => InkWell(
-        onTap: () => context.watch<PlayersProvider>().setPlayer(_player),
+        onTap: () => context.read<PlayersProvider>().setPlayer(_player),
         child: Container(
             padding: const EdgeInsets.all(10.0),
             child: Row(

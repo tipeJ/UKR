@@ -11,7 +11,19 @@ class Player {
   @HiveField(3)
   final int port;
 
-  const Player({required this.id, required this.name, required this.address, required this.port});
+  const Player(
+      {required this.id,
+      required this.name,
+      required this.address,
+      required this.port});
+
+  @override
+  bool operator ==(other) =>
+      (other is Player) &&
+      other.id == id &&
+      other.name == name &&
+      other.address == address &&
+      other.port == port;
 }
 
 class PlayerAdapter extends TypeAdapter<Player> {

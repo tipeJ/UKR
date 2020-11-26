@@ -16,7 +16,8 @@ class PlayersProvider extends ChangeNotifier {
     if (id == null) {
       selectedPlayer = players.isEmpty ? null : players.first;
     } else {
-      selectedPlayer = players.firstWhere((p) => p.id == id, orElse: () => players.first);
+      selectedPlayer =
+          players.firstWhere((p) => p.id == id, orElse: () => players.first);
     }
   }
   Future<bool> testPlayer(Player player) => _api.testPlayerConnection(player);
@@ -28,6 +29,7 @@ class PlayersProvider extends ChangeNotifier {
   }
 
   void setPlayer(Player player) {
+    if (player == this.selectedPlayer) return;
     selectedPlayer = player;
     //_box.put(DATA_MOST_RECENT_PLAYERID, player.id);
     notifyListeners();

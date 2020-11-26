@@ -39,6 +39,15 @@
 
 ** TODO [#B] Playlist Support
 
+** TODO Advanced player management
+
+*** TODO Automatic latest player selection on startup
+    Currently takes the first player in the storage box.
+
+*** TODO Player deletion
+
+*** TODO Player editing
+
 ** TODO Content browsing
    
 *** TODO [#C] Add-Ons
@@ -62,3 +71,16 @@
     #+BEGIN_SRC dart
       final _contSize = min(40.0, MediaQuery.of(context).size.width / 6 - 28.0);
     #+END_SRC
+
+** TODO Player switcher doesn't actually change the player value of the multiprovider providers
+   Strange...
+
+*** TODO Check with other stream.
+    Current fix has the stream pause before redefining the subscription
+    #+BEGIN_SRC dart
+      this._subscription.pause();
+      this._subscription = ...;
+      this._subscription.resume();
+    #+END_SRC
+
+    Needs to be checked with localhost player. Might cause memory leaks, or might not work as expected when there are two valid streams instead of just one.

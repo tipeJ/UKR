@@ -7,8 +7,9 @@ import 'package:flutter/material.dart';
 
 class ApplicationProvider extends ChangeNotifier {
   final _api = ApiProvider();
-  final Player _player;
-  late final StreamSubscription<ApplicationProperties> _stream;
+  Player? _player;
+  Player get player => _player!;
+  StreamSubscription<ApplicationProperties>? _stream;
 
   Timer? _volAdjustTimer;
   double currentTemporaryVolume = 0.0;
@@ -39,13 +40,21 @@ class ApplicationProvider extends ChangeNotifier {
 
   @override
   void dispose() {
-    _stream.cancel();
+    _stream?.cancel();
     _volAdjustTimer?.cancel();
     super.dispose();
   }
 
-  ApplicationProvider(this._player) {
-    this._stream = _api.applicationPropertiesStream(_player).listen((props) {
+  ApplicationProvider(Player player) {
+    initialize(player);
+  }
+
+  void initialize(Player player) async {
+    this._player = player;
+    _stream?.pause();
+    _volAdjustTimer?.cancel();
+
+    _stream = _api.applicationPropertiesStream(player).listen((props) {
       if (_volAdjustTimer == null &&
           (name != props.name ||
               _version != props.version ||
@@ -59,22 +68,24 @@ class ApplicationProvider extends ChangeNotifier {
         notifyListeners();
       }
     });
+    _stream?.resume();
+
     _fetchSystemProperties();
   }
 
   void _fetchSystemProperties() async =>
-      systemProps = await _api.getSystemProperties(_player);
+      systemProps = await _api.getSystemProperties(player);
 
   void toggleSystemProperty(String property) {
     if (systemProps[property] ?? false)
-      _api.toggleSystemProperty(_player, property.substring(3).capitalize());
+      _api.toggleSystemProperty(player, property.substring(3).capitalize());
   }
 
   void setVolume(double newVolume) {
     currentTemporaryVolume = newVolume.clamp(0.0, 100.0);
     if (_volAdjustTimer == null) {
       _volAdjustTimer = new Timer(_volumeSetTimeout, () {
-        _api.adjustVolume(_player,
+        _api.adjustVolume(player,
             newVolume: currentTemporaryVolume.round().clamp(0, 100));
         _volAdjustTimer = null;
       });
@@ -91,12 +102,12 @@ class ApplicationProvider extends ChangeNotifier {
   void decreaseVolumeSmall() => setVolume(currentTemporaryVolume - 5);
 
   void toggleMute() async {
-    final response = await _api.toggleMute(_player, !this._muted);
+    final response = await _api.toggleMute(player, !this._muted);
     if (response != _muted) {
       _muted = response;
       notifyListeners();
     }
   }
 
-  void navigate(String action) => _api.navigate(_player, action);
+  void navigate(String action) => _api.navigate(player, action);
 }
