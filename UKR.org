@@ -4,7 +4,7 @@
 * Objectives
 ** DONE [#A] Migrate to Sound null safety
    CLOSED: [2020-11-25 ke 14:54]
-   
+** TODO [#A] Migrade to WebSocket
 ** TODO [#B] Poster background completion
    Currently the poster background contains only the label for the currently playing item.
 

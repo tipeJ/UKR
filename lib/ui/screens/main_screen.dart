@@ -10,10 +10,16 @@ class MainScreen extends StatelessWidget {
     MainProvider? mainProvider;
     ApplicationProvider? applicationProvider;
     ItemProvider? itemProvider;
+    UKProvider? ukProvider;
     return Selector<PlayersProvider, Player>(
         selector: (context, provider) => provider.selectedPlayer,
         builder: (_, value, __) {
           if (value == null) return PlayersScreen();
+          if (ukProvider == null) {
+            ukProvider = new UKProvider(value);
+          } else {
+            ukProvider!.initialize(value);
+          }
           if (mainProvider == null) {
             mainProvider = new MainProvider(value);
           } else {
@@ -32,6 +38,7 @@ class MainScreen extends StatelessWidget {
           return MultiProvider(
             providers: [
               ChangeNotifierProvider<MainProvider>(create: (_) => mainProvider),
+              ChangeNotifierProvider<UKProvider>(create: (_) => ukProvider),
               ChangeNotifierProvider<ItemProvider>(create: (_) => itemProvider),
               ChangeNotifierProvider<ApplicationProvider>(
                   create: (_) => applicationProvider)

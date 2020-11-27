@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:UKR/models/models.dart';
+import 'package:web_socket_channel/io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -16,6 +18,10 @@ class ApiProvider {
   static const defParams = {"jsonrpc": jsonRPCVersion, "id": 27928};
   static const _playerID = 1;
   static String url(Player p) => "http://${p.address}:${p.port}/jsonrpc";
+  static String wsurl(Player p) => "ws://${p.address}:9090";
+
+  Future<WebSocket> getWS(Player player) => WebSocket.connect(wsurl(player),
+      headers: headers, compression: CompressionOptions.compressionOff);
 
   factory ApiProvider() {
     return _apiProvider;
@@ -27,11 +33,9 @@ class ApiProvider {
   Future<bool> testPlayerConnection(Player player) async {
     //TODO: Get this check working on local servers that do not have http control enabled (doesn't return anything)
     final body = jsonEncode({"method": "JSONRPC.Ping", ...defParams});
-    print(player.address + "AS");
     final request = await http
         .post(url(player), headers: headers, body: body)
         .timeout(_pingTimeOut, onTimeout: () => http.Response("", 404));
-    print("HJHJ" + player.address + request.contentLength.toString());
     return request.statusCode == 200;
   }
 
