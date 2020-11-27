@@ -48,6 +48,9 @@
 
 *** TODO Player editing
 
+*** TODO Player Password/Username implementation
+    Current implementation does not support auth.
+
 ** TODO Content browsing
    
 *** TODO [#C] Add-Ons
@@ -75,7 +78,8 @@
 ** TODO Player switcher doesn't actually change the player value of the multiprovider providers
    Strange...
 
-*** TODO Check with other stream.
+*** DONE Check with other stream.
+    CLOSED: [2020-11-27 pe 21:42]
     Current fix has the stream pause before redefining the subscription
     #+BEGIN_SRC dart
       this._subscription.pause();
@@ -84,3 +88,5 @@
     #+END_SRC
 
     Needs to be checked with localhost player. Might cause memory leaks, or might not work as expected when there are two valid streams instead of just one.
+
+*** TODO Check for memory leaks (With devtools on Android emulator)

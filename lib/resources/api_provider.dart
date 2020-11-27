@@ -25,11 +25,13 @@ class ApiProvider {
 
   // System API endpoints
   Future<bool> testPlayerConnection(Player player) async {
-    //TODO: Implement check with kodi-server that doesn't have JSONRPC enabled
-    final body = jsonEncode({"method": "JSONRPC.Ping"});
+    //TODO: Get this check working on local servers that do not have http control enabled (doesn't return anything)
+    final body = jsonEncode({"method": "JSONRPC.Ping", ...defParams});
+    print(player.address + "AS");
     final request = await http
         .post(url(player), headers: headers, body: body)
         .timeout(_pingTimeOut, onTimeout: () => http.Response("", 404));
+    print("HJHJ" + player.address + request.contentLength.toString());
     return request.statusCode == 200;
   }
 
