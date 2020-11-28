@@ -16,9 +16,9 @@ class BackgroundVolume extends StatelessWidget {
       onPointerSignal: (event) {
         if (event is PointerScrollEvent) {
           if (event.scrollDelta.dy < 0) {
-            context.read<ApplicationProvider>().increaseVolumeSmall();
+            context.read<UKProvider>().increaseVolumeSmall();
           } else {
-            context.read<ApplicationProvider>().decreaseVolumeSmall();
+            context.read<UKProvider>().decreaseVolumeSmall();
           }
         }
       },
@@ -28,7 +28,7 @@ class BackgroundVolume extends StatelessWidget {
           final clampedP =
               details.globalPosition.dy.clamp(56.0, maxHeight - 56.0);
           final newVolume = ((endPos - clampedP).abs() / (endPos - 56.0));
-          context.read<ApplicationProvider>().setVolume(newVolume * 100);
+          context.read<UKProvider>().setVolume(newVolume * 100);
         },
         child: Container(
           width: maxWidth,
@@ -58,13 +58,12 @@ class _BackgroundVolumeWrapper extends StatelessWidget {
       alignment: Alignment.topCenter,
       child: Container(
         color: Color.lerp(Colors.black12, Colors.black26,
-            context.watch<ApplicationProvider>().currentTemporaryVolume / 100),
+          context.select<UKProvider, double>((p)=>p.currentTemporaryVolume) / 100),
         width: MediaQuery.of(context).size.width,
         height: (maxHeight -
                 (maxHeight *
                     (context
-                            .watch<ApplicationProvider>()
-                            .currentTemporaryVolume /
+                      .select<UKProvider, double>((p)=>p.currentTemporaryVolume)/
                         100)))
             .clamp(0.0, maxHeight),
       ),

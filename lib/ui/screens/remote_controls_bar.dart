@@ -121,7 +121,7 @@ class _BottomControlButtons extends StatelessWidget {
               children: [
                 InkWell(
                     onTap: () {
-                      context.read<MainProvider>().toggleRepeat();
+                      context.read<UKProvider>().toggleRepeat();
                     },
                     child: Container(
                         width: _lerp(0.0, _contSize),
@@ -134,9 +134,7 @@ class _BottomControlButtons extends StatelessWidget {
                                 .repeat),
                             color: _getRepeatColor(
                                 context
-                                    .watch<MainProvider>()
-                                    .playerProperties
-                                    .repeat,
+                                .select<UKProvider, Repeat>((p)=>p.repeat),
                                 context),
                             size: _lerp(0.0, _maxSize)))),
                 InkWell(
@@ -219,12 +217,11 @@ class _BottomVolumeSlider extends StatelessWidget {
             margin: const EdgeInsets.only(left: 10.0),
             alignment: Alignment.center,
             child: InkWell(
-                onTap: () => context.read<ApplicationProvider>().toggleMute(),
-                child: context.watch<ApplicationProvider>().muted
+                onTap: () => context.read<UKProvider>().toggleMute(),
+                child: context.select<UKProvider, bool>((p)=>p.muted)
                     ? const Icon(Icons.volume_off)
                     : Text(context
-                        .watch<ApplicationProvider>()
-                        .currentTemporaryVolume
+                      .select<UKProvider, double>((p)=>p.currentTemporaryVolume)
                         .round()
                         .toString())),
           ),
