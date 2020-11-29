@@ -74,7 +74,7 @@ class _BackgroundVolumeWrapper extends StatelessWidget {
 class _BackgroundImageWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var currentItem = context.watch<ItemProvider>().item;
+    var currentItem = context.select<UKProvider, Item>((p) => p.currentItem);
     switch (currentItem.runtimeType) {
       case VideoItem:
         final item = currentItem as VideoItem;

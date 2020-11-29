@@ -4,7 +4,18 @@
 * Objectives
 ** DONE [#A] Migrate to Sound null safety
    CLOSED: [2020-11-25 ke 14:54]
-** TODO [#A] Migrade to WebSocket
+** DONE [#A] Migrade to WebSocket
+   CLOSED: [2020-11-29 su 21:19]
+   Old providers are deprecated. Not yet cleaned up.
+** TODO Clean old implementation
+*** TODO Clean api_provider
+    Currently has a lot of deprecated endpoints that are now used in the UKProvider class
+*** TODO Clean up providers
+    The following providers are no longer used:
+    1. Main_Provider
+    2. Application_Provider
+    3. Item_Provider
+       
 ** TODO [#B] Poster background completion
    Currently the poster background contains only the label for the currently playing item.
 

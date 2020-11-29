@@ -23,7 +23,7 @@ class UKProvider extends ChangeNotifier {
 
   WebSocket? _ws;
   WebSocket get _w => _ws!;
-  static const _resultTimeout = const Duration(milliseconds: 1000);
+  static const _resultTimeout = const Duration(milliseconds: 1500);
   StreamController<Map<String, dynamic>> _resultSink =
       StreamController.broadcast();
 
@@ -57,12 +57,15 @@ class UKProvider extends ChangeNotifier {
         .asyncMap<Map<String, dynamic>>(
             (data) => compute(_convertJsonData, data.toString()))
         .listen((data) => _handleJsonResponse(data));
+
+    // Refresh the initial values.
     await _refreshPlayerProperties();
     await _refreshApplicationProperties();
+    await _refreshPlayerItem();
     await _fetchSystemProperties();
   }
 
-  void _handleJsonResponse(Map<String, dynamic> j) {
+  void _handleJsonResponse(Map<String, dynamic> j) async {
     print("RECEIVED" + j.toString());
     final result = j['result'];
     if (result != null && !(result is String)) {
@@ -85,11 +88,10 @@ class UKProvider extends ChangeNotifier {
         break;
       case "Player.OnPropertyChanged":
         _updatePlayerProps(d['property']);
-        break;
+        return;
       case "Player.OnPlay":
-        title = d['item']['title'];
-        itemType = d['item']['type'];
-        break;
+        _refreshPlayerProperties();
+        return;
       case "Player.OnSeek":
         this.time = PlayerTime.fromJson(d['player']['time']);
         _updateTemporaryProgress();
@@ -98,7 +100,32 @@ class UKProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Player Property Endpoints
+  // * Endpoints
+  // ** Player Item Endpoints
+  Future<void> _refreshPlayerItem() async {
+    final c = await _encodeCommand("Player.GetItem", const {
+      "playerid": _playerID,
+      "properties": [
+        "director",
+        "year",
+        "disc",
+        "albumartist",
+        "art",
+        "albumreleasetype",
+        "duration",
+        "streamdetails"
+      ]
+    });
+    _w.add(c);
+    final result = await _getResult();
+    if (result.isNotEmpty) {
+      print("nextItem:" + result.toString());
+      this.currentItem = VideoItem.fromJson(result['item']);
+      notifyListeners();
+    }
+  }
+
+  // ** Player Property Endpoints
   Future<void> _refreshPlayerProperties() async {
     final body = await _encodeCommand("Player.getProperties", {
       "playerid": _playerID,
@@ -222,7 +249,7 @@ class UKProvider extends ChangeNotifier {
     await _getResult();
   }
 
-  // Application Property Endpoints
+  // ** Application Property Endpoints
 
   Future<void> _refreshApplicationProperties() async {
     final body = await _encodeCommand("Application.GetProperties", {
@@ -255,12 +282,12 @@ class UKProvider extends ChangeNotifier {
 
   void toggleMute() => _api.toggleMute(player, !this.muted);
 
-  // Navigation Endpoints
+  // ** Navigation Endpoints
 
   void navigate(String command) async =>
       _w.add(await _encodeCommand("Input.ExecuteAction", {"action": command}));
 
-  // System Properties
+  // ** System Endpoints
 
   Future<void> _fetchSystemProperties() async {
     final c = await _encodeCommand("System.GetProperties", const {
@@ -279,13 +306,15 @@ class UKProvider extends ChangeNotifier {
       _api.toggleSystemProperty(player, property.substring(3).capitalize());
   }
 
-  // Application Properties
+  // * Properties
+  // ** Application Properties
   bool muted = false;
   double currentTemporaryVolume = 0.0;
 
-  // System Properties
+  // ** System Properties
   Map<String, bool> systemProps = const {};
-  // Player Properties
+
+  // ** Player Properties
   PlayerTime time = PlayerTime(0, 0, 0);
   PlayerTime totalTime = PlayerTime(0, 0, 0);
   double currentTemporaryProgress = -1;
@@ -299,9 +328,10 @@ class UKProvider extends ChangeNotifier {
 
   bool get playing => speed > 0;
 
-  // Player Item Properties
-  String? title;
-  String? itemType;
+  // ** Player Item Properties
+  Item? currentItem;
+
+  // ** Playlist Properties
 }
 
 Map<String, dynamic> _convertJsonData(String json) =>

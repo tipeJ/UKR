@@ -335,7 +335,7 @@ class _BottomBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentItem = context.watch<ItemProvider>().item;
+    final currentItem = context.select<UKProvider, Item>((p) => p.currentItem);
     String? url;
     switch (currentItem.runtimeType) {
       case VideoItem:
