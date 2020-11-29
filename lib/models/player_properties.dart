@@ -70,6 +70,9 @@ class PlayerTime {
       other.seconds == seconds &&
       other.minutes == minutes &&
       other.hours == hours;
+
+  Map<String, int> toJson() =>
+      {"hours": hours, "minutes": minutes, "seconds": seconds};
   @override
   String toString() => [
         hours > 9 ? hours.toString() : "0$hours",

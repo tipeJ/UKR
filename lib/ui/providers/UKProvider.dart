@@ -17,8 +17,9 @@ class UKProvider extends ChangeNotifier {
   static const defParams = {"jsonrpc": "2.0", "id": 27928};
   Timer? _volAdjustTimer;
   Timer? _timeUpdateTimer;
-  Timer? _timeAdjustTimer;
+  Timer? _seekTimer;
   static const _volumeSetTimeout = const Duration(milliseconds: 300);
+  static const _seekTimeout = const Duration(milliseconds: 700);
 
   WebSocket? _ws;
   WebSocket get _w => _ws!;
@@ -73,6 +74,9 @@ class UKProvider extends ChangeNotifier {
     final p = j['params'];
     final d = p['data'];
     switch (j['method']) {
+      case "Other.PlaybackStarted":
+        _refreshPlayerProperties();
+        return;
       case "Application.OnVolumeChanged":
         if (_volAdjustTimer == null) {
           currentTemporaryVolume = d['volume'];
@@ -149,7 +153,7 @@ class UKProvider extends ChangeNotifier {
       if (speed != 0) {
         _timeUpdateTimer =
             Timer.periodic(Duration(milliseconds: (1000 / speed).round()), (t) {
-          if (_timeAdjustTimer == null){
+          if (_seekTimer == null) {
             this.time = this.time.increment(1);
             _updateTemporaryProgress();
             notifyListeners();
@@ -172,6 +176,11 @@ class UKProvider extends ChangeNotifier {
     _w.add(body);
   }
 
+  /// Navigate forward/backwards in the playlist. False for previous, true for next
+  void goto({bool direction = true}) async => _w.add(await _encodeCommand(
+      "Player.GoTo",
+      {"playerid": _playerID, "to": direction ? "next" : "previous"}));
+
   void stopPlayback() async {
     final body =
         await _encodeCommand("Player.Stop", const {"playerid": _playerID});
@@ -179,24 +188,38 @@ class UKProvider extends ChangeNotifier {
   }
 
   void _updateTemporaryProgress() {
-    print("ctime :" + this.time.toString());
-    print("ttime :" + this.totalTime.toString());
-    this.currentTemporaryProgress =
-        this.time.inSeconds / (this.totalTime.inSeconds * 1.0);
-    print("cprog:" + currentTemporaryProgress.toString());
+    final ctime = time.inSeconds;
+    final ttime = totalTime.inSeconds;
+    this.currentTemporaryProgress = ctime > ttime ? -1 : ctime / (ttime * 1.0);
   }
 
   void seek(double percentage) {
     currentTemporaryProgress = (percentage);
-    if (_timeAdjustTimer == null) {
-      _timeAdjustTimer = new Timer(_volumeSetTimeout, () async {
-        final c = await _encodeCommand("Player.Seek",
-          {"playerid": _playerID, "value": (currentTemporaryProgress * 100).round()});
+    if (_seekTimer == null) {
+      _seekTimer = new Timer(_seekTimeout, () async {
+        final c = await _encodeCommand("Player.Seek", {
+          "playerid": _playerID,
+          "value": (currentTemporaryProgress * 100).round()
+        });
         _w.add(c);
-        _timeAdjustTimer = null;
+        _seekTimer = null;
       });
     }
     notifyListeners();
+  }
+
+  /// Skip ahead (positive) or behind (negative) by the given [amount] of seconds
+  void skip(int amount) async {
+    Map<String, dynamic>? params;
+    if (amount < 0) {
+      params = {"seconds": amount};
+    } else {
+      final newTime = time.increment(amount);
+      params = {"time": newTime.toJson()};
+    }
+    _w.add(await _encodeCommand(
+        "Player.Seek", {"playerid": _playerID, "value": params}));
+    await _getResult();
   }
 
   // Application Property Endpoints

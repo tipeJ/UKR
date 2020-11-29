@@ -138,7 +138,7 @@ class _BottomControlButtons extends StatelessWidget {
                             size: _lerp(0.0, _maxSize)))),
                 InkWell(
                     onTap: () {
-                      print("ss");
+                      context.read<UKProvider>().goto(direction: false);
                     },
                     child: Container(
                         width: _contSize,
@@ -147,7 +147,7 @@ class _BottomControlButtons extends StatelessWidget {
                             size: _lerp(_minSize, _maxSize)))),
                 InkWell(
                     onTap: () {
-                      print("nax");
+                      context.read<UKProvider>().skip(-10);
                     },
                     child: Container(
                         width: _lerp(0.0, _contSize),
@@ -169,7 +169,7 @@ class _BottomControlButtons extends StatelessWidget {
                             size: _lerp(_minSize, _maxSize * 1.2)))),
                 InkWell(
                     onTap: () {
-                      print("PPPP");
+                      context.read<UKProvider>().skip(10);
                     },
                     child: Container(
                         width: _lerp(0.0, _contSize),
@@ -179,7 +179,7 @@ class _BottomControlButtons extends StatelessWidget {
                             size: _lerp(0.0, _maxSize)))),
                 InkWell(
                     onTap: () {
-                      print("PPPP");
+                      context.read<UKProvider>().goto();
                     },
                     child: Container(
                         width: _contSize,
@@ -282,7 +282,6 @@ class _SeekBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("progress: ${progress.toString()}");
     if (canSeek) {
       if (progress < 1.0 && progress > 0)
         return Expanded(

@@ -28,7 +28,8 @@
     * Artist
     * Album
 
-** TODO Playback controls
+** DONE Playback controls
+   CLOSED: [2020-11-29 su 20:26]
    Still not implemented:
    * Short Rewind/Skip
    * Prev/Next
