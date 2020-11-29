@@ -45,8 +45,31 @@ class PlayerTime {
   final int minutes;
   final int seconds;
 
-  int get inSeconds => (this.hours * minutes + minutes) * 60 + seconds;
+  /// Returns the time in seconds
+  int get inSeconds => (((hours * minutes) + minutes) * 60) + seconds;
 
+  /// Returns a new PlayerTime, with time adjusted according to the number of seconds as set by the variable [seconds]
+  PlayerTime increment(int seconds) {
+    int newSeconds = this.seconds + seconds;
+    int newMinutes = this.minutes;
+    int newHours = this.hours;
+    if (newSeconds > 59) {
+      newMinutes = newMinutes + (newSeconds / 60).floor();
+      newSeconds = newSeconds % 60;
+    }
+    if (newMinutes > 59) {
+      newHours = newHours + (newMinutes / 60).floor();
+      newMinutes = newMinutes % 60;
+    }
+    return PlayerTime(newSeconds, newMinutes, newHours);
+  }
+
+  @override
+  operator ==(other) =>
+      (other is PlayerTime) &&
+      other.seconds == seconds &&
+      other.minutes == minutes &&
+      other.hours == hours;
   @override
   String toString() => [
         hours > 9 ? hours.toString() : "0$hours",

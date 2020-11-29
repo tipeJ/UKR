@@ -28,6 +28,10 @@
     * Artist
     * Album
 
+** TODO Playback controls
+   Still not implemented:
+   * Short Rewind/Skip
+   * Prev/Next
 ** TODO [#A] Seekbar
    Implement the seekbar properly. Currently has a placeholder but does not work.
 

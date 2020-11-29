@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:UKR/models/models.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
+import 'package:tuple/tuple.dart';
 import 'package:UKR/ui/providers/providers.dart';
 import 'package:flutter/material.dart';
 
@@ -129,12 +130,10 @@ class _BottomControlButtons extends StatelessWidget {
                             EdgeInsets.symmetric(horizontal: _lerp(0.0, 10.0)),
                         child: Icon(
                             _getRepeatIcon(context
-                                .watch<MainProvider>()
-                                .playerProperties
-                                .repeat),
+                                .select<UKProvider, Repeat>((p) => p.repeat)),
                             color: _getRepeatColor(
-                                context
-                                .select<UKProvider, Repeat>((p)=>p.repeat),
+                                context.select<UKProvider, Repeat>(
+                                    (p) => p.repeat),
                                 context),
                             size: _lerp(0.0, _maxSize)))),
                 InkWell(
@@ -158,16 +157,13 @@ class _BottomControlButtons extends StatelessWidget {
                             Icon(Icons.replay_10, size: _lerp(0.0, _maxSize)))),
                 InkWell(
                     onTap: () {
-                      context.read<MainProvider>().togglePlay();
+                      context.read<UKProvider>().playPause();
                     },
                     child: Container(
                         width: _contSize,
                         margin: _containerPadding,
                         child: Icon(
-                            context
-                                    .watch<MainProvider>()
-                                    .playerProperties
-                                    .playing
+                            context.select<UKProvider, bool>((p) => p.playing)
                                 ? Icons.pause
                                 : Icons.play_arrow,
                             size: _lerp(_minSize, _maxSize * 1.2)))),
@@ -193,7 +189,7 @@ class _BottomControlButtons extends StatelessWidget {
                 InkWell(
                     onTap: () {
                       print("STOP");
-                      context.read<MainProvider>().stop();
+                      context.read<UKProvider>().stopPlayback();
                     },
                     child: Container(
                         width: _lerp(0.0, _contSize),
@@ -218,10 +214,11 @@ class _BottomVolumeSlider extends StatelessWidget {
             alignment: Alignment.center,
             child: InkWell(
                 onTap: () => context.read<UKProvider>().toggleMute(),
-                child: context.select<UKProvider, bool>((p)=>p.muted)
+                child: context.select<UKProvider, bool>((p) => p.muted)
                     ? const Icon(Icons.volume_off)
                     : Text(context
-                      .select<UKProvider, double>((p)=>p.currentTemporaryVolume)
+                        .select<UKProvider, double>(
+                            (p) => p.currentTemporaryVolume)
                         .round()
                         .toString())),
           ),
@@ -229,10 +226,9 @@ class _BottomVolumeSlider extends StatelessWidget {
             child: Slider(
               min: 0.0,
               max: 100.0,
-              value:
-                  context.watch<ApplicationProvider>().currentTemporaryVolume,
+              value: context.watch<UKProvider>().currentTemporaryVolume,
               onChanged: (newValue) {
-                context.read<ApplicationProvider>().setVolume(newValue);
+                context.read<UKProvider>().setVolume(newValue);
               },
             ),
           ),
@@ -249,8 +245,11 @@ class _BottomPlaybackInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final _contSize = min(40.0, width / 6 - 28.0);
-    final props = context.watch<MainProvider>().playerProperties;
-    if (props.type != "Null") {
+    final props = context.select<UKProvider,
+            Tuple5<PlayerTime, PlayerTime, double, String, bool>>(
+        (p) => Tuple5(p.time, p.totalTime, p.currentTemporaryProgress, p.type,
+            p.canSeek));
+    if (props.item4 != "Null") {
       return Positioned(
           left: _lerp(minSize, 0.0),
           child: Container(
@@ -260,11 +259,11 @@ class _BottomPlaybackInfo extends StatelessWidget {
                 children: [
                   Container(
                     width: _lerp(65.0, 100.0),
-                    child: _TimeDisplay(props, _lerp),
+                    child: _TimeDisplay(props.item1, props.item2, _lerp),
                   ),
                   Visibility(
                     visible: width > 400 || _lerp(0.0, 1.0) > 0.5,
-                    child: _SeekBar(props),
+                    child: _SeekBar(props.item5, props.item3),
                   ),
                   Container(width: (_contSize + 30.0) * _lerp(3.0, 0.2))
                 ],
@@ -276,25 +275,23 @@ class _BottomPlaybackInfo extends StatelessWidget {
 }
 
 class _SeekBar extends StatelessWidget {
-  final PlayerProperties props;
+  final bool canSeek;
+  final double progress;
 
-  const _SeekBar(this.props);
+  const _SeekBar(this.canSeek, this.progress);
 
   @override
   Widget build(BuildContext context) {
-    if (props.canSeek) {
-      final totalTime = props.totalTime.inSeconds;
-      final progress =
-          props.time.inSeconds / (totalTime == 0 ? 0.00001 : totalTime);
-      if (progress < 1.0)
+    print("progress: ${progress.toString()}");
+    if (canSeek) {
+      if (progress < 1.0 && progress > 0)
         return Expanded(
           child: Slider(
             min: 0.0,
             max: 1.0,
-            value: 0.5,
-            onChanged: (_) {},
-            onChangeEnd: (newValue) {
-              context.read<MainProvider>().seek(newValue);
+            value: progress,
+            onChanged: (newValue) {
+              context.read<UKProvider>().seek(newValue);
             },
           ),
         );
@@ -311,9 +308,10 @@ class _SeekBar extends StatelessWidget {
 }
 
 class _TimeDisplay extends StatelessWidget {
-  const _TimeDisplay(this.props, this._lerp);
+  const _TimeDisplay(this.time, this.totalTime, this._lerp);
 
-  final PlayerProperties props;
+  final PlayerTime time;
+  final PlayerTime totalTime;
   final Function(double p1, double p2) _lerp;
 
   @override
@@ -321,10 +319,10 @@ class _TimeDisplay extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(props.time.toString(),
+        Text(time.toString(),
             style: TextStyle(
                 fontWeight: FontWeight.w500, fontSize: _lerp(14.0, 20.0))),
-        Text(props.totalTime.toString(),
+        Text(totalTime.toString(),
             style: TextStyle(fontWeight: FontWeight.w300))
       ],
     );

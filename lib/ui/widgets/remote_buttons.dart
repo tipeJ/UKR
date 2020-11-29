@@ -6,8 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class RemoteButtons extends StatelessWidget {
-  void _executeAction(BuildContext context, String action) =>
-      context.read<ApplicationProvider>().navigate(action);
+  static void _executeAction(BuildContext context, String action) =>
+      context.read<UKProvider>().navigate(action);
   @override
   Widget build(BuildContext context) {
     return Column(

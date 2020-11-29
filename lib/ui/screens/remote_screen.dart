@@ -43,7 +43,7 @@ class RemoteScreen extends StatelessWidget {
 class _PlayerPowerOptions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Selector<ApplicationProvider, Map<String, bool>>(
+    return Selector<UKProvider, Map<String, bool>>(
         selector: (context, provider) => provider.systemProps,
         builder: (_, values, __) {
           if (values.values.contains(true)) {
@@ -51,16 +51,14 @@ class _PlayerPowerOptions extends StatelessWidget {
                 icon: const Icon(Icons.power_settings_new),
                 tooltip: "Power Menu",
                 onSelected: (newValue) {
-                  context
-                      .read<ApplicationProvider>()
-                      .toggleSystemProperty(newValue);
+                  context.read<UKProvider>().toggleSystemProperty(newValue);
                 },
                 itemBuilder: (_) => values.keys.map((String property) {
                       return PopupMenuItem<String>(
-                        value: property,
-                        enabled: values[property] ?? false,
-                        child: Text(property.substring(3).capitalize()));
-                  }).toList());
+                          value: property,
+                          enabled: values[property] ?? false,
+                          child: Text(property.substring(3).capitalize()));
+                    }).toList());
           }
           return Container();
         });

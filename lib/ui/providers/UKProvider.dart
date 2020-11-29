@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:UKR/models/models.dart';
 import 'package:UKR/resources/resources.dart';
+import 'package:UKR/utils/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -15,6 +16,8 @@ class UKProvider extends ChangeNotifier {
   static const _playerID = 1;
   static const defParams = {"jsonrpc": "2.0", "id": 27928};
   Timer? _volAdjustTimer;
+  Timer? _timeUpdateTimer;
+  Timer? _timeAdjustTimer;
   static const _volumeSetTimeout = const Duration(milliseconds: 300);
 
   WebSocket? _ws;
@@ -39,6 +42,7 @@ class UKProvider extends ChangeNotifier {
   void dispose() {
     _ws?.close();
     _volAdjustTimer?.cancel();
+    _timeUpdateTimer?.cancel();
     super.dispose();
   }
 
@@ -53,10 +57,12 @@ class UKProvider extends ChangeNotifier {
             (data) => compute(_convertJsonData, data.toString()))
         .listen((data) => _handleJsonResponse(data));
     await _refreshPlayerProperties();
-    _refreshApplicationProperties();
+    await _refreshApplicationProperties();
+    await _fetchSystemProperties();
   }
 
   void _handleJsonResponse(Map<String, dynamic> j) {
+    print("RECEIVED" + j.toString());
     final result = j['result'];
     if (result != null && !(result is String)) {
       // Send the result to the result Sink, to be picked up by the sending function:
@@ -79,6 +85,10 @@ class UKProvider extends ChangeNotifier {
       case "Player.OnPlay":
         title = d['item']['title'];
         itemType = d['item']['type'];
+        break;
+      case "Player.OnSeek":
+        this.time = PlayerTime.fromJson(d['player']['time']);
+        _updateTemporaryProgress();
         break;
     }
     notifyListeners();
@@ -106,14 +116,20 @@ class UKProvider extends ChangeNotifier {
   }
 
   void _updatePlayerProps(Map<String, dynamic> r) {
+    bool timeChanged = false;
+    bool speedChanged = false;
     if (r['time'] != null) {
       time = PlayerTime.fromJson(r['time']);
+      timeChanged = true;
     }
     if (r['totaltime'] != null) {
       totalTime = PlayerTime.fromJson(r['totaltime']);
     }
     type = r['type'] ?? type;
-    speed = r['speed'] ?? speed;
+    if (r['speed'] != null) {
+      speed = r['speed'];
+      speedChanged = true;
+    }
     canSeek = r['canseek'] ?? canSeek;
     if (r['repeat'] != null) {
       repeat = enumFromString(Repeat.values, r['repeat'] ?? "off");
@@ -122,9 +138,24 @@ class UKProvider extends ChangeNotifier {
       currentVideoStream = VideoStream.fromJson(r['currentvideostream']);
     }
     if (r['videostreams'] != null) {
+      print("VIDEOSTREAMS: " + r['videostreams'].toString());
       videoStreams = r['videostreams']
           .map<VideoStream>((v) => VideoStream.fromJson(v))
           .toList();
+    }
+    if (timeChanged || speedChanged) {
+      _timeUpdateTimer?.cancel();
+      if (timeChanged) _updateTemporaryProgress();
+      if (speed != 0) {
+        _timeUpdateTimer =
+            Timer.periodic(Duration(milliseconds: (1000 / speed).round()), (t) {
+          if (_timeAdjustTimer == null){
+            this.time = this.time.increment(1);
+            _updateTemporaryProgress();
+            notifyListeners();
+          }
+        });
+      }
     }
     notifyListeners();
   }
@@ -135,17 +166,50 @@ class UKProvider extends ChangeNotifier {
     _w.add(body);
   }
 
+  void playPause() async {
+    final body = await _encodeCommand(
+        "Player.PlayPause", const {"playerid": _playerID, "play": "toggle"});
+    _w.add(body);
+  }
+
+  void stopPlayback() async {
+    final body =
+        await _encodeCommand("Player.Stop", const {"playerid": _playerID});
+    _w.add(body);
+  }
+
+  void _updateTemporaryProgress() {
+    print("ctime :" + this.time.toString());
+    print("ttime :" + this.totalTime.toString());
+    this.currentTemporaryProgress =
+        this.time.inSeconds / (this.totalTime.inSeconds * 1.0);
+    print("cprog:" + currentTemporaryProgress.toString());
+  }
+
+  void seek(double percentage) {
+    currentTemporaryProgress = (percentage);
+    if (_timeAdjustTimer == null) {
+      _timeAdjustTimer = new Timer(_volumeSetTimeout, () async {
+        final c = await _encodeCommand("Player.Seek",
+          {"playerid": _playerID, "value": (currentTemporaryProgress * 100).round()});
+        _w.add(c);
+        _timeAdjustTimer = null;
+      });
+    }
+    notifyListeners();
+  }
+
   // Application Property Endpoints
 
-  void _refreshApplicationProperties() async {
+  Future<void> _refreshApplicationProperties() async {
     final body = await _encodeCommand("Application.GetProperties", {
       "properties": const ["muted", "name", "version", "volume"]
     });
     _w.add(body);
     final r = await _getResult();
     if (r.isNotEmpty) {
-      print("REC" + r.toString());
-      currentTemporaryVolume = r['volume']?.toDouble() ?? currentTemporaryVolume;
+      currentTemporaryVolume =
+          r['volume']?.toDouble() ?? currentTemporaryVolume;
       muted = r['muted'] ?? muted;
       notifyListeners();
     }
@@ -168,13 +232,40 @@ class UKProvider extends ChangeNotifier {
 
   void toggleMute() => _api.toggleMute(player, !this.muted);
 
+  // Navigation Endpoints
+
+  void navigate(String command) async =>
+      _w.add(await _encodeCommand("Input.ExecuteAction", {"action": command}));
+
+  // System Properties
+
+  Future<void> _fetchSystemProperties() async {
+    final c = await _encodeCommand("System.GetProperties", const {
+      "properties": ["canshutdown", "canhibernate", "canreboot", "cansuspend"]
+    });
+    _w.add(c);
+    final result = await _getResult();
+    if (result.isNotEmpty) {
+      systemProps = Map<String, bool>.from(result);
+      notifyListeners();
+    }
+  }
+
+  void toggleSystemProperty(String property) {
+    if (systemProps[property] ?? false)
+      _api.toggleSystemProperty(player, property.substring(3).capitalize());
+  }
+
   // Application Properties
   bool muted = false;
   double currentTemporaryVolume = 0.0;
 
+  // System Properties
+  Map<String, bool> systemProps = const {};
   // Player Properties
   PlayerTime time = PlayerTime(0, 0, 0);
   PlayerTime totalTime = PlayerTime(0, 0, 0);
+  double currentTemporaryProgress = -1;
   int speed = 0;
   String type = "Null";
   bool canSeek = false;

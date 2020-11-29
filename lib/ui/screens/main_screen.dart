@@ -47,9 +47,4 @@ class MainScreen extends StatelessWidget {
           );
         });
   }
-
-  MainProvider newMethod(Player value) {
-    print("BLBLBLB");
-    return new MainProvider(value);
-  }
 }
