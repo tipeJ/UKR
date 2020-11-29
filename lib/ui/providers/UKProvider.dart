@@ -23,7 +23,7 @@ class UKProvider extends ChangeNotifier {
 
   WebSocket? _ws;
   WebSocket get _w => _ws!;
-  static const _resultTimeout = const Duration(milliseconds: 1500);
+  static const _resultTimeout = const Duration(milliseconds: 5000);
   StreamController<Map<String, dynamic>> _resultSink =
       StreamController.broadcast();
 
@@ -44,6 +44,7 @@ class UKProvider extends ChangeNotifier {
     _ws?.close();
     _volAdjustTimer?.cancel();
     _timeUpdateTimer?.cancel();
+    _seekTimer?.cancel();
     super.dispose();
   }
 
@@ -66,7 +67,7 @@ class UKProvider extends ChangeNotifier {
   }
 
   void _handleJsonResponse(Map<String, dynamic> j) async {
-    print("RECEIVED" + j.toString());
+    print("RECEIVED: " + j.toString());
     final result = j['result'];
     if (result != null && !(result is String)) {
       // Send the result to the result Sink, to be picked up by the sending function:
@@ -127,7 +128,7 @@ class UKProvider extends ChangeNotifier {
 
   // ** Player Property Endpoints
   Future<void> _refreshPlayerProperties() async {
-    final body = await _encodeCommand("Player.getProperties", {
+    final body = await _encodeCommand("Player.GetProperties", {
       "playerid": _playerID,
       "properties": const [
         "position",

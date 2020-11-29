@@ -77,6 +77,14 @@
 *** TODO Files
     Not nearly as important, as I don't really use this feature all that much yet.
     
+** TODO Notifications
+
+*** TODO Android
+
+*** TODO iOS / iPadOS
+
+*** Desktop??
+    No API exists yet for environments like KDE or Windows. Perhaps I should create that myself if it seems to take too long..?
 * Known Issues / Bugs
 
 ** DONE Launch Screen render error
@@ -109,3 +117,11 @@
 *** TODO Check for memory leaks (With devtools on Android emulator)
 
 ** TODO Fix local player(s) not going through with the API network check
+
+** TODO Android UKProvider doesn't receive any data
+   Works in emulator, not with real device (H910). The provider reads audio change events, but doesn't do anything with the data.
+   The receiver sometimes reports an object sent by XBMC, describing a parse error. Works neither in release nor debug mode. Profile not tested.
+   Cause unknown, no issues reported on a debug instance running on an emulator (API 30)
+
+** TODO Fix ( initial ) playback data sometimes not being applied on launch
+   Usually works on repeated launches.
