@@ -44,7 +44,8 @@
    Still not implemented:
    * Short Rewind/Skip
    * Prev/Next
-** TODO [#A] Seekbar
+** DONE [#A] Seekbar
+   CLOSED: [2020-11-29 su 21:23]
    Implement the seekbar properly. Currently has a placeholder but does not work.
 
 *** DONE [#A] Implement LIVE tag
