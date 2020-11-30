@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:UKR/ui/providers/providers.dart';
+import 'package:UKR/utils/utils.dart';
 import 'package:UKR/models/models.dart';
 
 class CurrentItem extends StatelessWidget {
@@ -17,7 +18,9 @@ class CurrentItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(item.label),
-              ]),
+                item.director.nullIf(Text(item.director.separateFold(', ')), (d) => d.isNotEmpty),
+                item.year.nullOr(Text(item.year.toString())),
+              ].nonNulls() as List<Widget>),
         );
       case AudioItem:
         return Text("Audio");

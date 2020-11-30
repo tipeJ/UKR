@@ -65,6 +65,8 @@ class ApiProvider {
   static String _handleHTTPResponse(http.Response r) => r.statusCode == 200
       ? r.body
       : "An error occurred: " + r.statusCode.toString();
+  static Future<String> _encode(String method, Map<String, dynamic> params) =>
+      compute(jsonEncode, {"method": method, "params": params, ...defParams});
 
   Future<String> _getApplicationProperties(Player player) async {
     final body = jsonEncode({
@@ -78,6 +80,58 @@ class ApiProvider {
     return _handleHTTPResponse(response);
   }
 
+  Future<Map<String, dynamic>> getApplicationProperties(Player player) async {
+    final body = await _encode("Application.GetProperties", {"properties": const ["muted", "name", "version", "volume"]});
+    final response = await http.post(url(player), headers: headers, body: body);
+    final s = _handleHTTPResponse(response);
+    if (s.startsWith("An error")) return const {};
+    final parsed = await compute(jsonDecode, s);
+    return parsed['result'] ?? const {};
+  }
+
+  Future<Map<String, dynamic>> getPlayerProperties(Player player) async {
+    final body = await _encode("Player.GetProperties", {
+      "playerid:": _playerID,
+      "properties": const [
+        "position",
+        "repeat",
+        "type",
+        "speed",
+        "totaltime",
+        "time",
+        "canseek",
+        "videostreams",
+        "currentvideostream"
+      ]
+    });
+    final response = await http.post(url(player), headers: headers, body: body);
+    final s = _handleHTTPResponse(response);
+    if (s.startsWith("An error")) return const {};
+    final parsed = await compute(jsonDecode, s);
+    return parsed['result'] ?? const {};
+  }
+
+  Future<Map<String, dynamic>> getPlayerItem(Player player) async {
+    final body = await _encode("Player.GetItem", {
+      "playerid:": _playerID,
+      "properties": const [
+        "director",
+        "year",
+        "playlistid",
+        "disc",
+        "albumartist",
+        "art",
+        "albumreleasetype",
+        "duration",
+        "streamdetails"
+      ]
+    });
+    final response = await http.post(url(player), headers: headers, body: body);
+    final s = _handleHTTPResponse(response);
+    if (s.startsWith("An error")) return const {};
+    final parsed = await compute(jsonDecode, s);
+    return parsed['result'] ?? const {};
+  }
   Future<String> _getPlayerProperties(Player player) async {
     final body = jsonEncode({
       "method": "Player.getProperties",

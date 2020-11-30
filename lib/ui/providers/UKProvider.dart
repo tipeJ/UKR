@@ -23,7 +23,7 @@ class UKProvider extends ChangeNotifier {
 
   WebSocket? _ws;
   WebSocket get _w => _ws!;
-  static const _resultTimeout = const Duration(milliseconds: 1500);
+  static const _resultTimeout = const Duration(milliseconds: 5000);
   StreamController<Map<String, dynamic>> _resultSink =
       StreamController.broadcast();
 
@@ -44,6 +44,7 @@ class UKProvider extends ChangeNotifier {
     _ws?.close();
     _volAdjustTimer?.cancel();
     _timeUpdateTimer?.cancel();
+    _seekTimer?.cancel();
     super.dispose();
   }
 
@@ -66,7 +67,6 @@ class UKProvider extends ChangeNotifier {
   }
 
   void _handleJsonResponse(Map<String, dynamic> j) async {
-    print("RECEIVED" + j.toString());
     final result = j['result'];
     if (result != null && !(result is String)) {
       // Send the result to the result Sink, to be picked up by the sending function:
@@ -90,7 +90,8 @@ class UKProvider extends ChangeNotifier {
         _updatePlayerProps(d['property']);
         return;
       case "Player.OnPlay":
-        _refreshPlayerProperties();
+        await _refreshPlayerProperties();
+        await _refreshPlayerItem();
         return;
       case "Player.OnSeek":
         this.time = PlayerTime.fromJson(d['player']['time']);
@@ -103,21 +104,7 @@ class UKProvider extends ChangeNotifier {
   // * Endpoints
   // ** Player Item Endpoints
   Future<void> _refreshPlayerItem() async {
-    final c = await _encodeCommand("Player.GetItem", const {
-      "playerid": _playerID,
-      "properties": [
-        "director",
-        "year",
-        "disc",
-        "albumartist",
-        "art",
-        "albumreleasetype",
-        "duration",
-        "streamdetails"
-      ]
-    });
-    _w.add(c);
-    final result = await _getResult();
+    final result = await _api.getPlayerItem(player);
     if (result.isNotEmpty) {
       print("nextItem:" + result.toString());
       this.currentItem = VideoItem.fromJson(result['item']);
@@ -127,22 +114,7 @@ class UKProvider extends ChangeNotifier {
 
   // ** Player Property Endpoints
   Future<void> _refreshPlayerProperties() async {
-    final body = await _encodeCommand("Player.getProperties", {
-      "playerid": _playerID,
-      "properties": const [
-        "position",
-        "repeat",
-        "type",
-        "speed",
-        "totaltime",
-        "time",
-        "canseek",
-        "videostreams",
-        "currentvideostream"
-      ]
-    });
-    _w.add(body);
-    final r = await _getResult();
+    final r = await _api.getPlayerProperties(player);
     if (r.isNotEmpty) _updatePlayerProps(r);
   }
 
@@ -252,11 +224,7 @@ class UKProvider extends ChangeNotifier {
   // ** Application Property Endpoints
 
   Future<void> _refreshApplicationProperties() async {
-    final body = await _encodeCommand("Application.GetProperties", {
-      "properties": const ["muted", "name", "version", "volume"]
-    });
-    _w.add(body);
-    final r = await _getResult();
+    final r = await _api.getApplicationProperties(player);
     if (r.isNotEmpty) {
       currentTemporaryVolume =
           r['volume']?.toDouble() ?? currentTemporaryVolume;
