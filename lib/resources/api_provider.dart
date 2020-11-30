@@ -39,20 +39,11 @@ class ApiProvider {
   }
 
   Future<Map<String, bool>> getSystemProperties(Player player) async {
-    final body = jsonEncode({
-      "method": "System.GetProperties",
-      "params": {
-        "properties": const [
-          "canshutdown",
-          "canhibernate",
-          "canreboot",
-          "cansuspend"
-        ]
-      },
-      ...defParams
+    final body = await _encode("System.GetProperties", const {
+      "properties": ["canshutdown", "canhibernate", "canreboot", "cansuspend"]
     });
     final response = await http.post(url(player), body: body, headers: headers);
-    final json = jsonDecode(response.body);
+    final json = await compute(jsonDecode, response.body);
     return Map<String, bool>.from(json['result']);
   }
 
@@ -81,7 +72,9 @@ class ApiProvider {
   }
 
   Future<Map<String, dynamic>> getApplicationProperties(Player player) async {
-    final body = await _encode("Application.GetProperties", {"properties": const ["muted", "name", "version", "volume"]});
+    final body = await _encode("Application.GetProperties", {
+      "properties": const ["muted", "name", "version", "volume"]
+    });
     final response = await http.post(url(player), headers: headers, body: body);
     final s = _handleHTTPResponse(response);
     if (s.startsWith("An error")) return const {};
@@ -91,12 +84,13 @@ class ApiProvider {
 
   Future<Map<String, dynamic>> getPlayerProperties(Player player) async {
     final body = await _encode("Player.GetProperties", {
-      "playerid:": _playerID,
+      "playerid": _playerID,
       "properties": const [
         "position",
         "repeat",
         "type",
         "speed",
+        "playlistid",
         "totaltime",
         "time",
         "canseek",
@@ -104,20 +98,21 @@ class ApiProvider {
         "currentvideostream"
       ]
     });
+    print("bod:" + body.toString());
     final response = await http.post(url(player), headers: headers, body: body);
     final s = _handleHTTPResponse(response);
     if (s.startsWith("An error")) return const {};
     final parsed = await compute(jsonDecode, s);
+    print("REC:" + parsed.toString());
     return parsed['result'] ?? const {};
   }
 
   Future<Map<String, dynamic>> getPlayerItem(Player player) async {
     final body = await _encode("Player.GetItem", {
-      "playerid:": _playerID,
+      "playerid": _playerID,
       "properties": const [
         "director",
         "year",
-        "playlistid",
         "disc",
         "albumartist",
         "art",
@@ -132,6 +127,7 @@ class ApiProvider {
     final parsed = await compute(jsonDecode, s);
     return parsed['result'] ?? const {};
   }
+
   Future<String> _getPlayerProperties(Player player) async {
     final body = jsonEncode({
       "method": "Player.getProperties",
@@ -261,6 +257,12 @@ class ApiProvider {
     });
     final response = await http.post(url(player), headers: headers, body: body);
     return response.statusCode;
+  }
+
+  void skip(Player player, Map<String, dynamic> params) async {
+    final body =
+        await _encode("Player.Seek", {"playerid": _playerID, "value": params});
+    http.post(url(player), headers: headers, body: body);
   }
 
   Future<int> stop(Player player) async {

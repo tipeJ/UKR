@@ -24,8 +24,7 @@ class CurrentItem extends StatelessWidget {
         );
       case AudioItem:
         return Text("Audio");
-      default:
-        return const Text("Nothing is Playing");
+      default: return const Padding(padding: EdgeInsets.all(10.0), child: Text("Nothing is Playing"));
     }
   }
 }

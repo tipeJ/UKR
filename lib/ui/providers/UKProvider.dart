@@ -42,6 +42,7 @@ class UKProvider extends ChangeNotifier {
   @override
   void dispose() {
     _ws?.close();
+    _resultSink.close();
     _volAdjustTimer?.cancel();
     _timeUpdateTimer?.cancel();
     _seekTimer?.cancel();
@@ -64,10 +65,10 @@ class UKProvider extends ChangeNotifier {
     await _refreshApplicationProperties();
     await _refreshPlayerItem();
     await _fetchSystemProperties();
+    notifyListeners();
   }
 
   void _handleJsonResponse(Map<String, dynamic> j) async {
-    print("RECEIVED: " + j.toString());
     final result = j['result'];
     if (result != null && !(result is String)) {
       // Send the result to the result Sink, to be picked up by the sending function:
@@ -95,7 +96,9 @@ class UKProvider extends ChangeNotifier {
         await _refreshPlayerItem();
         return;
       case "Player.OnSeek":
+        print(d.toString());
         this.time = PlayerTime.fromJson(d['player']['time']);
+        _updateTimeTimer();
         _updateTemporaryProgress();
         break;
     }
@@ -115,22 +118,7 @@ class UKProvider extends ChangeNotifier {
 
   // ** Player Property Endpoints
   Future<void> _refreshPlayerProperties() async {
-    final body = await _encodeCommand("Player.GetProperties", {
-      "playerid": _playerID,
-      "properties": const [
-        "position",
-        "repeat",
-        "type",
-        "speed",
-        "totaltime",
-        "time",
-        "canseek",
-        "videostreams",
-        "currentvideostream"
-      ]
-    });
-    _w.add(body);
-    final r = await _getResult();
+    final r = await _api.getPlayerProperties(player);
     if (r.isNotEmpty) _updatePlayerProps(r);
   }
 
@@ -153,6 +141,7 @@ class UKProvider extends ChangeNotifier {
     if (r['repeat'] != null) {
       repeat = enumFromString(Repeat.values, r['repeat'] ?? "off");
     }
+    playlistID = r['playlistid'] ?? playlistID;
     if (r['currentvideostream'] != null) {
       currentVideoStream = VideoStream.fromJson(r['currentvideostream']);
     }
@@ -164,19 +153,24 @@ class UKProvider extends ChangeNotifier {
     }
     if (timeChanged || speedChanged) {
       _timeUpdateTimer?.cancel();
+      _updateTimeTimer();
       if (timeChanged) _updateTemporaryProgress();
-      if (speed != 0) {
-        _timeUpdateTimer =
-            Timer.periodic(Duration(milliseconds: (1000 / speed).round()), (t) {
-          if (_seekTimer == null) {
-            this.time = this.time.increment(1);
-            _updateTemporaryProgress();
-            notifyListeners();
-          }
-        });
-      }
     }
     notifyListeners();
+  }
+
+  void _updateTimeTimer() {
+    _timeUpdateTimer?.cancel();
+    if (speed != 0) {
+      _timeUpdateTimer =
+          Timer.periodic(Duration(milliseconds: (1000 / speed).round()), (t) {
+        if (_seekTimer == null) {
+          this.time = this.time.increment(1);
+          _updateTemporaryProgress();
+          notifyListeners();
+        }
+      });
+    }
   }
 
   void toggleRepeat() async {
@@ -209,14 +203,10 @@ class UKProvider extends ChangeNotifier {
   }
 
   void seek(double percentage) {
-    currentTemporaryProgress = (percentage);
+    currentTemporaryProgress = percentage;
     if (_seekTimer == null) {
       _seekTimer = new Timer(_seekTimeout, () async {
-        final c = await _encodeCommand("Player.Seek", {
-          "playerid": _playerID,
-          "value": (currentTemporaryProgress * 100).round()
-        });
-        _w.add(c);
+        _api.seek(player, percentage: currentTemporaryProgress);
         _seekTimer = null;
       });
     }
@@ -224,17 +214,15 @@ class UKProvider extends ChangeNotifier {
   }
 
   /// Skip ahead (positive) or behind (negative) by the given [amount] of seconds
-  void skip(int amount) async {
-    Map<String, dynamic>? params;
+  void skip(int amount) {
+    Map<String, dynamic> params;
     if (amount < 0) {
       params = {"seconds": amount};
     } else {
       final newTime = time.increment(amount);
       params = {"time": newTime.toJson()};
     }
-    _w.add(await _encodeCommand(
-        "Player.Seek", {"playerid": _playerID, "value": params}));
-    await _getResult();
+    _api.skip(player, params);
   }
 
   // ** Application Property Endpoints
@@ -268,17 +256,11 @@ class UKProvider extends ChangeNotifier {
 
   // ** Navigation Endpoints
 
-  void navigate(String command) async =>
-      _w.add(await _encodeCommand("Input.ExecuteAction", {"action": command}));
+  void navigate(String command) => _api.navigate(player, command);
 
   // ** System Endpoints
-
   Future<void> _fetchSystemProperties() async {
-    final c = await _encodeCommand("System.GetProperties", const {
-      "properties": ["canshutdown", "canhibernate", "canreboot", "cansuspend"]
-    });
-    _w.add(c);
-    final result = await _getResult();
+    final result = await _api.getSystemProperties(player);
     if (result.isNotEmpty) {
       systemProps = Map<String, bool>.from(result);
       notifyListeners();
@@ -302,6 +284,7 @@ class UKProvider extends ChangeNotifier {
   PlayerTime time = PlayerTime(0, 0, 0);
   PlayerTime totalTime = PlayerTime(0, 0, 0);
   double currentTemporaryProgress = -1;
+  int playlistID = -1;
   int speed = 0;
   String type = "Null";
   bool canSeek = false;
