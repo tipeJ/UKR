@@ -67,6 +67,7 @@ class UKProvider extends ChangeNotifier {
   }
 
   void _handleJsonResponse(Map<String, dynamic> j) async {
+    print("RECEIVED: " + j.toString());
     final result = j['result'];
     if (result != null && !(result is String)) {
       // Send the result to the result Sink, to be picked up by the sending function:
@@ -114,7 +115,22 @@ class UKProvider extends ChangeNotifier {
 
   // ** Player Property Endpoints
   Future<void> _refreshPlayerProperties() async {
-    final r = await _api.getPlayerProperties(player);
+    final body = await _encodeCommand("Player.GetProperties", {
+      "playerid": _playerID,
+      "properties": const [
+        "position",
+        "repeat",
+        "type",
+        "speed",
+        "totaltime",
+        "time",
+        "canseek",
+        "videostreams",
+        "currentvideostream"
+      ]
+    });
+    _w.add(body);
+    final r = await _getResult();
     if (r.isNotEmpty) _updatePlayerProps(r);
   }
 
