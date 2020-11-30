@@ -110,8 +110,15 @@ class UKProvider extends ChangeNotifier {
   Future<void> _refreshPlayerItem() async {
     final result = await _api.getPlayerItem(player);
     if (result.isNotEmpty) {
-      print("nextItem:" + result.toString());
       this.currentItem = VideoItem.fromJson(result['item']);
+      notifyListeners();
+      // Fetch Artwork Paths
+      final poster = await _api.retrieveCachedImageURL(
+          player, result['item']['art']['poster']);
+      final thumb = await _api.retrieveCachedImageURL(
+          player, result['item']['art']['thumb']);
+      this.artwork['poster'] = poster;
+      this.artwork['thumb'] = thumb;
       notifyListeners();
     }
   }
@@ -179,11 +186,7 @@ class UKProvider extends ChangeNotifier {
     _w.add(body);
   }
 
-  void playPause() async {
-    final body = await _encodeCommand(
-        "Player.PlayPause", const {"playerid": _playerID, "play": "toggle"});
-    _w.add(body);
-  }
+  void playPause() => _api.playPause(player);
 
   /// Navigate forward/backwards in the playlist. False for previous, true for next
   void goto({bool direction = true}) async => _w.add(await _encodeCommand(
@@ -297,6 +300,8 @@ class UKProvider extends ChangeNotifier {
 
   // ** Player Item Properties
   Item? currentItem;
+
+  Map<String, String> artwork = {};
 
   // ** Playlist Properties
 }

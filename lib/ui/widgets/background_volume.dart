@@ -1,3 +1,4 @@
+import 'package:UKR/resources/resources.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:UKR/utils/utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -6,6 +7,7 @@ import 'package:UKR/ui/providers/providers.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tuple/tuple.dart';
 
 class BackgroundVolume extends StatelessWidget {
   @override
@@ -57,13 +59,17 @@ class _BackgroundVolumeWrapper extends StatelessWidget {
     return Align(
       alignment: Alignment.topCenter,
       child: Container(
-        color: Color.lerp(Colors.black12, Colors.black26,
-          context.select<UKProvider, double>((p)=>p.currentTemporaryVolume) / 100),
+        color: Color.lerp(
+            Colors.black12,
+            Colors.black26,
+            context.select<UKProvider, double>(
+                    (p) => p.currentTemporaryVolume) /
+                100),
         width: MediaQuery.of(context).size.width,
         height: (maxHeight -
                 (maxHeight *
-                    (context
-                      .select<UKProvider, double>((p)=>p.currentTemporaryVolume)/
+                    (context.select<UKProvider, double>(
+                            (p) => p.currentTemporaryVolume) /
                         100)))
             .clamp(0.0, maxHeight),
       ),
@@ -74,24 +80,22 @@ class _BackgroundVolumeWrapper extends StatelessWidget {
 class _BackgroundImageWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var currentItem = context.select<UKProvider, Item>((p) => p.currentItem);
-    switch (currentItem.runtimeType) {
-      case VideoItem:
-        final item = currentItem as VideoItem;
-        Widget child;
-        if (item.poster == null) {
-          return Container();
-        } else {
-          child = CachedNetworkImage(
-              fit: BoxFit.fitHeight,
-              imageUrl: decodeExternalImageUrl(item.poster!));
-        }
-        return Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            child: child);
-      default:
-        return Container();
+    var props =
+        context.select<UKProvider, Map<String, String>>((p) => p.artwork);
+    Widget child;
+    if (props['poster'] == null) {
+      print("BLBLBLBLBBLBLBBL");
+      return Container();
+    } else {
+      print("HLHLHLHL");
+      final fit = MediaQuery.of(context).size.aspectRatio > 1.0
+          ? BoxFit.fitWidth
+          : BoxFit.fitHeight;
+      child = CachedNetworkImage(fit: fit, imageUrl: props['poster']);
     }
+    return Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        child: child);
   }
 }

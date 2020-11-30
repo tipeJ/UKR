@@ -335,20 +335,10 @@ class _BottomBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentItem = context.select<UKProvider, Item>((p) => p.currentItem);
+    final aw =
+        context.select<UKProvider, Map<String, String>>((p) => p.artwork);
     String? url;
-    switch (currentItem.runtimeType) {
-      case VideoItem:
-        final item = currentItem as VideoItem;
-        url = item.thumb ?? item.poster ?? item.fanart ?? item.banner;
-        break;
-      case AudioItem:
-        final item = currentItem as AudioItem;
-        //TODO: Add audio item thumbnail/ album art
-        break;
-      default:
-        break;
-    }
+    url = aw['thumb'] ?? aw['poster'] ?? aw['fanart'] ?? aw['banner'];
     if (url == null || url.isEmpty) {
       return Container();
     }
@@ -367,6 +357,6 @@ class _BottomBackground extends StatelessWidget {
                     .createShader(Rect.fromLTRB(0, 0, rect.width, rect.height)),
             blendMode: BlendMode.dstIn,
             child: CachedNetworkImage(
-                imageUrl: decodeExternalImageUrl(url), fit: BoxFit.fitHeight)));
+                imageUrl: url, fit: BoxFit.fitWidth)));
   }
 }

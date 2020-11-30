@@ -69,7 +69,7 @@
     Current implementation does not support auth.
 
 ** TODO Image fetching for movies (TMDB, etc.)
-   Currently doesn't work, because there is no API key. Look into kodi cached images before getting API keys for different fetching websites. Ideally everything in local network.
+   Works, but not on initial launch. The selector doesn't seem to find any difference between the artwork maps.
 ** TODO Content browsing
    
 *** TODO [#C] Add-Ons
@@ -128,5 +128,6 @@
 *** Tests
     Not caused by encoding command being run in an isolate function. The behaviour persists on non-isolate version.
 
+** TODO Artwork not showing before widget rebuilds
 ** TODO Fix ( initial ) playback data sometimes not being applied on launch
    Usually works on repeated launches.

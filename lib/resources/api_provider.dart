@@ -259,6 +259,17 @@ class ApiProvider {
     return response.statusCode;
   }
 
+  Future<String> retrieveCachedImageURL(Player player, String source) async {
+    final bod = await _encode("Files.PrepareDownload", {"path": source});
+    final r = await http.post(url(player), headers: headers, body: bod);
+    if (r.statusCode != 200) return "";
+    final parsed = await compute(jsonDecode, r.body);
+    final path = parsed['result']['details']['path'];
+    if (path == null) return "";
+    return "http://${player.address}:${player.port}/" +
+        parsed['result']['details']['path'];
+  }
+
   void skip(Player player, Map<String, dynamic> params) async {
     final body =
         await _encode("Player.Seek", {"playerid": _playerID, "value": params});
