@@ -55,7 +55,7 @@ class ApiProvider {
   // Properties endpoints
   static String _handleHTTPResponse(http.Response r) => r.statusCode == 200
       ? r.body
-      : "An error occurred: " + r.statusCode.toString();
+      : "";
   static Future<String> _encode(String method, Map<String, dynamic> params) =>
       compute(jsonEncode, {"method": method, "params": params, ...defParams});
 
@@ -77,13 +77,13 @@ class ApiProvider {
     });
     final response = await http.post(url(player), headers: headers, body: body);
     final s = _handleHTTPResponse(response);
-    if (s.startsWith("An error")) return const {};
+    if (s.isEmpty) return const {};
     final parsed = await compute(jsonDecode, s);
     return parsed['result'] ?? const {};
   }
 
   Future<Map<String, dynamic>> getPlayerProperties(Player player) async {
-    final body = await _encode("Player.GetProperties", {
+    final body = await _encode("Player.getProperties", {
       "playerid": _playerID,
       "properties": const [
         "position",
@@ -98,12 +98,11 @@ class ApiProvider {
         "currentvideostream"
       ]
     });
-    print("bod:" + body.toString());
     final response = await http.post(url(player), headers: headers, body: body);
+    print("REC: " + response.body);
     final s = _handleHTTPResponse(response);
-    if (s.startsWith("An error")) return const {};
+    if (s.isEmpty) return const {};
     final parsed = await compute(jsonDecode, s);
-    print("REC:" + parsed.toString());
     return parsed['result'] ?? const {};
   }
 
@@ -123,7 +122,17 @@ class ApiProvider {
     });
     final response = await http.post(url(player), headers: headers, body: body);
     final s = _handleHTTPResponse(response);
-    if (s.startsWith("An error")) return const {};
+    if (s.isEmpty) return const {};
+    final parsed = await compute(jsonDecode, s);
+    return parsed['result'] ?? const {};
+  }
+
+  Future<Map<String, dynamic>> getPlayList(Player player,
+      {required int id}) async {
+    final body = await _encode("Player.GetItem", {"playlistid": id});
+    final response = await http.post(url(player), headers: headers, body: body);
+    final s = _handleHTTPResponse(response);
+    if (s.isEmpty) return const {};
     final parsed = await compute(jsonDecode, s);
     return parsed['result'] ?? const {};
   }

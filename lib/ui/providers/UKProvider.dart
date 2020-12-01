@@ -64,6 +64,7 @@ class UKProvider extends ChangeNotifier {
     await _refreshPlayerProperties();
     await _refreshApplicationProperties();
     await _refreshPlayerItem();
+    await _refreshPlayList();
     await _fetchSystemProperties();
     notifyListeners();
   }
@@ -109,17 +110,33 @@ class UKProvider extends ChangeNotifier {
   // ** Player Item Endpoints
   Future<void> _refreshPlayerItem() async {
     final result = await _api.getPlayerItem(player);
+    print("ITEM: ${result.toString()}");
     if (result.isNotEmpty) {
       this.currentItem = VideoItem.fromJson(result['item']);
       notifyListeners();
       // Fetch Artwork Paths
-      final poster = await _api.retrieveCachedImageURL(
-          player, result['item']['art']['poster']);
-      final thumb = await _api.retrieveCachedImageURL(
-          player, result['item']['art']['thumb']);
-      this.artwork['poster'] = poster;
-      this.artwork['thumb'] = thumb;
-      notifyListeners();
+      this.artwork = const {};
+      String? poster = result['item']['art'].nullOr('poster');
+      String? thumb = result['item']['art'].nullOr('thumb');
+      if (poster != null) {
+        poster = await _api.retrieveCachedImageURL(
+            player, result['item']['art']['poster']);
+        this.artwork['poster'] = poster;
+      }
+      if (thumb != null) {
+        thumb = await _api.retrieveCachedImageURL(
+            player, result['item']['art']['thumb']);
+        this.artwork['thumb'] = thumb;
+      }
+      if (artwork != {}) notifyListeners();
+    }
+  }
+
+  // ** Playlist Endpoints
+  Future<void> _refreshPlayList() async {
+    if (playlistID != -1) {
+      final r = await _api.getPlayList(player, id: playlistID);
+      print("playlist: " + r.toString());
     }
   }
 
@@ -193,11 +210,7 @@ class UKProvider extends ChangeNotifier {
       "Player.GoTo",
       {"playerid": _playerID, "to": direction ? "next" : "previous"}));
 
-  void stopPlayback() async {
-    final body =
-        await _encodeCommand("Player.Stop", const {"playerid": _playerID});
-    _w.add(body);
-  }
+  void stopPlayback() => _api.stop(player);
 
   void _updateTemporaryProgress() {
     final ctime = time.inSeconds;

@@ -84,10 +84,8 @@ class _BackgroundImageWrapper extends StatelessWidget {
         context.select<UKProvider, Map<String, String>>((p) => p.artwork);
     Widget child;
     if (props['poster'] == null) {
-      print("BLBLBLBLBBLBLBBL");
       return Container();
     } else {
-      print("HLHLHLHL");
       final fit = MediaQuery.of(context).size.aspectRatio > 1.0
           ? BoxFit.fitWidth
           : BoxFit.fitHeight;
