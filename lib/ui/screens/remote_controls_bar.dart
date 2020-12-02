@@ -357,6 +357,6 @@ class _BottomBackground extends StatelessWidget {
                     .createShader(Rect.fromLTRB(0, 0, rect.width, rect.height)),
             blendMode: BlendMode.dstIn,
             child: CachedNetworkImage(
-                imageUrl: url, fit: BoxFit.fitWidth)));
+                imageUrl: url, fit: BoxFit.cover)));
   }
 }

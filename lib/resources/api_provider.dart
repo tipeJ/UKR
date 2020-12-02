@@ -99,7 +99,6 @@ class ApiProvider {
       ]
     });
     final response = await http.post(url(player), headers: headers, body: body);
-    print("REC: " + response.body);
     final s = _handleHTTPResponse(response);
     if (s.isEmpty) return const {};
     final parsed = await compute(jsonDecode, s);

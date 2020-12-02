@@ -53,14 +53,24 @@ class PlayerTime {
     int newSeconds = this.seconds + seconds;
     int newMinutes = this.minutes;
     int newHours = this.hours;
-    if (newSeconds > 59) {
-      newMinutes = newMinutes + (newSeconds / 60).floor();
+    // if (newSeconds > 59) {
+      newMinutes += (newSeconds / 60).floor();
       newSeconds = newSeconds % 60;
-    }
-    if (newMinutes > 59) {
-      newHours = newHours + (newMinutes / 60).floor();
-      newMinutes = newMinutes % 60;
-    }
+
+      if (newMinutes > 59) {
+          newHours += (newMinutes / 60).floor();
+          newMinutes = newMinutes % 60;
+      }
+    // } else if (newSeconds < 0) {
+    //   newMinutes = newMinutes - (seconds /)
+    //   newMinutes += (newSeconds / 60).floor();
+    //   newSeconds = newSeconds % 60;
+
+    //   if (newMinutes > 59) {
+    //       newHours += (newMinutes / 60).floor();
+    //       newMinutes = newMinutes % 60;
+    //   }
+    // }
     return PlayerTime(newSeconds, newMinutes, newHours);
   }
 

@@ -19,7 +19,7 @@ class UKProvider extends ChangeNotifier {
   Timer? _timeUpdateTimer;
   Timer? _seekTimer;
   static const _volumeSetTimeout = const Duration(milliseconds: 300);
-  static const _seekTimeout = const Duration(milliseconds: 700);
+  static const _seekTimeout = const Duration(milliseconds: 800);
 
   WebSocket? _ws;
   WebSocket get _w => _ws!;
@@ -72,6 +72,7 @@ class UKProvider extends ChangeNotifier {
   void _handleJsonResponse(Map<String, dynamic> j) async {
     final result = j['result'];
     if (result != null && !(result is String)) {
+      print("result: " + result.toString());
       // Send the result to the result Sink, to be picked up by the sending function:
       _resultSink.add(result);
       return;
@@ -79,9 +80,12 @@ class UKProvider extends ChangeNotifier {
     if (j['params'] == null) return;
     final p = j['params'];
     final d = p['data'];
+    print("RESPONSE: " + j.toString());
     switch (j['method']) {
       case "Other.PlaybackStarted":
         _refreshPlayerProperties();
+        await _refreshPlayerItem();
+        _updateTimeTimer();
         return;
       case "Application.OnVolumeChanged":
         if (_volAdjustTimer == null) {
@@ -92,15 +96,23 @@ class UKProvider extends ChangeNotifier {
       case "Player.OnPropertyChanged":
         _updatePlayerProps(d['property']);
         return;
-      case "Player.OnPlay":
+      case "Player.OnResume":
         await _refreshPlayerProperties();
+        _updateTimeTimer();
+        break;
+      case "Player.OnPause":
+        speed = 0;
+        _updateTimeTimer();
+        break;
+      case "Player.OnPlay":
+        speed = d['player']['speed'];
+        _updateTimeTimer();
         await _refreshPlayerItem();
         return;
       case "Player.OnSeek":
-        print(d.toString());
         this.time = PlayerTime.fromJson(d['player']['time']);
-        _updateTimeTimer();
         _updateTemporaryProgress();
+        _updateTimeTimer();
         break;
     }
     notifyListeners();
@@ -110,14 +122,14 @@ class UKProvider extends ChangeNotifier {
   // ** Player Item Endpoints
   Future<void> _refreshPlayerItem() async {
     final result = await _api.getPlayerItem(player);
-    print("ITEM: ${result.toString()}");
     if (result.isNotEmpty) {
       this.currentItem = VideoItem.fromJson(result['item']);
       notifyListeners();
       // Fetch Artwork Paths
-      this.artwork = const {};
-      String? poster = result['item']['art'].nullOr('poster');
-      String? thumb = result['item']['art'].nullOr('thumb');
+      this.artwork = {};
+      var art = result['item']['art'];
+      String? poster = art != null ? (art['poster']) : null;
+      String? thumb = art != null ? art['thumb'] : null;
       if (poster != null) {
         poster = await _api.retrieveCachedImageURL(
             player, result['item']['art']['poster']);
@@ -170,7 +182,6 @@ class UKProvider extends ChangeNotifier {
       currentVideoStream = VideoStream.fromJson(r['currentvideostream']);
     }
     if (r['videostreams'] != null) {
-      print("VIDEOSTREAMS: " + r['videostreams'].toString());
       videoStreams = r['videostreams']
           .map<VideoStream>((v) => VideoStream.fromJson(v))
           .toList();
@@ -232,12 +243,13 @@ class UKProvider extends ChangeNotifier {
   /// Skip ahead (positive) or behind (negative) by the given [amount] of seconds
   void skip(int amount) {
     Map<String, dynamic> params;
-    if (amount < 0) {
-      params = {"seconds": amount};
-    } else {
-      final newTime = time.increment(amount);
-      params = {"time": newTime.toJson()};
-    }
+    // if (amount < 0) {
+    //   params = {"seconds": amount};
+    // } else {
+    //   final newTime = time.increment(amount);
+    //   params = {"time": newTime.toJson()};
+    // }
+    params = {"time": time.increment(amount)};
     _api.skip(player, params);
   }
 
