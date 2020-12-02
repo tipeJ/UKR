@@ -53,9 +53,8 @@ class ApiProvider {
   }
 
   // Properties endpoints
-  static String _handleHTTPResponse(http.Response r) => r.statusCode == 200
-      ? r.body
-      : "";
+  static String _handleHTTPResponse(http.Response r) =>
+      r.statusCode == 200 ? r.body : "";
   static Future<String> _encode(String method, Map<String, dynamic> params) =>
       compute(jsonEncode, {"method": method, "params": params, ...defParams});
 
@@ -114,12 +113,18 @@ class ApiProvider {
         "disc",
         "albumartist",
         "art",
+        "showtitle",
+        "episode",
+        "season",
+        "episodeguide",
+        "description",
         "albumreleasetype",
         "duration",
         "streamdetails"
       ]
     });
     final response = await http.post(url(player), headers: headers, body: body);
+    print("RRR:" + response.body.toString());
     final s = _handleHTTPResponse(response);
     if (s.isEmpty) return const {};
     final parsed = await compute(jsonDecode, s);

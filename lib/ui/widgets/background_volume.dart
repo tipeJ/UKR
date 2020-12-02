@@ -80,16 +80,19 @@ class _BackgroundVolumeWrapper extends StatelessWidget {
 class _BackgroundImageWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var props =
-        context.select<UKProvider, Map<String, String>>((p) => p.artwork);
+    var item = context.select<UKProvider, Item?>((p) => p.currentItem);
+    var art = item?.artwork ?? {};
+    String? url;
     Widget child;
-    if (props['poster'] == null) {
+    if (item == null || art.isEmpty || art['poster'] == null) {
       return Container();
     } else {
+      url = retrieveOptimalImage(item);
+      if (url.isEmpty) return Container();
       final fit = MediaQuery.of(context).size.aspectRatio > 1.0
           ? BoxFit.fitWidth
           : BoxFit.fitHeight;
-      child = CachedNetworkImage(fit: fit, imageUrl: props['poster']);
+      child = CachedNetworkImage(fit: fit, imageUrl: art['poster']);
     }
     return Container(
         width: MediaQuery.of(context).size.width,

@@ -128,25 +128,28 @@ class UKProvider extends ChangeNotifier {
   // ** Player Item Endpoints
   Future<void> _refreshPlayerItem() async {
     final result = await _api.getPlayerItem(player);
-    if (result.isNotEmpty) {
+    print("nextitem: ${result.toString()}");
+    if (result.isNotEmpty && result['item']['year'] != 1601) {
+      // Fetch Artwork Paths
+      var art = result['item']['art'];
+      if (art != null && art.isNotEmpty) {
+        Map<String, String> alreadyFetched = {};
+        for (int i = 0; i < art.length; i++) {
+          final key = art.keys.elementAt(i);
+          if (art[key].isNotEmpty) {
+            if (alreadyFetched.keys.contains(art[key])) {
+              art[key] = alreadyFetched[art[key]];
+            } else {
+              final previous = art[key];
+              art[key] =
+                  await _api.retrieveCachedImageURL(player, art[key] ?? "");
+              alreadyFetched[previous] = art[key];
+            }
+          }
+        }
+      }
       this.currentItem = VideoItem.fromJson(result['item']);
       notifyListeners();
-      // Fetch Artwork Paths
-      this.artwork = {};
-      var art = result['item']['art'];
-      String? poster = art != null ? (art['poster']) : null;
-      String? thumb = art != null ? art['thumb'] : null;
-      if (poster != null) {
-        poster = await _api.retrieveCachedImageURL(
-            player, result['item']['art']['poster']);
-        this.artwork['poster'] = poster;
-      }
-      if (thumb != null) {
-        thumb = await _api.retrieveCachedImageURL(
-            player, result['item']['art']['thumb']);
-        this.artwork['thumb'] = thumb;
-      }
-      if (artwork != {}) notifyListeners();
     }
   }
 
@@ -248,14 +251,7 @@ class UKProvider extends ChangeNotifier {
 
   /// Skip ahead (positive) or behind (negative) by the given [amount] of seconds
   void skip(int amount) {
-    Map<String, dynamic> params;
-    // if (amount < 0) {
-    //   params = {"seconds": amount};
-    // } else {
-    //   final newTime = time.increment(amount);
-    //   params = {"time": newTime.toJson()};
-    // }
-    params = {"time": time.increment(amount)};
+    var params = {"time": time.increment(amount)};
     _api.skip(player, params);
   }
 
@@ -331,8 +327,6 @@ class UKProvider extends ChangeNotifier {
 
   // ** Player Item Properties
   Item? currentItem;
-
-  Map<String, String> artwork = {};
 
   // ** Playlist Properties
 }

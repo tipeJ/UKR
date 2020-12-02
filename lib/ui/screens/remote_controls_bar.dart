@@ -335,13 +335,15 @@ class _BottomBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final aw =
-        context.select<UKProvider, Map<String, String>>((p) => p.artwork);
-    String? url;
-    url = aw['thumb'] ?? aw['poster'] ?? aw['fanart'] ?? aw['banner'];
-    if (url == null || url.isEmpty) {
-      return Container();
-    }
+    var item = context.select<UKProvider, Item?>((p) => p.currentItem);
+    String url;
+
+    if (item == null || item.artwork.isEmpty) return Container();
+
+    url = item.artwork['thumb'] ?? retrieveOptimalImage(item);
+
+    if (url.isEmpty) return Container();
+
     return Container(
         //TODO: MONITOR PERFORMANCE OF SHADERMASK, CONSIDER STATIC SWITCH INSTEAD
         height: _lerp(minSize, maxSize),
@@ -356,7 +358,6 @@ class _BottomBackground extends StatelessWidget {
                     ])
                     .createShader(Rect.fromLTRB(0, 0, rect.width, rect.height)),
             blendMode: BlendMode.dstIn,
-            child: CachedNetworkImage(
-                imageUrl: url, fit: BoxFit.cover)));
+            child: CachedNetworkImage(imageUrl: url, fit: BoxFit.cover)));
   }
 }
