@@ -54,13 +54,13 @@ class PlayerTime {
     int newMinutes = this.minutes;
     int newHours = this.hours;
     // if (newSeconds > 59) {
-      newMinutes += (newSeconds / 60).floor();
-      newSeconds = newSeconds % 60;
+    newMinutes += (newSeconds / 60).floor();
+    newSeconds = newSeconds % 60;
 
-      if (newMinutes > 59) {
-          newHours += (newMinutes / 60).floor();
-          newMinutes = newMinutes % 60;
-      }
+    if (newMinutes > 59) {
+      newHours += (newMinutes / 60).floor();
+      newMinutes = newMinutes % 60;
+    }
     // } else if (newSeconds < 0) {
     //   newMinutes = newMinutes - (seconds /)
     //   newMinutes += (newSeconds / 60).floor();
@@ -91,6 +91,8 @@ class PlayerTime {
       ].join(":");
 
   const PlayerTime(this.seconds, this.minutes, this.hours);
+
+  factory PlayerTime.empty() => const PlayerTime(0, 0, 0);
   factory PlayerTime.fromJson(dynamic j) => j == null
       ? PlayerTime(0, 0, 0)
       : PlayerTime(j['seconds'], j['minutes'], j['hours']);

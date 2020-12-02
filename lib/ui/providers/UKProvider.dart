@@ -104,6 +104,12 @@ class UKProvider extends ChangeNotifier {
         speed = 0;
         _updateTimeTimer();
         break;
+      case "Player.OnStop":
+        speed = 0;
+        time = PlayerTime.empty();
+        totalTime = PlayerTime.empty();
+        currentItem = null;
+        break;
       case "Player.OnPlay":
         speed = d['player']['speed'];
         _updateTimeTimer();
@@ -309,8 +315,8 @@ class UKProvider extends ChangeNotifier {
   Map<String, bool> systemProps = const {};
 
   // ** Player Properties
-  PlayerTime time = PlayerTime(0, 0, 0);
-  PlayerTime totalTime = PlayerTime(0, 0, 0);
+  PlayerTime time = PlayerTime.empty();
+  PlayerTime totalTime = PlayerTime.empty();
   double currentTemporaryProgress = -1;
   int playlistID = -1;
   int speed = 0;
