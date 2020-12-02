@@ -169,13 +169,13 @@ class _BottomControlButtons extends StatelessWidget {
                             size: _lerp(_minSize, _maxSize * 1.2)))),
                 InkWell(
                     onTap: () {
-                      context.read<UKProvider>().skip(10);
+                      context.read<UKProvider>().skip(30);
                     },
                     child: Container(
                         width: _lerp(0.0, _contSize),
                         margin:
                             EdgeInsets.symmetric(horizontal: _lerp(0.0, 10.0)),
-                        child: Icon(Icons.forward_10,
+                        child: Icon(Icons.forward_30,
                             size: _lerp(0.0, _maxSize)))),
                 InkWell(
                     onTap: () {
