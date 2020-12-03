@@ -36,11 +36,12 @@ class BackgroundImageWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     var item = context.select<UKProvider, Item?>((p) => p.currentItem);
     var art = item?.artwork ?? {};
-    String? url;
     Widget? child;
-    if (item != null || art.isNotEmpty || art['poster'] != null) {
-      url = retrieveOptimalImage(item!);
-      if (url.isNotEmpty){
+    if (item != null && art.isNotEmpty) {
+      String? url;
+      url = retrieveOptimalImage(item);
+      print("UURL:" + url);
+      if (url.isNotEmpty) {
         final fit = MediaQuery.of(context).size.aspectRatio > 1.0
             ? BoxFit.fitWidth
             : BoxFit.fitHeight;

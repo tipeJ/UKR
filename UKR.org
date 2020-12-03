@@ -55,7 +55,8 @@
 *** DONE [#B] Seek
     CLOSED: [2020-12-03 to 13:37]
 
-** TODO [#B] Playlist Support
+** DONE [#B] Playlist Support
+   CLOSED: [2020-12-03 to 23:49]
 
 ** TODO Movie/TV Show cast
    the cast parameter returns an insane number of items.

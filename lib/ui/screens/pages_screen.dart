@@ -1,4 +1,5 @@
 import 'package:UKR/ui/providers/providers.dart';
+import 'package:UKR/ui/screens/playlist_screen.dart';
 import 'package:UKR/ui/widgets/widgets.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -20,10 +21,10 @@ class PagesScreen extends StatelessWidget {
           ),
           GestureDetector(
             onVerticalDragUpdate: (details) {
-              final endPos = maxHeight - 56.0;
+              final endPos = maxHeight - kBottomNavigationBarHeight;
               final clampedP =
-                  details.globalPosition.dy.clamp(56.0, maxHeight - 56.0);
-              final newVolume = ((endPos - clampedP).abs() / (endPos - 56.0));
+                  details.globalPosition.dy.clamp(kBottomNavigationBarHeight, maxHeight - kBottomNavigationBarHeight);
+              final newVolume = ((endPos - clampedP).abs() / (endPos - kBottomNavigationBarHeight));
               context.read<UKProvider>().setVolume(newVolume * 100);
             },
             child: Listener(
@@ -39,14 +40,13 @@ class PagesScreen extends StatelessWidget {
               child: _RemotePage(),
             ),
           ),
-          ListView.builder(
-              itemCount: 5000,
-              itemBuilder: (_, i) => ListTile(title: Text(i.toString())))
+          PlaylistScreen()
         ],
       ),
     );
   }
 }
+
 
 class _RemotePage extends StatelessWidget {
   @override

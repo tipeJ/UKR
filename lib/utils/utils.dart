@@ -21,6 +21,16 @@ extension ListExtensions<T> on List<T> {
   }
 }
 
+extension MapsExtensions<T, E> on Map<T, E> {
+  E getPreferred(List<T> preferreds, E def) {
+    E? result;
+    preferreds.forEach((p) {
+      if (this[p] != null) result = this[p];
+    });
+    return result ?? def;
+  }
+}
+
 extension Generals on dynamic {
   T? nullOr<T>(T retur) => this == null ? null : retur;
   T? nullIf<T>(T retur, ConditionArgument a) => a(this) ? retur : null;

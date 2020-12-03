@@ -72,7 +72,6 @@ class UKProvider extends ChangeNotifier {
   void _handleJsonResponse(Map<String, dynamic> j) async {
     final result = j['result'];
     if (result != null && !(result is String)) {
-      print("result: " + result.toString());
       // Send the result to the result Sink, to be picked up by the sending function:
       _resultSink.add(result);
       return;
@@ -129,25 +128,7 @@ class UKProvider extends ChangeNotifier {
   Future<void> _refreshPlayerItem() async {
     final result = await _api.getPlayerItem(player);
     if (result.isNotEmpty) {
-      // Fetch Artwork Paths
-      var art = result['item']['art'];
-      if (art != null && art.isNotEmpty) {
-        Map<String, String> alreadyFetched = {};
-        for (int i = 0; i < art.length; i++) {
-          final key = art.keys.elementAt(i);
-          if (art[key].isNotEmpty) {
-            if (alreadyFetched.keys.contains(art[key])) {
-              art[key] = alreadyFetched[art[key]];
-            } else {
-              final previous = art[key];
-              art[key] =
-                  await _api.retrieveCachedImageURL(player, art[key] ?? "");
-              alreadyFetched[previous] = art[key];
-            }
-          }
-        }
-      }
-      this.currentItem = VideoItem.fromJson(result['item']);
+      this.currentItem = VideoItem.fromJson(result);
       notifyListeners();
     }
   }
@@ -155,8 +136,8 @@ class UKProvider extends ChangeNotifier {
   // ** Playlist Endpoints
   Future<void> _refreshPlayList() async {
     if (playlistID != -1) {
-      final r = await _api.getPlayList(player, id: playlistID);
-      print("playlist: " + r.toString());
+      this.playList = await _api.getPlayList(player, id: playlistID);
+      notifyListeners();
     }
   }
 
@@ -328,6 +309,7 @@ class UKProvider extends ChangeNotifier {
   Item? currentItem;
 
   // ** Playlist Properties
+  List<Item> playList = [];
 }
 
 Map<String, dynamic> _convertJsonData(String json) =>

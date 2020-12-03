@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:UKR/models/models.dart';
+import 'package:UKR/resources/resources.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -98,7 +99,6 @@ class ApiProvider {
       ]
     });
     final response = await http.post(url(player), headers: headers, body: body);
-    print("props:" + response.body);
     final s = _handleHTTPResponse(response);
     if (s.isEmpty) return const {};
     final parsed = await compute(jsonDecode, s);
@@ -106,47 +106,45 @@ class ApiProvider {
   }
 
   Future<Map<String, dynamic>> getPlayerItem(Player player) async {
-    final body = await _encode("Player.GetItem", {
-      "playerid": _playerID,
-      "properties": const [
-        "director",
-        "year",
-        "disc",
-        "albumartist",
-        "art",
-        "showtitle",
-        "episode",
-        "season",
-        "episodeguide",
-        "description",
-        "albumreleasetype",
-        "duration",
-        "streamdetails",
-        "file",
-        "plot",
-        "plotoutline",
-        // "cast"
-      ]
-    });
+    final body = await _encode("Player.GetItem",
+        {"playerid": _playerID, "properties": FETCH_ITEM_PROPERTIES});
     final response = await http.post(url(player), headers: headers, body: body);
-    print("------------");
-    print("nextitem:" + response.body.toString());
-    print("------------");
     final s = _handleHTTPResponse(response);
     if (s.isEmpty) return const {};
     final parsed = await compute(jsonDecode, s);
-    return parsed['result'] ?? const {};
+    final result = parsed['result'];
+    if (parsed['error'] == null && result != null) {
+      var item = parsed['result']['item'];
+      print('item:::' + item.toString());
+      // *** Fetch Artwork Paths
+      await _retrieveImageURLs(player, item);
+      return item;
+    }
+    return {};
   }
 
-  Future<Map<String, dynamic>> getPlayList(Player player,
-      {required int id}) async {
-    final body = await _encode("Player.GetItem", {"playlistid": id});
+  Future<List<Item>> getPlayList(Player player, {required int id}) async {
+    final body = await _encode("Playlist.GetItems",
+        {"playlistid": id, "properties": FETCH_ITEM_PROPERTIES});
     final response = await http.post(url(player), headers: headers, body: body);
+    print("------------");
     print("PLAYLIST: " + response.body);
+    print("------------");
     final s = _handleHTTPResponse(response);
-    if (s.isEmpty) return const {};
-    final parsed = await compute(jsonDecode, s);
-    return parsed['result'] ?? const {};
+    if (s.isNotEmpty) {
+      final parsed = await compute(jsonDecode, s);
+      List<Item> itemsList = [];
+      final items = parsed['result']['items'];
+      if (items != null && items.isNotEmpty) {
+        for (int i = 0; i < items.length; i++) {
+          var item = items[i];
+          await _retrieveImageURLs(player, item);
+          itemsList.add(VideoItem.fromJson(item));
+        }
+      }
+      return itemsList;
+    }
+    return const [];
   }
 
   Future<String> _getPlayerProperties(Player player) async {
@@ -281,16 +279,34 @@ class ApiProvider {
   }
 
   Future<String> retrieveCachedImageURL(Player player, String source) async {
-    print("SOURCE: " + source);
     final bod = await _encode("Files.PrepareDownload", {"path": source});
     final r = await http.post(url(player), headers: headers, body: bod);
     final parsed = await compute(jsonDecode, r.body);
-    print("DETAILS: " + parsed.toString());
     if (r.statusCode != 200 || parsed['error'] != null) return "";
     final path = parsed['result']['details']['path'];
     if (path == null) return "";
     return "http://${player.address}:${player.port}/" +
         parsed['result']['details']['path'];
+  }
+
+  Future<void> _retrieveImageURLs(
+      Player player, Map<String, dynamic> item) async {
+    var art = item['art'];
+    if (art != null && art.isNotEmpty) {
+      Map<String, String> alreadyFetched = {};
+      for (int i = 0; i < art.length; i++) {
+        final key = art.keys.elementAt(i);
+        if (art[key].isNotEmpty) {
+          if (alreadyFetched.keys.contains(art[key])) {
+            art[key] = alreadyFetched[art[key]];
+          } else {
+            final previous = art[key];
+            art[key] = await retrieveCachedImageURL(player, art[key] ?? "");
+            alreadyFetched[previous] = art[key];
+          }
+        }
+      }
+    }
   }
 
   void skip(Player player, Map<String, dynamic> params) async {
