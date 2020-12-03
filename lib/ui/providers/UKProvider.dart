@@ -120,6 +120,9 @@ class UKProvider extends ChangeNotifier {
         _updateTemporaryProgress();
         _updateTimeTimer();
         break;
+      case "Playlist.OnClear":
+        this.playList = [];
+        break;
     }
     notifyListeners();
   }

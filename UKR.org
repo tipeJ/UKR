@@ -134,6 +134,11 @@
 *** Tests
     Not caused by encoding command being run in an isolate function. The behaviour persists on non-isolate version.
 
-** TODO Artwork not showing before widget rebuilds
-** TODO Fix ( initial ) playback data sometimes not being applied on launch
+** TODO Totaltime doesn't appear when starting a new item playback
+   Causes the seekbar to show the live tag even though the stream may be seekable.
+
+** DONE Artwork not showing before widget rebuilds
+   CLOSED: [2020-12-03 to 23:57]
+** DONE Fix ( initial ) playback data sometimes not being applied on launch
+   CLOSED: [2020-12-03 to 23:57]
    Usually works on repeated launches.
