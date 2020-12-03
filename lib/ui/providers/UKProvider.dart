@@ -108,6 +108,7 @@ class UKProvider extends ChangeNotifier {
         time = PlayerTime.empty();
         totalTime = PlayerTime.empty();
         currentItem = null;
+        _timeUpdateTimer?.cancel();
         break;
       case "Player.OnPlay":
         speed = d['player']['speed'];
