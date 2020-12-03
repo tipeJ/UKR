@@ -14,23 +14,23 @@ class BackgroundVolume extends StatelessWidget {
   Widget build(BuildContext context) {
     final maxHeight = MediaQuery.of(context).size.height;
     final maxWidth = MediaQuery.of(context).size.width;
-    return Listener(
-      onPointerSignal: (event) {
-        if (event is PointerScrollEvent) {
-          if (event.scrollDelta.dy < 0) {
-            context.read<UKProvider>().increaseVolumeSmall();
-          } else {
-            context.read<UKProvider>().decreaseVolumeSmall();
-          }
-        }
+    return GestureDetector(
+      onVerticalDragUpdate: (details) {
+        final endPos = maxHeight - 56.0;
+        final clampedP =
+            details.globalPosition.dy.clamp(56.0, maxHeight - 56.0);
+        final newVolume = ((endPos - clampedP).abs() / (endPos - 56.0));
+        context.read<UKProvider>().setVolume(newVolume * 100);
       },
-      child: GestureDetector(
-        onVerticalDragUpdate: (details) {
-          final endPos = maxHeight - 56.0;
-          final clampedP =
-              details.globalPosition.dy.clamp(56.0, maxHeight - 56.0);
-          final newVolume = ((endPos - clampedP).abs() / (endPos - 56.0));
-          context.read<UKProvider>().setVolume(newVolume * 100);
+      child: Listener(
+        onPointerSignal: (event) {
+          if (event is PointerScrollEvent) {
+            if (event.scrollDelta.dy < 0) {
+              context.read<UKProvider>().increaseVolumeSmall();
+            } else {
+              context.read<UKProvider>().decreaseVolumeSmall();
+            }
+          }
         },
         child: Container(
           width: maxWidth,
@@ -38,12 +38,12 @@ class BackgroundVolume extends StatelessWidget {
           color: Colors.transparent,
           child: Stack(
             children: [
-              _BackgroundImageWrapper(),
+              BackgroundImageWrapper(),
               Container(
                   width: maxWidth,
                   height: maxHeight,
                   color: Color.fromARGB(125, 0, 0, 0)),
-              _BackgroundVolumeWrapper()
+              BackgroundVolumeWrapper()
             ],
           ),
         ),
@@ -52,7 +52,7 @@ class BackgroundVolume extends StatelessWidget {
   }
 }
 
-class _BackgroundVolumeWrapper extends StatelessWidget {
+class BackgroundVolumeWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final maxHeight = MediaQuery.of(context).size.height - 2 * 56.0;
@@ -77,26 +77,26 @@ class _BackgroundVolumeWrapper extends StatelessWidget {
   }
 }
 
-class _BackgroundImageWrapper extends StatelessWidget {
+class BackgroundImageWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var item = context.select<UKProvider, Item?>((p) => p.currentItem);
     var art = item?.artwork ?? {};
     String? url;
-    Widget child;
-    if (item == null || art.isEmpty || art['poster'] == null) {
-      return Container();
-    } else {
-      url = retrieveOptimalImage(item);
-      if (url.isEmpty) return Container();
-      final fit = MediaQuery.of(context).size.aspectRatio > 1.0
-          ? BoxFit.fitWidth
-          : BoxFit.fitHeight;
-      child = CachedNetworkImage(fit: fit, imageUrl: art['poster']);
+    Widget? child;
+    if (item != null || art.isNotEmpty || art['poster'] != null) {
+      url = retrieveOptimalImage(item!);
+      if (url.isNotEmpty){
+        final fit = MediaQuery.of(context).size.aspectRatio > 1.0
+            ? BoxFit.fitWidth
+            : BoxFit.fitHeight;
+        child = CachedNetworkImage(fit: fit, imageUrl: art['poster']);
+      }
     }
     return Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        child: child);
+        color: Colors.black38,
+        child: child ?? Container());
   }
 }

@@ -1,12 +1,19 @@
 import 'models.dart';
 
-abstract class Item {
+class Item {
   final String type;
   final int duration;
   final String label;
   final Map<String, String> artwork;
-  const Item(this.duration, this.label, this.type, this.artwork);
-
+  final String fileUrl;
+  final int? year;
+  Item(Map<String, dynamic> j)
+      : duration = j['duration'],
+        year = j['year'] == 1601 ? null : j['year'],
+        type = j['type'],
+        label = j['label'],
+        artwork = _castArt(j),
+        fileUrl = j['file'] ?? "";
   @override
   bool operator ==(other) =>
       other is Item && other.duration == duration && other.label == label;
@@ -19,17 +26,16 @@ class AudioItem extends Item {
   final AlbumReleaseType releaseType;
   final int disc;
 
-  const AudioItem(duration, label, type, artwork,
+  AudioItem(json,
       {required this.albumArtist,
       required this.releaseType,
       required this.disc})
-      : super(duration, label, type, artwork);
+      : super(json);
 
-  factory AudioItem.fromJson(dynamic j) =>
-    AudioItem(j['duration'], j['label'], j['type'], _castArt(j),
-          albumArtist: j['albumartist'],
-          releaseType: _getReleaseType(j['releasetype']),
-          disc: j['disc']);
+  factory AudioItem.fromJson(dynamic j) => AudioItem(j,
+      albumArtist: j['albumartist'],
+      releaseType: _getReleaseType(j['releasetype']),
+      disc: j['disc']);
 
   static AlbumReleaseType _getReleaseType(String releaseType) =>
       releaseType == "album" ? AlbumReleaseType.Album : AlbumReleaseType.Single;
@@ -38,34 +44,33 @@ class AudioItem extends Item {
 class VideoItem extends Item {
   final List<String> director;
   final VideoStreams? videoStreams;
-  final int? year;
+  final String? plot;
 
   // * TV Specific
   final int? season;
   final int? episode;
   final String? showTitle;
 
-  const VideoItem(duration, label, type, artwork,
+  VideoItem(json,
       {required this.director,
       required this.videoStreams,
-      this.year,
+      this.plot,
       this.season,
       this.episode,
       this.showTitle})
-      : super(duration, label, type, artwork);
+      : super(json);
 
-  factory VideoItem.fromJson(dynamic j) =>
-    VideoItem(j['duration'], j['label'], j['type'], _castArt(j),
-          year: j['year'],
-          season: j['season'],
-          episode: j['episode'],
-          showTitle: j['showtitle'],
-          director: j['director'] != null
-              ? j['director'].map<String>((d) => d.toString()).toList()
-              : const [],
-          videoStreams: j['streamdetails'] != null
-              ? VideoStreams.fromJson(j['streamdetails'])
-              : null);
+  factory VideoItem.fromJson(dynamic j) => VideoItem(j,
+      plot: j['plot'],
+      season: j['season'] == -1 ? null : j['season'],
+      episode: j['episode'],
+      showTitle: j['showtitle'],
+      director: j['director'] != null
+          ? j['director'].map<String>((d) => d.toString()).toList()
+          : const [],
+      videoStreams: j['streamdetails'] != null
+          ? VideoStreams.fromJson(j['streamdetails'])
+          : null);
 }
 
 Map<String, String> _castArt(dynamic j) => Map<String, String>.from(j['art']);

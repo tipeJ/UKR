@@ -14,14 +14,9 @@ class RemoteScreen extends StatelessWidget {
         bottomSheet: RemoteControlsBar(),
         body: Stack(
           children: [
-            BackgroundVolume(),
-            Align(alignment: Alignment.topCenter, child: CurrentItem()),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                  padding: EdgeInsets.only(bottom: 50.0),
-                  child: RemoteButtons()),
-            )
+            BackgroundImageWrapper(),
+            BackgroundVolumeWrapper(),
+            PagesScreen(),
           ],
         ));
   }
@@ -31,7 +26,7 @@ class RemoteScreen extends StatelessWidget {
     List<Widget> actions = [];
     final player = context.watch<PlayersProvider>().selectedPlayer;
     if (player == null) {
-      title = const Text("TEST");
+      title = const Text("NO PLAYER");
     } else {
       title = Text(player.address);
       actions.add(_PlayerPowerOptions());

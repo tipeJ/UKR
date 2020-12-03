@@ -98,6 +98,7 @@ class ApiProvider {
       ]
     });
     final response = await http.post(url(player), headers: headers, body: body);
+    print("props:" + response.body);
     final s = _handleHTTPResponse(response);
     if (s.isEmpty) return const {};
     final parsed = await compute(jsonDecode, s);
@@ -120,11 +121,17 @@ class ApiProvider {
         "description",
         "albumreleasetype",
         "duration",
-        "streamdetails"
+        "streamdetails",
+        "file",
+        "plot",
+        "plotoutline",
+        // "cast"
       ]
     });
     final response = await http.post(url(player), headers: headers, body: body);
-    print("RRR:" + response.body.toString());
+    print("------------");
+    print("nextitem:" + response.body.toString());
+    print("------------");
     final s = _handleHTTPResponse(response);
     if (s.isEmpty) return const {};
     final parsed = await compute(jsonDecode, s);
@@ -135,6 +142,7 @@ class ApiProvider {
       {required int id}) async {
     final body = await _encode("Player.GetItem", {"playlistid": id});
     final response = await http.post(url(player), headers: headers, body: body);
+    print("PLAYLIST: " + response.body);
     final s = _handleHTTPResponse(response);
     if (s.isEmpty) return const {};
     final parsed = await compute(jsonDecode, s);
@@ -273,10 +281,12 @@ class ApiProvider {
   }
 
   Future<String> retrieveCachedImageURL(Player player, String source) async {
+    print("SOURCE: " + source);
     final bod = await _encode("Files.PrepareDownload", {"path": source});
     final r = await http.post(url(player), headers: headers, body: bod);
-    if (r.statusCode != 200) return "";
     final parsed = await compute(jsonDecode, r.body);
+    print("DETAILS: " + parsed.toString());
+    if (r.statusCode != 200 || parsed['error'] != null) return "";
     final path = parsed['result']['details']['path'];
     if (path == null) return "";
     return "http://${player.address}:${player.port}/" +

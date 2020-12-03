@@ -52,9 +52,13 @@
     CLOSED: [2020-11-25 ke 15:20]
     For when the stream is not seekable.
 
-*** TODO [#B] Seek
+*** DONE [#B] Seek
+    CLOSED: [2020-12-03 to 13:37]
 
 ** TODO [#B] Playlist Support
+
+** TODO Movie/TV Show cast
+   the cast parameter returns an insane number of items.
 
 ** TODO Advanced player management
 
@@ -68,7 +72,8 @@
 *** TODO Player Password/Username implementation
     Current implementation does not support auth.
 
-** TODO Image fetching for movies (TMDB, etc.)
+** DONE Image fetching for movies (TMDB, etc.)
+   CLOSED: [2020-12-03 to 13:37]
    Works, but not on initial launch. The selector doesn't seem to find any difference between the artwork maps.
 ** TODO Content browsing
    

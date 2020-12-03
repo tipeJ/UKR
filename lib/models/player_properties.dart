@@ -53,25 +53,18 @@ class PlayerTime {
     int newSeconds = this.seconds + seconds;
     int newMinutes = this.minutes;
     int newHours = this.hours;
-    // if (newSeconds > 59) {
-    newMinutes += (newSeconds / 60).floor();
-    newSeconds = newSeconds % 60;
+    if (newMinutes == 0 && newHours == 0 && newSeconds < 0) {
+      return PlayerTime.empty();
+    } else {
+      newMinutes += (newSeconds / 60).floor();
+      newSeconds = newSeconds % 60;
 
-    if (newMinutes > 59) {
-      newHours += (newMinutes / 60).floor();
-      newMinutes = newMinutes % 60;
+      if (newMinutes > 59) {
+        newHours += (newMinutes / 60).floor();
+        newMinutes = newMinutes % 60;
+      }
+      return PlayerTime(newSeconds, newMinutes, newHours);
     }
-    // } else if (newSeconds < 0) {
-    //   newMinutes = newMinutes - (seconds /)
-    //   newMinutes += (newSeconds / 60).floor();
-    //   newSeconds = newSeconds % 60;
-
-    //   if (newMinutes > 59) {
-    //       newHours += (newMinutes / 60).floor();
-    //       newMinutes = newMinutes % 60;
-    //   }
-    // }
-    return PlayerTime(newSeconds, newMinutes, newHours);
   }
 
   @override

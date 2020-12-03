@@ -128,8 +128,7 @@ class UKProvider extends ChangeNotifier {
   // ** Player Item Endpoints
   Future<void> _refreshPlayerItem() async {
     final result = await _api.getPlayerItem(player);
-    print("nextitem: ${result.toString()}");
-    if (result.isNotEmpty && result['item']['year'] != 1601) {
+    if (result.isNotEmpty) {
       // Fetch Artwork Paths
       var art = result['item']['art'];
       if (art != null && art.isNotEmpty) {
