@@ -1,8 +1,8 @@
 import 'package:UKR/ui/providers/providers.dart';
-import 'package:provider/provider.dart';
 import 'package:UKR/ui/widgets/widgets.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class PagesScreen extends StatelessWidget {
   @override

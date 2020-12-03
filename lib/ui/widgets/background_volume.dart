@@ -1,56 +1,10 @@
-import 'package:UKR/resources/resources.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:UKR/utils/utils.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:UKR/models/models.dart';
 import 'package:UKR/ui/providers/providers.dart';
-import 'package:flutter/gestures.dart';
+import 'package:UKR/utils/utils.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tuple/tuple.dart';
-
-class BackgroundVolume extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final maxHeight = MediaQuery.of(context).size.height;
-    final maxWidth = MediaQuery.of(context).size.width;
-    return GestureDetector(
-      onVerticalDragUpdate: (details) {
-        final endPos = maxHeight - 56.0;
-        final clampedP =
-            details.globalPosition.dy.clamp(56.0, maxHeight - 56.0);
-        final newVolume = ((endPos - clampedP).abs() / (endPos - 56.0));
-        context.read<UKProvider>().setVolume(newVolume * 100);
-      },
-      child: Listener(
-        onPointerSignal: (event) {
-          if (event is PointerScrollEvent) {
-            if (event.scrollDelta.dy < 0) {
-              context.read<UKProvider>().increaseVolumeSmall();
-            } else {
-              context.read<UKProvider>().decreaseVolumeSmall();
-            }
-          }
-        },
-        child: Container(
-          width: maxWidth,
-          height: maxHeight,
-          color: Colors.transparent,
-          child: Stack(
-            children: [
-              BackgroundImageWrapper(),
-              Container(
-                  width: maxWidth,
-                  height: maxHeight,
-                  color: Color.fromARGB(125, 0, 0, 0)),
-              BackgroundVolumeWrapper()
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class BackgroundVolumeWrapper extends StatelessWidget {
   @override
