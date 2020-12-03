@@ -40,7 +40,6 @@ class BackgroundImageWrapper extends StatelessWidget {
     if (item != null && art.isNotEmpty) {
       String? url;
       url = retrieveOptimalImage(item);
-      print("UURL:" + url);
       if (url.isNotEmpty) {
         final fit = MediaQuery.of(context).size.aspectRatio > 1.0
             ? BoxFit.fitWidth
