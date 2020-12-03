@@ -201,11 +201,7 @@ class UKProvider extends ChangeNotifier {
     }
   }
 
-  void toggleRepeat() async {
-    final body = await _encodeCommand(
-        "Player.SetRepeat", const {"playerid": _playerID, "repeat": "cycle"});
-    _w.add(body);
-  }
+  void toggleRepeat() => _api.toggleRepeat(player);
 
   void playPause() => _api.playPause(player);
 
