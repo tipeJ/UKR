@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:provider/provider.dart';
@@ -58,12 +59,13 @@ class _RemoteButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final iconSize = max(((MediaQuery.of(context).size.width / 5.5) - 25.0) * (this.size / 45.0), size);
     return InkWell(
         onTap: onTap,
         child: Container(
             alignment: Alignment.center,
-            width: 50.0,
-            height: 50.0,
-            child: Icon(this.icon, color: _iconColor, size: this.size)));
+            width: iconSize + 5.00,
+            height: iconSize + 5.00,
+            child: Icon(this.icon, color: _iconColor, size: iconSize)));
   }
 }
