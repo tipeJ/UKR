@@ -23,3 +23,5 @@ const FETCH_ITEM_PROPERTIES = [
   "plotoutline",
   // "cast"
 ];
+
+const FETCH_PLAYLIST_ITEMS = ["file"];

@@ -23,11 +23,13 @@ extension ListExtensions<T> on List<T> {
 
 extension MapsExtensions<T, E> on Map<T, E> {
   E getPreferred(List<T> preferreds, E def) {
-    E? result;
-    preferreds.forEach((p) {
-      if (this[p] != null) result = this[p];
-    });
-    return result ?? def;
+    for (int i = 0; i < preferreds.length; i++) {
+      E? p = this[preferreds[i]];
+      if (p != null) {
+        return p;
+      }
+    }
+    return def;
   }
 }
 

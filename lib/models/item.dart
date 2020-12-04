@@ -73,4 +73,4 @@ class VideoItem extends Item {
           : null);
 }
 
-Map<String, String> _castArt(dynamic j) => Map<String, String>.from(j['art']);
+Map<String, String> _castArt(dynamic j) => j['art'] != null ? Map<String, String>.from(j['art']) : const {};

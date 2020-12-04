@@ -125,7 +125,7 @@ class ApiProvider {
 
   Future<List<Item>> getPlayList(Player player, {required int id}) async {
     final body = await _encode("Playlist.GetItems",
-        {"playlistid": id, "properties": FETCH_ITEM_PROPERTIES});
+        {"playlistid": id, "properties": FETCH_PLAYLIST_ITEMS});
     final response = await http.post(url(player), headers: headers, body: body);
     print("------------");
     print("PLAYLIST: " + response.body);
@@ -138,7 +138,6 @@ class ApiProvider {
       if (items != null && items.isNotEmpty) {
         for (int i = 0; i < items.length; i++) {
           var item = items[i];
-          await _retrieveImageURLs(player, item);
           itemsList.add(VideoItem.fromJson(item));
         }
       }

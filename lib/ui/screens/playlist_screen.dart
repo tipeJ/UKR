@@ -8,10 +8,11 @@ class PlaylistScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final playList = context.select<UKProvider, List<Item>>((p) => p.playList);
-    return ListView.builder(
+    return ListView.separated(
         itemCount: playList.length,
-        itemBuilder: (_, i) => ListItem(playList[i], onTap: () {
-              print("Clicked ${playList[i].label}");
+        separatorBuilder: (_, __) => const Divider(),
+        itemBuilder: (_, i) => PlaylistItem(playList[i], onTap: () {
+              print("Clicked ${playList[i].fileUrl}");
     }));
   }
 }

@@ -19,7 +19,6 @@ String retrieveOptimalImage(Item item) {
         'banner'
       ], "");
     default:
-      print("type:" + item.type);
       return a.getPreferred(
           const ['poster', 'season.poster', 'fanart', 'thumb', 'banner'], "");
   }
