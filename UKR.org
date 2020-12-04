@@ -39,6 +39,17 @@
     * Artist
     * Album
 
+** TODO [#C] Advanced remote controls
+   Implementation for most of the commands in Input.Executeaction.
+   Most important ones:
+   + Cycle Subtitle
+   + Bookmark
+   + Fast forwarding
+   + Chapter navigation
+   + Player Debug/ Process info
+
+   Maybe even touch scrolling pad :thinking
+   
 ** DONE Playback controls
    CLOSED: [2020-11-29 su 20:26]
    Still not implemented:

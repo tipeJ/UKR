@@ -40,7 +40,7 @@ class RemoteButtons extends StatelessWidget {
             _RemoteButton(Icons.info_outline_rounded,
                 () => _executeAction(context, "info"), 30.0),
             _RemoteButton(Icons.menu_outlined,
-                () => _executeAction(context, "contextmenu"), 30.0),
+                () => _executeAction(context, "leftclick"), 30.0),
           ],
         )
       ],
