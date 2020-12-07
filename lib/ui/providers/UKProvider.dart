@@ -123,7 +123,18 @@ class UKProvider extends ChangeNotifier {
       case "Playlist.OnClear":
         this.playList = [];
         break;
+      case "Playlist.OnRemove":
+        this.playList.removeAt(d['position']);
+        break;
+      case "Playlist.OnAdd":
+        int pos = d['position'];
+        var list = await _api.getPlayList(player,
+            id: d['playlistid'], lowerLimit: pos, upperLimit: pos + 1);
+        print("RECEIVED: " + list.toString());
+        this.playList.add(list.first);
+        break;
     }
+    print("REFRESHING");
     notifyListeners();
   }
 

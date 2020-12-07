@@ -15,9 +15,28 @@
     2. Application_Provider
     3. Item_Provider
        
+** Playlist controlling
+
+*** TODO Remove items
+
+*** Add items
+
+**** TODO Add via dialog (Android/iOS)
+
+**** TODO Add via content browser / bookmarks
+     
+*** TODO Move items
+
+*** TODO Switch current item
+
+*** DONE Sync items
+    CLOSED: [2020-12-07 ma 22:13]
+
+** TODO Bookmarks
+   Sources:
+   * Web
 ** TODO [#B] Poster background completion
    Currently the poster background contains only the label for the currently playing item.
-
 *** [#A] Movies
     * Title
     * Year

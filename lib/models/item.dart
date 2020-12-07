@@ -16,7 +16,7 @@ class Item {
         fileUrl = j['file'] ?? "";
   @override
   bool operator ==(other) =>
-      other is Item && other.duration == duration && other.label == label;
+      other is Item && other.duration == duration && other.label == label && other.fileUrl == fileUrl && other.year == year;
 }
 
 enum AlbumReleaseType { Album, Single }

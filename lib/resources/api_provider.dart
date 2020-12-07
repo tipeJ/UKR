@@ -123,9 +123,13 @@ class ApiProvider {
     return {};
   }
 
-  Future<List<Item>> getPlayList(Player player, {required int id}) async {
+  Future<List<Item>> getPlayList(Player player,
+      {required int id, int lowerLimit = -1, int upperLimit = -1}) async {
+    final limits =
+        lowerLimit > 0 ? {"start": lowerLimit, "end": upperLimit} : const {};
     final body = await _encode("Playlist.GetItems",
-        {"playlistid": id, "properties": FETCH_PLAYLIST_ITEMS});
+        {"playlistid": id, "properties": FETCH_PLAYLIST_ITEMS,
+      "limits": limits});
     final response = await http.post(url(player), headers: headers, body: body);
     print("------------");
     print("PLAYLIST: " + response.body);
