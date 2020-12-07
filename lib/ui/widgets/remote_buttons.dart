@@ -59,7 +59,11 @@ class _RemoteButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final iconSize = max(((MediaQuery.of(context).size.width / 5.5) - 25.0) * (this.size / 45.0), size);
+    final iconSize = max(
+            ((MediaQuery.of(context).size.width / 5.5) - 25.0) *
+                (this.size / 45.0),
+            size)
+          .clamp(size, 125.0);
     return InkWell(
         onTap: onTap,
         child: Container(
