@@ -1,12 +1,11 @@
 #+TITLE: UKR
 #+AUTHOR: Tiitus Järvinen
 
+* Features
+
+** Playlist support
+   
 * Objectives
-** DONE [#A] Migrate to Sound null safety
-   CLOSED: [2020-11-25 ke 14:54]
-** DONE [#A] Migrade to WebSocket
-   CLOSED: [2020-11-29 su 21:19]
-   Old providers are deprecated. Not yet cleaned up.
 ** TODO Clean old implementation
 *** TODO Clean api_provider
     Currently has a lot of deprecated endpoints that are now used in the UKProvider class
@@ -50,25 +49,6 @@
 
    Maybe even touch scrolling pad :thinking
    
-** DONE Playback controls
-   CLOSED: [2020-11-29 su 20:26]
-   Still not implemented:
-   * Short Rewind/Skip
-   * Prev/Next
-** DONE [#A] Seekbar
-   CLOSED: [2020-11-29 su 21:23]
-   Implement the seekbar properly. Currently has a placeholder but does not work.
-
-*** DONE [#A] Implement LIVE tag
-    CLOSED: [2020-11-25 ke 15:20]
-    For when the stream is not seekable.
-
-*** DONE [#B] Seek
-    CLOSED: [2020-12-03 to 13:37]
-
-** DONE [#B] Playlist Support
-   CLOSED: [2020-12-03 to 23:49]
-
 ** TODO Movie/TV Show cast
    the cast parameter returns an insane number of items.
 
@@ -84,9 +64,6 @@
 *** TODO Player Password/Username implementation
     Current implementation does not support auth.
 
-** DONE Image fetching for movies (TMDB, etc.)
-   CLOSED: [2020-12-03 to 13:37]
-   Works, but not on initial launch. The selector doesn't seem to find any difference between the artwork maps.
 ** TODO Content browsing
    
 *** TODO [#C] Add-Ons
@@ -99,25 +76,12 @@
 ** TODO Notifications
 
 *** TODO Android
-
+    
 *** TODO iOS / iPadOS
-
+    
 *** Desktop??
     No API exists yet for environments like KDE or Windows. Perhaps I should create that myself if it seems to take too long..?
 * Known Issues / Bugs
-
-** DONE Launch Screen render error
-   CLOSED: [2020-11-25 ke 14:56]
-   Flashes for a little while when opening the application for the first time. Should be easily fixed by implementing null player item check.
-
-   
-** DONE Playback controls overflow error
-   CLOSED: [2020-11-25 ke 15:26]
-   Control buttons overflow on very narrow screen. As this is written, implemented by the following line:
-
-    #+BEGIN_SRC dart
-      final _contSize = min(40.0, MediaQuery.of(context).size.width / 6 - 28.0);
-    #+END_SRC
 
 ** TODO Player switcher doesn't actually change the player value of the multiprovider providers
    Strange...
@@ -148,8 +112,3 @@
 ** TODO Totaltime doesn't appear when starting a new item playback
    Causes the seekbar to show the live tag even though the stream may be seekable.
 
-** DONE Artwork not showing before widget rebuilds
-   CLOSED: [2020-12-03 to 23:57]
-** DONE Fix ( initial ) playback data sometimes not being applied on launch
-   CLOSED: [2020-12-03 to 23:57]
-   Usually works on repeated launches.
