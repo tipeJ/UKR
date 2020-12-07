@@ -123,7 +123,7 @@ class ApiProvider {
     return {};
   }
 
-  Future<List<Item>> getPlayList(Player player,
+  Future<List<PlaylistItemModel>> getPlayList(Player player,
       {required int id, int lowerLimit = -1, int upperLimit = -1}) async {
     final limits =
         lowerLimit > 0 ? {"start": lowerLimit, "end": upperLimit} : const {};
@@ -137,12 +137,12 @@ class ApiProvider {
     final s = _handleHTTPResponse(response);
     if (s.isNotEmpty) {
       final parsed = await compute(jsonDecode, s);
-      List<Item> itemsList = [];
+      List<PlaylistItemModel> itemsList = [];
       final items = parsed['result']['items'];
       if (items != null && items.isNotEmpty) {
         for (int i = 0; i < items.length; i++) {
           var item = items[i];
-          itemsList.add(VideoItem.fromJson(item));
+          itemsList.add(PlaylistItemModel.fromJson(item));
         }
       }
       return itemsList;

@@ -138,7 +138,7 @@ class _BottomControlButtons extends StatelessWidget {
                             size: _lerp(0.0, _maxSize)))),
                 InkWell(
                     onTap: () {
-                      context.read<UKProvider>().goto(direction: false);
+                      context.read<UKProvider>().goto("previous");
                     },
                     child: Container(
                         width: _contSize,
@@ -179,7 +179,7 @@ class _BottomControlButtons extends StatelessWidget {
                             size: _lerp(0.0, _maxSize)))),
                 InkWell(
                     onTap: () {
-                      context.read<UKProvider>().goto();
+                      context.read<UKProvider>().goto("next");
                     },
                     child: Container(
                         width: _contSize,

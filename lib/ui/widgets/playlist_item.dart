@@ -2,7 +2,7 @@ import 'package:UKR/models/models.dart';
 import 'package:flutter/material.dart';
 
 class PlaylistItem extends StatelessWidget {
-  final Item item;
+  final PlaylistItemModel item;
   final VoidCallback onTap;
 
   const PlaylistItem(this.item, {required this.onTap});
@@ -10,7 +10,7 @@ class PlaylistItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String title = item.label.isEmpty ? item.fileUrl : item.label;
-    String subtitle = item.year?.toString() ?? item.type;
+    String subtitle = item.type;
     return ListTile(
       onTap: onTap,
       title: Text(title, overflow: TextOverflow.ellipsis,),

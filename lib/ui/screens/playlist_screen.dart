@@ -19,14 +19,15 @@ class PlaylistScreen extends StatelessWidget {
     //         itemBuilder: (_, i) => PlaylistItem(playList[i], onTap: () {
     //               print("Clicked ${playList[i].fileUrl}");
     //             })));
-    return Selector<UKProvider, List<Item>>(
-      selector: (_, p) => p.playList.toList(),
+    return Selector<UKProvider, List<PlaylistItemModel>>(
+        selector: (_, p) => p.playList.toList(),
         builder: (_, playList, __) {
           return ListView.separated(
               itemCount: playList.length,
               separatorBuilder: (_, __) => const Divider(),
               itemBuilder: (_, i) => PlaylistItem(playList[i], onTap: () {
                     print("Clicked ${playList[i].fileUrl}");
+                    context.read<UKProvider>().goto(i);
                   }));
         });
   }

@@ -112,8 +112,9 @@ class UKProvider extends ChangeNotifier {
         break;
       case "Player.OnPlay":
         speed = d['player']['speed'];
-        _updateTimeTimer();
         await _refreshPlayerItem();
+        await _refreshPlayerProperties();
+        _updateTimeTimer();
         return;
       case "Player.OnSeek":
         this.time = PlayerTime.fromJson(d['player']['time']);
@@ -130,11 +131,9 @@ class UKProvider extends ChangeNotifier {
         int pos = d['position'];
         var list = await _api.getPlayList(player,
             id: d['playlistid'], lowerLimit: pos, upperLimit: pos + 1);
-        print("RECEIVED: " + list.toString());
         this.playList.add(list.first);
         break;
     }
-    print("REFRESHING");
     notifyListeners();
   }
 
@@ -217,9 +216,8 @@ class UKProvider extends ChangeNotifier {
   void playPause() => _api.playPause(player);
 
   /// Navigate forward/backwards in the playlist. False for previous, true for next
-  void goto({bool direction = true}) async => _w.add(await _encodeCommand(
-      "Player.GoTo",
-      {"playerid": _playerID, "to": direction ? "next" : "previous"}));
+  void goto(dynamic to) async => _w.add(
+      await _encodeCommand("Player.GoTo", {"playerid": _playerID, "to": to}));
 
   void stopPlayback() => _api.stop(player);
 
@@ -320,7 +318,7 @@ class UKProvider extends ChangeNotifier {
   Item? currentItem;
 
   // ** Playlist Properties
-  List<Item> playList = [];
+  List<PlaylistItemModel> playList = [];
 }
 
 Map<String, dynamic> _convertJsonData(String json) =>

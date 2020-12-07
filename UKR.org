@@ -15,6 +15,16 @@
     2. Application_Provider
     3. Item_Provider
        
+** Wide-Screen support
+   The layout could look somewhat like this:
+   | Appbar  | Appbar  | Appbar            |
+   |---------+---------+-------------------|
+   | Content | Content | Remote            |
+   | Content | Content | Remote            |
+   | Content | Content | Remote            |
+   | Seekbar | Seekbar | Playback Controls |
+   
+   "Content" being either playlist or content browser.
 ** Playlist controlling
 
 *** TODO Remove items
@@ -27,7 +37,8 @@
      
 *** TODO Move items
 
-*** TODO Switch current item
+*** DONE Switch current item
+    CLOSED: [2020-12-07 ma 23:36]
 
 *** DONE Sync items
     CLOSED: [2020-12-07 ma 22:13]
@@ -131,3 +142,4 @@
 ** TODO Totaltime doesn't appear when starting a new item playback
    Causes the seekbar to show the live tag even though the stream may be seekable.
 
+** TODO Time and totaltime sometimes not syncing when navigating in the playlist
