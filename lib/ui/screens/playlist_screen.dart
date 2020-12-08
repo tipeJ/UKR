@@ -21,12 +21,12 @@ class PlaylistScreen extends StatelessWidget {
                 int newPositionIndex = _indexOf(to, playList);
                 context
                     .read<UKProvider>()
-                    .swapPlaylistItems(draggingIndex, newPositionIndex);
+                    .movePlaylistItem(draggingIndex, newPositionIndex);
                 return true;
               },
               onReorderDone: (item) {
                 int newIndex = _indexOf(item, playList);
-                context.read<UKProvider>().syncPlaylistSwap(newIndex);
+                context.read<UKProvider>().syncMovePlaylistItem(newIndex);
               },
               child: ListView.builder(
                   itemCount: playList.length,

@@ -293,9 +293,9 @@ class UKProvider extends ChangeNotifier {
 
   // ** Playlist actions
 
-  /// *** Swap Playlist Items
-  /// Swaps items in the current playlist. NOTE: Call syncPlaylistSwap after the swap has been finished in the widget tree. This function does not sync the change with the remote Player.
-  void swapPlaylistItems(int from, int to) {
+  /// *** Move Playlist Item
+  /// Move item in the current playlist. NOTE: Call syncPlaylistMove after the swap has been finished in the widget tree. This function does not sync the change with the remote Player.
+  void movePlaylistItem(int from, int to) {
     final draggedItem = playList[from];
     playList.removeAt(from);
     playList.insert(to, draggedItem);
@@ -304,9 +304,9 @@ class UKProvider extends ChangeNotifier {
   }
 
   int? _oldLocation;
-  /// *** Sync Playlist Swap
-  /// Syncronizes the most recent swap event (As determined by the private variable oldLocation) with the remote Player instance.
-  void syncPlaylistSwap(int newLocation) async {
+  /// *** Sync Playlist Move
+  /// Syncronizes the most recent move event (As determined by the private variable oldLocation) with the remote Player instance.
+  void syncMovePlaylistItem(int newLocation) async {
     if (_oldLocation != null) {
       // Notify the Kodi instance.
       _api.swapPlaylist(player,
