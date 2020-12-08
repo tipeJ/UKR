@@ -296,11 +296,13 @@ class UKProvider extends ChangeNotifier {
   /// *** Move Playlist Item
   /// Move item in the current playlist. NOTE: Call syncPlaylistMove after the swap has been finished in the widget tree. This function does not sync the change with the remote Player.
   void movePlaylistItem(int from, int to) {
-    final draggedItem = playList[from];
-    playList.removeAt(from);
-    playList.insert(to, draggedItem);
-    _oldLocation = from;
-    notifyListeners();
+    if (from != -1 && to != -1 && from != to){
+      final draggedItem = playList[from];
+      playList.removeAt(from);
+      playList.insert(to, draggedItem);
+      _oldLocation = from;
+      notifyListeners();
+    }
   }
 
   int? _oldLocation;

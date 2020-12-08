@@ -5,26 +5,45 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class PagesScreen extends StatelessWidget {
+class PagesScreen extends StatefulWidget {
+  @override
+  _PagesScreenState createState() => _PagesScreenState();
+}
+
+class _PagesScreenState extends State<PagesScreen> {
+  late final PageController _controller;
+
+  @override
+  void initState() {
+    _controller = PageController(initialPage: 1);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final maxHeight = MediaQuery.of(context).size.height;
     return Padding(
       padding: const EdgeInsets.only(bottom: kBottomNavigationBarHeight),
       child: PageView(
+        controller: _controller,
         dragStartBehavior: DragStartBehavior.down,
         allowImplicitScrolling: true,
         children: [
-          Container(
-            color: Colors.black45,
-            child: Text("Content be here")
-          ),
+          Container(color: Colors.black45, child: Text("Content be here")),
           GestureDetector(
             onVerticalDragUpdate: (details) {
               final endPos = maxHeight - kBottomNavigationBarHeight;
-              final clampedP =
-                  details.globalPosition.dy.clamp(kBottomNavigationBarHeight, maxHeight - kBottomNavigationBarHeight);
-              final newVolume = ((endPos - clampedP).abs() / (endPos - kBottomNavigationBarHeight));
+              final clampedP = details.globalPosition.dy.clamp(
+                  kBottomNavigationBarHeight,
+                  maxHeight - kBottomNavigationBarHeight);
+              final newVolume = ((endPos - clampedP).abs() /
+                  (endPos - kBottomNavigationBarHeight));
               context.read<UKProvider>().setVolume(newVolume * 100);
             },
             child: Listener(
@@ -46,7 +65,6 @@ class PagesScreen extends StatelessWidget {
     );
   }
 }
-
 
 class _RemotePage extends StatelessWidget {
   @override
