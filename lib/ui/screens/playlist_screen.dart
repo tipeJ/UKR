@@ -32,19 +32,12 @@ class PlaylistScreen extends StatelessWidget {
                   itemCount: playList.length,
                   itemBuilder: (_, i) => _ReorderablePlaylistItem(
                       data: playList[i],
+                      onTap: () {
+                        print("Clicked ${playList[i].fileUrl}");
+                        context.read<UKProvider>().goto(i);
+                      },
                       isFirst: i == 0,
                       isLast: i == playList.length - 1)));
-        });
-    return Selector<UKProvider, List<PlaylistItemModel>>(
-        selector: (_, p) => p.playList.toList(),
-        builder: (_, playList, __) {
-          return ListView.separated(
-              itemCount: playList.length,
-              separatorBuilder: (_, __) => const Divider(),
-              itemBuilder: (_, i) => PlaylistItem(playList[i], onTap: () {
-                    print("Clicked ${playList[i].fileUrl}");
-                    context.read<UKProvider>().goto(i);
-                  }));
         });
   }
 }
@@ -52,11 +45,13 @@ class PlaylistScreen extends StatelessWidget {
 class _ReorderablePlaylistItem extends StatelessWidget {
   _ReorderablePlaylistItem({
     required this.data,
+    required this.onTap,
     required this.isFirst,
     required this.isLast,
   });
 
   final PlaylistItemModel data;
+  final VoidCallback onTap;
   final bool isFirst;
   final bool isLast;
 
@@ -66,7 +61,7 @@ class _ReorderablePlaylistItem extends StatelessWidget {
     if (state == ReorderableItemState.dragProxy ||
         state == ReorderableItemState.dragProxyFinished) {
       // slightly transparent background white dragging (just like on iOS)
-      decoration = BoxDecoration(color: Color(0x55000000));
+      decoration = const BoxDecoration(color: Color(0x55000000));
     } else {
       bool placeholder = state == ReorderableItemState.placeholder;
       decoration = BoxDecoration(
@@ -84,10 +79,10 @@ class _ReorderablePlaylistItem extends StatelessWidget {
     // reordering; For android mode it will be just an empty container
     Widget dragHandle = ReorderableListener(
       child: Container(
-        padding: EdgeInsets.only(right: 18.0, left: 18.0),
+        padding: const EdgeInsets.only(right: 18.0, left: 18.0),
         color: Color(0x08000000),
         child: Center(
-          child: Icon(Icons.reorder, color: Color(0xFF888888)),
+          child: const Icon(Icons.reorder, color: Color(0xFF888888)),
         ),
       ),
     );
@@ -105,7 +100,7 @@ class _ReorderablePlaylistItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   Expanded(
-                    child: PlaylistItem(data, onTap:() => print("CLICKED : ${data.fileUrl}"))),
+                      child: PlaylistItem(data, onTap: onTap)),
                   // Triggers the reordering
                   dragHandle,
                 ],
