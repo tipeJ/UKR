@@ -82,9 +82,9 @@ class UKProvider extends ChangeNotifier {
     print("RESPONSE: " + j.toString());
     switch (j['method']) {
       case "Other.PlaybackStarted":
-        _refreshPlayerProperties();
-        await _refreshPlayerItem();
+        await _refreshPlayerProperties();
         _updateTimeTimer();
+        await _refreshPlayerItem();
         return;
       case "Application.OnVolumeChanged":
         if (_volAdjustTimer == null) {
@@ -289,6 +289,25 @@ class UKProvider extends ChangeNotifier {
   void toggleSystemProperty(String property) {
     if (systemProps[property] ?? false)
       _api.toggleSystemProperty(player, property.substring(3).capitalize());
+  }
+
+  // ** Playlist actions
+  void swapPlaylistItems(int from, int to) {
+    final draggedItem = playList[from];
+    playList.removeAt(from);
+    playList.insert(to, draggedItem);
+    _oldLocation = from;
+    notifyListeners();
+  }
+
+  int? _oldLocation;
+  void syncPlaylistSwap(int newLocation) async {
+    if (_oldLocation != null) {
+      // Notify the Kodi instance.
+      _api.swapPlaylist(player,
+          playListID: playlistID, from: _oldLocation!, to: newLocation);
+      _oldLocation = null;
+    }
   }
 
   // * Properties

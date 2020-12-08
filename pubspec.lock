@@ -111,6 +111,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"
+  flutter_reorderable_list:
+    dependency: "direct main"
+    description:
+      name: flutter_reorderable_list
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.5"
   flutter_test:
     dependency: "direct dev"
     description: flutter

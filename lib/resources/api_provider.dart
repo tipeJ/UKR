@@ -127,9 +127,11 @@ class ApiProvider {
       {required int id, int lowerLimit = -1, int upperLimit = -1}) async {
     final limits =
         lowerLimit > 0 ? {"start": lowerLimit, "end": upperLimit} : const {};
-    final body = await _encode("Playlist.GetItems",
-        {"playlistid": id, "properties": FETCH_PLAYLIST_ITEMS,
-      "limits": limits});
+    final body = await _encode("Playlist.GetItems", {
+      "playlistid": id,
+      "properties": FETCH_PLAYLIST_ITEMS,
+      "limits": limits
+    });
     final response = await http.post(url(player), headers: headers, body: body);
     print("------------");
     print("PLAYLIST: " + response.body);
@@ -335,6 +337,15 @@ class ApiProvider {
       ...defParams
     });
     await http.post(url(player), headers: headers, body: body);
+  }
+
+  // * Playlist API Endpoints
+  Future<void> swapPlaylist(Player player,
+      {required int playListID, required int from, required int to}) async {
+    final body = await _encode("Playlist.Swap",
+        {"playlistid": playListID, "position1": from, "position2": to});
+    final r = await http.post(url(player), headers: headers, body: body);
+    print("swap:" + r.body);
   }
 }
 

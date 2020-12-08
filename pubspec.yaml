@@ -35,7 +35,7 @@ dependencies:
   uuid: ^2.2.2
   cached_network_image: ^2.3.3
   tuple: ^1.0.3
-  # flutter_reorderable_list: ^0.1.5
+  flutter_reorderable_list: ^0.1.5
 
 dev_dependencies:
   flutter_test:

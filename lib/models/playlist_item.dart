@@ -1,11 +1,15 @@
+import 'package:flutter/foundation.dart';
+import 'package:uuid/uuid.dart';
+
 /// * Playlist Item
 /// A model for Playlist Items, which are simplified representations of normal Items
 class PlaylistItemModel {
+  final Key id = Key(Uuid().v4());
   final String type;
   final String label;
   final String fileUrl;
 
-  const PlaylistItemModel({this.type = "", this.label = "", this.fileUrl = ""});
+  PlaylistItemModel({this.type = "", this.label = "", this.fileUrl = ""});
 
   factory PlaylistItemModel.fromJson(dynamic j) => PlaylistItemModel(
       type: j['type'],

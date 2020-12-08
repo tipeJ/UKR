@@ -34,8 +34,12 @@
 **** TODO Add via dialog (Android/iOS)
 
 **** TODO Add via content browser / bookmarks
+
+**** Drag- n' drop on desktop?
      
-*** TODO Move items
+*** DONE Move items
+    CLOSED: [2020-12-08 ti 19:31]
+    Sync accuracy should be monitored. Current solution does not verify the change via the API, as the plugin reorderable_list required syncronous solution.
 
 *** DONE Switch current item
     CLOSED: [2020-12-07 ma 23:36]
