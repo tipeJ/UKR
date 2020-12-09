@@ -145,16 +145,19 @@ class _BottomControlButtons extends StatelessWidget {
                         margin: _containerPadding,
                         child: Icon(Icons.skip_previous,
                             size: _lerp(_minSize, _maxSize)))),
-                InkWell(
-                    onTap: () {
-                      context.read<UKProvider>().skip(-10);
-                    },
-                    child: Container(
-                        width: _lerp(0.0, _contSize),
-                        margin:
-                            EdgeInsets.symmetric(horizontal: _lerp(0.0, 10.0)),
-                        child:
-                            Icon(Icons.replay_10, size: _lerp(0.0, _maxSize)))),
+                Selector<UKProvider, bool>(
+                  selector: (_, p) => p.canSeek,
+                  builder: (_, canSeek, __) => InkWell(
+                      onTap: () {
+                        if (canSeek) context.read<UKProvider>().skip(-10);
+                      },
+                      child: Container(
+                          width: _lerp(0.0, _contSize),
+                          margin:
+                              EdgeInsets.symmetric(horizontal: _lerp(0.0, 10.0)),
+                          child:
+                              Icon(Icons.replay_10, size: _lerp(0.0, _maxSize), color: canSeek ? null : Colors.grey))),
+                ),
                 InkWell(
                     onTap: () {
                       context.read<UKProvider>().playPause();
@@ -167,16 +170,20 @@ class _BottomControlButtons extends StatelessWidget {
                                 ? Icons.pause
                                 : Icons.play_arrow,
                             size: _lerp(_minSize, _maxSize * 1.2)))),
-                InkWell(
-                    onTap: () {
-                      context.read<UKProvider>().skip(30);
-                    },
-                    child: Container(
-                        width: _lerp(0.0, _contSize),
-                        margin:
-                            EdgeInsets.symmetric(horizontal: _lerp(0.0, 10.0)),
-                        child: Icon(Icons.forward_30,
-                            size: _lerp(0.0, _maxSize)))),
+                Selector<UKProvider, bool>(
+                  selector: (_, p) => p.canSeek,
+                  builder: (_, canSeek, __) => InkWell(
+                      onTap: () {
+                        if (canSeek) context.read<UKProvider>().skip(30);
+                      },
+                      child: Container(
+                          width: _lerp(0.0, _contSize),
+                          margin: EdgeInsets.symmetric(
+                              horizontal: _lerp(0.0, 10.0)),
+                          child: Icon(Icons.forward_30,
+                              size: _lerp(0.0, _maxSize),
+                              color: canSeek ? null : Colors.grey))),
+                ),
                 InkWell(
                     onTap: () {
                       context.read<UKProvider>().goto("next");
