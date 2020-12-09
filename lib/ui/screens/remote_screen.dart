@@ -28,10 +28,10 @@ class RemoteScreen extends StatelessWidget {
     if (player == null) {
       title = const Text("NO PLAYER");
     } else {
-      title = Text(player.address);
+      title = Text(player.name);
       actions.add(_PlayerPowerOptions());
     }
-    return AppBar(title: title, actions: actions);
+    return AppBar(centerTitle: true, title: title, actions: actions);
   }
 }
 
