@@ -1,4 +1,5 @@
 import 'package:UKR/models/models.dart';
+import 'package:flutter/gestures.dart';
 import 'package:provider/provider.dart';
 import 'package:UKR/ui/providers/providers.dart';
 import 'package:flutter/material.dart';
@@ -44,19 +45,34 @@ class _PlaylistItemState extends State<PlaylistItem> {
     String title =
         widget.item.label.isEmpty ? widget.item.fileUrl : widget.item.label;
     String subtitle = widget.item.type;
-    return InkWell(
-        onTap: widget.onTap,
-        onTapDown: _storePosition,
-        onLongPress: _showCustomMenu,
-        child: Padding(
-          padding: const EdgeInsets.only(left: 2.0, top: 2.0, bottom: 2.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.subtitle1),
-              widget.compact ? null : Text(subtitle, overflow: TextOverflow.ellipsis)
-            ].nonNulls() as List<Widget>,
-          ),
-        ));
+    return Listener(
+      onPointerDown: (details) {
+        // Detect mouse right clicks:
+        if (details.kind == PointerDeviceKind.mouse && details.buttons == 2){
+          _tapPosition = details.position;
+          _showCustomMenu();
+        }
+      },
+      child: InkWell(
+          onTap: widget.onTap,
+          onTapDown: _storePosition,
+          onLongPress: _showCustomMenu,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 4.0, top: 4.0, bottom: 4.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodyText1),
+                if (widget.compact)
+                  Text(subtitle,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodyText2!.apply(
+                          color: Theme.of(context).textTheme.caption!.color))
+              ],
+            ),
+          )),
+    );
   }
 }
