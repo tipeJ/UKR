@@ -1,6 +1,7 @@
 import 'package:UKR/models/models.dart';
 import 'package:UKR/ui/providers/providers.dart';
 import 'package:UKR/ui/widgets/widgets.dart';
+import 'package:UKR/utils/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -100,7 +101,7 @@ class _ReorderablePlaylistItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   Expanded(
-                      child: PlaylistItem(data, onTap: onTap)),
+                    child: PlaylistItem(data, compact: isDesktop(), onTap: onTap)),
                   // Triggers the reordering
                   dragHandle,
                 ],

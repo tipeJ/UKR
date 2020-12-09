@@ -1,4 +1,5 @@
 export 'image_utils.dart';
+export 'platform_utils.dart';
 
 extension StringExtension on String {
   String capitalize() {

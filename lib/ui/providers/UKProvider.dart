@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:UKR/models/models.dart';
 import 'package:UKR/resources/resources.dart';
@@ -32,9 +33,9 @@ class UKProvider extends ChangeNotifier {
           String method, Map<String, dynamic> params) =>
       compute(jsonEncode, {"method": method, "params": params, ...defParams});
 
-  Future<Map<String, dynamic>> _getResult() => _resultSink.stream.first
+  Future<Map<String, dynamic>> _getResult(int id) => _resultSink.stream
+      .firstWhere((r) => r['id'] == id)
       .timeout(_resultTimeout, onTimeout: () => const {});
-
   UKProvider(Player p) {
     initialize(p);
   }
@@ -296,7 +297,7 @@ class UKProvider extends ChangeNotifier {
   /// *** Move Playlist Item
   /// Move item in the current playlist. NOTE: Call syncPlaylistMove after the swap has been finished in the widget tree. This function does not sync the change with the remote Player.
   void movePlaylistItem(int from, int to) {
-    if (from != -1 && to != -1 && from != to){
+    if (from != -1 && to != -1 && from != to) {
       final draggedItem = playList[from];
       playList.removeAt(from);
       playList.insert(to, draggedItem);
@@ -306,6 +307,7 @@ class UKProvider extends ChangeNotifier {
   }
 
   int? _oldLocation;
+
   /// *** Sync Playlist Move
   /// Syncronizes the most recent move event (As determined by the private variable oldLocation) with the remote Player instance.
   void syncMovePlaylistItem(int newLocation) async {
@@ -315,6 +317,16 @@ class UKProvider extends ChangeNotifier {
           playListID: playlistID, from: _oldLocation!, to: newLocation);
       _oldLocation = null;
     }
+  }
+
+  /// *** Remove item from playlist
+  /// Removes the given item from the current playlist.
+  void removePlaylistItem(Key item) async {
+    final body = await _encodeCommand("Playlist.Remove", {
+      "playlistid": playlistID,
+      "position": playList.indexWhere((i) => i.id == item)
+    });
+    _w.add(body);
   }
 
   // * Properties

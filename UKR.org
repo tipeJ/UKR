@@ -28,6 +28,7 @@
 ** Playlist controlling
 
 *** TODO Remove items
+    Implement via custom menu?
 
 *** Add items
 
@@ -82,6 +83,7 @@
    + Player Debug/ Process info
 
    Maybe even touch scrolling pad :thinking
+   Probably should be included in a separate screen.
    
 ** TODO Movie/TV Show cast
    the cast parameter returns an insane number of items.
