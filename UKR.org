@@ -56,14 +56,16 @@
    * Web
 ** TODO [#B] Poster background completion
    Currently the poster background contains only the label for the currently playing item.
-*** [#A] Movies
+*** DONE [#A] Movies
+    CLOSED: [2020-12-11 pe 16:07]
     * Title
     * Year
     * Director
     * Rating
     * Duration?
 
-*** [#B] TV
+*** DONE [#B] TV
+    CLOSED: [2020-12-11 pe 16:07]
     Same as movies, but producers instead of directors. Additionally:
     * Season
     * Episode
