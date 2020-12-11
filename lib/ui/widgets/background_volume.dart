@@ -41,7 +41,7 @@ class BackgroundImageWrapper extends StatelessWidget {
       String? url;
       url = retrieveOptimalImage(item);
       if (url.isNotEmpty) {
-        final fit = MediaQuery.of(context).size.aspectRatio > 1.0
+        final fit = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - 2 * kBottomNavigationBarHeight).aspectRatio > 1.0
             ? BoxFit.fitWidth
             : BoxFit.fitHeight;
         child = CachedNetworkImage(fit: fit, imageUrl: art['poster']);

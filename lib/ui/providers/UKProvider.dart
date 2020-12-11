@@ -84,7 +84,6 @@ class UKProvider extends ChangeNotifier {
     switch (j['method']) {
       case "Other.PlaybackStarted":
         await _refreshPlayerProperties();
-        _updateTimeTimer();
         await _refreshPlayerItem();
         return;
       case "Application.OnVolumeChanged":
@@ -97,8 +96,7 @@ class UKProvider extends ChangeNotifier {
         _updatePlayerProps(d['property']);
         return;
       case "Player.OnResume":
-        await _refreshPlayerProperties();
-        _updateTimeTimer();
+        // await _refreshPlayerProperties();
         break;
       case "Player.OnPause":
         speed = 0;
@@ -112,12 +110,13 @@ class UKProvider extends ChangeNotifier {
         _timeUpdateTimer?.cancel();
         break;
       case "Player.OnPlay":
+        _timeUpdateTimer?.cancel();
         speed = d['player']['speed'];
-        await _refreshPlayerItem();
         await _refreshPlayerProperties();
-        _updateTimeTimer();
-        return;
+        await _refreshPlayerItem();
+        break;
       case "Player.OnSeek":
+        _timeUpdateTimer?.cancel();
         this.time = PlayerTime.fromJson(d['player']['time']);
         _updateTemporaryProgress();
         _updateTimeTimer();

@@ -153,10 +153,11 @@ class _BottomControlButtons extends StatelessWidget {
                       },
                       child: Container(
                           width: _lerp(0.0, _contSize),
-                          margin:
-                              EdgeInsets.symmetric(horizontal: _lerp(0.0, 10.0)),
-                          child:
-                              Icon(Icons.replay_10, size: _lerp(0.0, _maxSize), color: canSeek ? null : Colors.grey))),
+                          margin: EdgeInsets.symmetric(
+                              horizontal: _lerp(0.0, 10.0)),
+                          child: Icon(Icons.replay_10,
+                              size: _lerp(0.0, _maxSize),
+                              color: canSeek ? null : Colors.grey))),
                 ),
                 InkWell(
                     onTap: () {
@@ -254,9 +255,9 @@ class _BottomPlaybackInfo extends StatelessWidget {
     final _contSize = min(40.0, width / 6 - 28.0);
     final props = context.select<UKProvider,
             Tuple5<PlayerTime, PlayerTime, double, String, bool>>(
-        (p) => Tuple5(p.time, p.totalTime, p.currentTemporaryProgress, p.type,
+        (p) => Tuple5(p.time, p.totalTime, p.currentTemporaryProgress, p.currentItem?.type ?? "Null",
             p.canSeek));
-    if (props.item4 != "Null") {
+    if (props.item4 != "Null" && props.item4 != "unknown") {
       return Positioned(
           left: _lerp(minSize, 0.0),
           child: Container(
