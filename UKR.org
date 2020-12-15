@@ -31,6 +31,7 @@
     CLOSED: [2020-12-09 ke 17:27]
     Implement via custom menu?
 
+*** TODO Implement move via remove/insert instead of individual swaps.
 *** TODO Display current item
 
 *** Add items
