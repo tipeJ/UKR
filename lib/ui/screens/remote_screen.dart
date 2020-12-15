@@ -64,6 +64,7 @@ class _PlayersBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final players = context.watch<PlayersProvider>().players;
+    bool compact = isDesktop();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -79,7 +80,7 @@ class _PlayersBar extends StatelessWidget {
               SliverList(
                   delegate: SliverChildListDelegate(
                       List<PlayerListItem>.generate(
-                          players.length, (i) => PlayerListItem(players[i])))),
+                          players.length, (i) => PlayerListItem(players[i], compact: compact)))),
               SliverToBoxAdapter(
                   child: InkWell(
                       onTap: () async {
