@@ -21,7 +21,7 @@ class _DialogManagerState extends State<DialogManager> {
     super.initState();
     _dialogService.registerDialogListener(_showDialog);
     _dialogService.registerDialogDismiss(() {
-        if (active) Navigator.of(context).pop();
+      if (active) Navigator.of(context).pop();
     });
   }
 
@@ -30,17 +30,32 @@ class _DialogManagerState extends State<DialogManager> {
 
   void _showDialog(Input input) async {
     active = true;
-    Widget alert;
+    TextInputType inputType = TextInputType.text;
     String? returnValue;
 
+    // TODO Add the rest
     switch (input.type) {
       case InputType.Keyboard:
-      alert = AlertDialog(
+        break;
+      case InputType.Ip:
+        inputType = TextInputType.url;
+        break;
+      case InputType.Number:
+        inputType = TextInputType.number;
+        break;
+      case InputType.Password:
+        inputType = TextInputType.visiblePassword;
+        break;
+      default:
+        active = false;
+        return;
+    }
+    Widget alert = AlertDialog(
         title: Text(input.title),
         content: TextField(
-          decoration: InputDecoration(labelText: input.title),
-          onChanged: (s) => returnValue = s
-        ),
+            keyboardType: inputType,
+            decoration: InputDecoration(labelText: input.title),
+            onChanged: (s) => returnValue = s),
         actions: [
           FlatButton(
             child: const Text("Cancel"),
@@ -57,10 +72,6 @@ class _DialogManagerState extends State<DialogManager> {
             },
           ),
         ]);
-        break;
-      default:
-        alert = Text("BL");
-    }
     await showDialog(
         context: context, barrierDismissible: false, builder: (_) => alert);
     active = false;

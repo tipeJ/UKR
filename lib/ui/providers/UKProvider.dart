@@ -90,6 +90,8 @@ class UKProvider extends ChangeNotifier {
         await _refreshPlayerItem();
         return;
       case "Input.OnInputRequested":
+        _dialogService.dismissDialog();
+        _dialogService.dialogComplete();
         var input = Input.fromJson(d);
         var dialogResult = await _dialogService.showDialog(input);
         if (dialogResult != null) {

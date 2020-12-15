@@ -15,7 +15,7 @@ enum InputType {
   Keyboard,
   Time,
   Date,
-  IP,
+  Ip,
   Password,
   Numericpassword,
   Number,
