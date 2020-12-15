@@ -234,6 +234,12 @@ class ApiProvider {
       }),
       headers: headers);
 
+  void sendTextInput(Player p, {required String data, bool done = true}) async {
+    final body =
+        await _encode("Input.SendText", {"text": data, "done": done});
+    http.post(url(p), body: body, headers: headers);
+  }
+
   // * Application API endpoints
   Future<int> adjustVolume(Player player, {required int newVolume}) async {
     final body = jsonEncode({

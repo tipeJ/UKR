@@ -31,17 +31,31 @@ class _DialogManagerState extends State<DialogManager> {
   void _showDialog(Input input) async {
     active = true;
     Widget alert;
+    String? returnValue;
 
     switch (input.type) {
       case InputType.Keyboard:
-        alert = AlertDialog(title: Text(input.title), actions: [
+      alert = AlertDialog(
+        title: Text(input.title),
+        content: TextField(
+          decoration: InputDecoration(labelText: input.title),
+          onChanged: (s) => returnValue = s
+        ),
+        actions: [
           FlatButton(
-            child: const Text("OK"),
+            child: const Text("Cancel"),
             onPressed: () {
               _dialogService.dialogComplete();
               Navigator.of(context).pop();
             },
-          )
+          ),
+          FlatButton(
+            child: const Text("OK"),
+            onPressed: () {
+              _dialogService.dialogComplete(returnValue);
+              Navigator.of(context).pop();
+            },
+          ),
         ]);
         break;
       default:

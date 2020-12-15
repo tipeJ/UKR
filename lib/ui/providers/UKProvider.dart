@@ -91,13 +91,15 @@ class UKProvider extends ChangeNotifier {
         return;
       case "Input.OnInputRequested":
         var input = Input.fromJson(d);
-        print("BEGIN:");
         var dialogResult = await _dialogService.showDialog(input);
-        print("END:");
-        break;
+        if (dialogResult != null) {
+          _api.sendTextInput(player, data: dialogResult);
+        }
+        return;
       case "Input.OnInputFinished":
         _dialogService.dismissDialog();
-        break;
+        _dialogService.dialogComplete();
+        return;
       case "Application.OnVolumeChanged":
         if (_volAdjustTimer == null) {
           currentTemporaryVolume = d['volume'];
