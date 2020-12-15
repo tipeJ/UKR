@@ -342,7 +342,7 @@ class ApiProvider {
   }
 
   // * Playlist API Endpoints
-  Future<void> swapPlaylist(Player player,
+  Future<void> swapPlaylistItems(Player player,
       {required int playListID, required int from, required int to}) async {
     final body = await _encode("Playlist.Swap",
         {"playlistid": playListID, "position1": from, "position2": to});

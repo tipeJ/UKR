@@ -84,6 +84,7 @@
    Most important ones:
    + Cycle Subtitle
    + Bookmark
+   + Parent folder
    + Fast forwarding
    + Chapter navigation
    + Player Debug/ Process info
@@ -126,7 +127,8 @@
     No API exists yet for environments like KDE or Windows. Perhaps I should create that myself if it seems to take too long..?
 * Known Issues / Bugs
 
-** TODO Player switcher doesn't actually change the player value of the multiprovider providers
+** DONE Player switcher doesn't actually change the player value of the multiprovider providers
+   CLOSED: [2020-12-15 ti 22:39]
    Strange...
 
 *** DONE Check with other stream.
@@ -144,7 +146,8 @@
 
 ** TODO Fix local player(s) not going through with the API network check
 
-** TODO Android UKProvider doesn't receive any data
+** DONE Android UKProvider doesn't receive any data
+   CLOSED: [2020-12-15 ti 22:39]
    Works in emulator, not with real device (H910). The provider reads audio change events, but doesn't do anything with the data.
    The receiver sometimes reports an object sent by XBMC, describing a parse error. Works neither in release nor debug mode. Profile not tested.
    Cause unknown, no issues reported on a debug instance running on an emulator (API 30)
@@ -152,7 +155,8 @@
 *** Tests
     Not caused by encoding command being run in an isolate function. The behaviour persists on non-isolate version.
 
-** TODO Totaltime doesn't appear when starting a new item playback
+** DONE Totaltime doesn't appear when starting a new item playback
+   CLOSED: [2020-12-15 ti 22:39]
    Causes the seekbar to show the live tag even though the stream may be seekable.
 
 ** TODO Time and totaltime sometimes not syncing when navigating in the playlist

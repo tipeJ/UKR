@@ -18,6 +18,7 @@ class PlaylistScreen extends StatelessWidget {
         builder: (_, playList, __) {
           return ReorderableList(
               onReorder: (from, to) {
+                print("FROM: $from TO:Rto");
                 int draggingIndex = _indexOf(from, playList);
                 int newPositionIndex = _indexOf(to, playList);
                 context
@@ -101,7 +102,8 @@ class _ReorderablePlaylistItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   Expanded(
-                    child: PlaylistItem(data, compact: isDesktop(), onTap: onTap)),
+                      child: PlaylistItem(data,
+                          compact: isDesktop(), onTap: onTap)),
                   // Triggers the reordering
                   dragHandle,
                 ],

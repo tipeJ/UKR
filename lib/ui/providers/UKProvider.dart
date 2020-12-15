@@ -129,9 +129,15 @@ class UKProvider extends ChangeNotifier {
       case "Player.OnPlay":
         _timeUpdateTimer?.cancel();
         speed = d['player']['speed'];
-        await _refreshPlayerProperties();
         await _refreshPlayerItem();
+        await _refreshPlayerProperties();
         break;
+      case "Player.OnAVStart":
+        _timeUpdateTimer?.cancel();
+        speed = d['player']['speed'];
+        await _refreshPlayerItem();
+        await _refreshPlayerProperties();
+        return;
       case "Player.OnSeek":
         _timeUpdateTimer?.cancel();
         this.time = PlayerTime.fromJson(d['player']['time']);
@@ -158,7 +164,7 @@ class UKProvider extends ChangeNotifier {
   // ** Player Item Endpoints
   Future<void> _refreshPlayerItem() async {
     final result = await _api.getPlayerItem(player);
-    if (result.isNotEmpty) {
+    if (result.isNotEmpty && result['label'].isNotEmpty) {
       this.currentItem = VideoItem.fromJson(result);
       notifyListeners();
     }
@@ -186,6 +192,7 @@ class UKProvider extends ChangeNotifier {
       timeChanged = true;
     }
     if (r['totaltime'] != null) {
+      print("TOTALTIME: " + r['totaltime'].toString());
       totalTime = PlayerTime.fromJson(r['totaltime']);
     }
     type = r['type'] ?? type;
@@ -317,7 +324,7 @@ class UKProvider extends ChangeNotifier {
       final draggedItem = playList[from];
       playList.removeAt(from);
       playList.insert(to, draggedItem);
-      _oldLocation = from;
+      if (_oldLocation == null) _oldLocation = from;
       notifyListeners();
     }
   }
@@ -329,8 +336,14 @@ class UKProvider extends ChangeNotifier {
   void syncMovePlaylistItem(int newLocation) async {
     if (_oldLocation != null) {
       // Notify the Kodi instance.
-      _api.swapPlaylist(player,
-          playListID: playlistID, from: _oldLocation!, to: newLocation);
+      while (_oldLocation! != newLocation) {
+        var step = _oldLocation! < newLocation ? 1 : -1;
+        await _api.swapPlaylistItems(player,
+            playListID: playlistID,
+            from: _oldLocation!,
+            to: _oldLocation! + step);
+        _oldLocation = _oldLocation! + step;
+      }
       _oldLocation = null;
     }
   }
