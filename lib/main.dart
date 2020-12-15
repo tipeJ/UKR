@@ -11,6 +11,7 @@ void main() async {
   Hive.registerAdapter(PlayerAdapter());
   await Hive.initFlutter();
   await Hive.openBox<Player>(BOX_PLAYERS);
+  await Hive.openBox(BOX_CACHED);
 
   runApp(MyApp());
 }

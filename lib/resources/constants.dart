@@ -1,6 +1,8 @@
 // * Hive Data
 const BOX_PLAYERS = "box_players";
 
+// * Cached information
+const BOX_CACHED = "box_cached";
 const DATA_MOST_RECENT_PLAYERID = "mostRecentPlayerID";
 
 // * Fetching data

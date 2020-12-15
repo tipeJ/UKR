@@ -7,12 +7,13 @@ import 'dart:async';
 class PlayersProvider extends ChangeNotifier {
   final _api = ApiProvider();
   get _box => Hive.box<Player>(BOX_PLAYERS);
+  get _cachedBox => Hive.box(BOX_CACHED);
   final List<Player> players = [];
   Player? selectedPlayer;
 
   PlayersProvider() {
     this.players.addAll(_box.values);
-    final id = null; //this._box.get(DATA_MOST_RECENT_PLAYERID);
+    final id = _cachedBox.get(DATA_MOST_RECENT_PLAYERID);
     if (id == null) {
       selectedPlayer = players.isEmpty ? null : players.first;
     } else {
@@ -31,7 +32,7 @@ class PlayersProvider extends ChangeNotifier {
   void setPlayer(Player player) {
     if (player == this.selectedPlayer) return;
     selectedPlayer = player;
-    //_box.put(DATA_MOST_RECENT_PLAYERID, player.id);
+    _cachedBox.put(DATA_MOST_RECENT_PLAYERID, player.id);
     notifyListeners();
   }
 
