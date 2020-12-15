@@ -235,8 +235,7 @@ class ApiProvider {
       headers: headers);
 
   void sendTextInput(Player p, {required String data, bool done = true}) async {
-    final body =
-        await _encode("Input.SendText", {"text": data, "done": done});
+    final body = await _encode("Input.SendText", {"text": data, "done": done});
     http.post(url(p), body: body, headers: headers);
   }
 
@@ -337,11 +336,8 @@ class ApiProvider {
   }
 
   void toggleRepeat(Player player) async {
-    final body = jsonEncode({
-      "method": "Player.SetRepeat",
-      "params": {"playerid": _playerID, "repeat": "cycle"},
-      ...defParams
-    });
+    final body = await _encode(
+        "Player.SetRepeat", {"repeat": "cycle", "playerid": _playerID});
     await http.post(url(player), headers: headers, body: body);
   }
 
