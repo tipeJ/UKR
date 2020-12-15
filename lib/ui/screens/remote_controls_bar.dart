@@ -254,10 +254,10 @@ class _BottomPlaybackInfo extends StatelessWidget {
     final width = MediaQuery.of(context).size.width;
     final _contSize = min(40.0, width / 6 - 28.0);
     final props = context.select<UKProvider,
-            Tuple5<PlayerTime, PlayerTime, double, String, bool>>(
-        (p) => Tuple5(p.time, p.totalTime, p.currentTemporaryProgress, p.currentItem?.type ?? "Null",
+            Tuple5<PlayerTime, PlayerTime, double, bool, bool>>(
+        (p) => Tuple5(p.time, p.totalTime, p.currentTemporaryProgress, p.currentItem?.type != "Null" && (p.currentItem?.label.isNotEmpty ?? false),
             p.canSeek));
-    if (props.item4 != "Null" && props.item4 != "unknown") {
+    if (props.item4) {
       return Positioned(
           left: _lerp(minSize, 0.0),
           child: Container(

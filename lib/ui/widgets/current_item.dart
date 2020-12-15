@@ -24,12 +24,20 @@ class CurrentItem extends StatelessWidget {
         } else if (item.type == "episode") {
           children = [
             Text(item.showTitle ?? item.label, style: theme.headline5),
-            Text("S${item.season} E${item.episode} - ${item.label}", style: theme.subtitle1),
-            Text((item.director.nullIf(item.director.separateFold(', '), (d) => d.isNotEmpty) ?? "") + (item.year != null ? " - " + item.year.toString() : "" ), style: theme.caption)
+            Text("S${item.season} E${item.episode} - ${item.label}",
+                style: theme.subtitle1),
+            Text(
+                (item.director.nullIf(item.director.separateFold(', '),
+                            (d) => d.isNotEmpty) ??
+                        "") +
+                    (item.year != null ? " - " + item.year.toString() : ""),
+                style: theme.caption)
           ];
+        } else if (item.type == "unknown") {
+          children = [Text(item.label, style: theme.headline6)];
         }
         return Container(
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 10.0),
             child: Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.start,
