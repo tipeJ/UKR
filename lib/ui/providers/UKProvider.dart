@@ -96,7 +96,8 @@ class UKProvider extends ChangeNotifier {
         _updatePlayerProps(d['property']);
         return;
       case "Player.OnResume":
-        // await _refreshPlayerProperties();
+        speed = d['player']['speed'];
+        _updateTimeTimer();
         break;
       case "Player.OnPause":
         speed = 0;
