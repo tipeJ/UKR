@@ -18,7 +18,6 @@ class PlaylistScreen extends StatelessWidget {
         builder: (_, playList, __) {
           return ReorderableList(
               onReorder: (from, to) {
-                print("FROM: $from TO:Rto");
                 int draggingIndex = _indexOf(from, playList);
                 int newPositionIndex = _indexOf(to, playList);
                 context
@@ -35,7 +34,6 @@ class PlaylistScreen extends StatelessWidget {
                   itemBuilder: (_, i) => _ReorderablePlaylistItem(
                       data: playList[i],
                       onTap: () {
-                        print("Clicked ${playList[i].fileUrl}");
                         context.read<UKProvider>().goto(i);
                       },
                       isFirst: i == 0,

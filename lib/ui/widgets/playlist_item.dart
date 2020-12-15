@@ -58,14 +58,14 @@ class _PlaylistItemState extends State<PlaylistItem> {
           onTapDown: _storePosition,
           onLongPress: _showCustomMenu,
           child: Padding(
-            padding: const EdgeInsets.only(left: 4.0, top: 4.0, bottom: 4.0),
+            padding: EdgeInsets.all(widget.compact ? 4.0 : 8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(title,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.bodyText1),
-                if (widget.compact)
+                if (!widget.compact)
                   Text(subtitle,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.bodyText2!.apply(

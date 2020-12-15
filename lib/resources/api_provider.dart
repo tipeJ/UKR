@@ -346,8 +346,7 @@ class ApiProvider {
       {required int playListID, required int from, required int to}) async {
     final body = await _encode("Playlist.Swap",
         {"playlistid": playListID, "position1": from, "position2": to});
-    final r = await http.post(url(player), headers: headers, body: body);
-    print("swap:" + r.body);
+    await http.post(url(player), headers: headers, body: body);
   }
 }
 
