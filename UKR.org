@@ -51,6 +51,7 @@
 *** DONE Sync items
     CLOSED: [2020-12-07 ma 22:13]
 
+** TODO Text input request handling
 ** TODO Bookmarks
    Sources:
    * Web

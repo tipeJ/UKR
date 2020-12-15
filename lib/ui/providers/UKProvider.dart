@@ -5,9 +5,11 @@ import 'dart:math';
 
 import 'package:UKR/models/models.dart';
 import 'package:UKR/resources/resources.dart';
+import 'package:UKR/ui/dialogs/dialogs.dart';
 import 'package:UKR/utils/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 class UKProvider extends ChangeNotifier {
   final _api = ApiProvider();
@@ -70,6 +72,7 @@ class UKProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  DialogService _dialogService = GetIt.instance<DialogService>();
   void _handleJsonResponse(Map<String, dynamic> j) async {
     final result = j['result'];
     if (result != null && !(result is String)) {
@@ -86,6 +89,15 @@ class UKProvider extends ChangeNotifier {
         await _refreshPlayerProperties();
         await _refreshPlayerItem();
         return;
+      case "Input.OnInputRequested":
+        var input = Input.fromJson(d);
+        print("BEGIN:");
+        var dialogResult = await _dialogService.showDialog(input);
+        print("END:");
+        break;
+      case "Input.OnInputFinished":
+        _dialogService.dismissDialog();
+        break;
       case "Application.OnVolumeChanged":
         if (_volAdjustTimer == null) {
           currentTemporaryVolume = d['volume'];
