@@ -1,11 +1,7 @@
 export 'image_utils.dart';
+export 'string_utils.dart';
 export 'platform_utils.dart';
 
-extension StringExtension on String {
-  String capitalize() {
-    return "${this[0].toUpperCase()}${this.substring(1)}";
-  }
-}
 
 extension ListExtensions<T> on List<T> {
   /// A version of this list where the null values are filtered.
