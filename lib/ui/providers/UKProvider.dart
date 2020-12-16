@@ -240,8 +240,7 @@ class UKProvider extends ChangeNotifier {
   void playPause() => _api.playPause(player);
 
   /// Navigate forward/backwards in the playlist. False for previous, true for next
-  void goto(dynamic to) async => _w.add(
-      await _encodeCommand("Player.GoTo", {"playerid": _playerID, "to": to}));
+  void goto(dynamic to) async => _api.goTo(player, to);
 
   void stopPlayback() => _api.stop(player);
 
@@ -351,11 +350,9 @@ class UKProvider extends ChangeNotifier {
   /// *** Remove item from playlist
   /// Removes the given item from the current playlist.
   void removePlaylistItem(Key item) async {
-    final body = await _encodeCommand("Playlist.Remove", {
-      "playlistid": playlistID,
-      "position": playList.indexWhere((i) => i.id == item)
-    });
-    _w.add(body);
+    _api.removePlaylistItem(player,
+        playlistID: playlistID,
+        location: playList.indexWhere((i) => i.id == item));
   }
 
   // * Properties

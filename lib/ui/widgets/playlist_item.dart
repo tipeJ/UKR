@@ -45,10 +45,11 @@ class _PlaylistItemState extends State<PlaylistItem> {
     String title =
         widget.item.label.isEmpty ? widget.item.fileUrl : widget.item.label;
     String subtitle = widget.item.type;
+    double padding = widget.compact ? 4.0 : 8.0;
     return Listener(
       onPointerDown: (details) {
         // Detect mouse right clicks:
-        if (details.kind == PointerDeviceKind.mouse && details.buttons == 2){
+        if (details.kind == PointerDeviceKind.mouse && details.buttons == 2) {
           _tapPosition = details.position;
           _showCustomMenu();
         }
@@ -58,7 +59,7 @@ class _PlaylistItemState extends State<PlaylistItem> {
           onTapDown: _storePosition,
           onLongPress: _showCustomMenu,
           child: Padding(
-            padding: EdgeInsets.all(widget.compact ? 4.0 : 8.0),
+            padding: EdgeInsets.only(left: padding, bottom: padding, top: padding),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

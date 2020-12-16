@@ -87,6 +87,7 @@
    + Bookmark
    + Parent folder
    + Fast forwarding
+   + Player view modes
    + Chapter navigation
    + Player Debug/ Process info
 

@@ -348,6 +348,29 @@ class ApiProvider {
         {"playlistid": playListID, "position1": from, "position2": to});
     await http.post(url(player), headers: headers, body: body);
   }
+
+  Future<void> removePlaylistItem(Player player,
+      {required int location, required int playlistID}) async {
+    final body = await _encode(
+        "Playlist.Remove", {"playlistid": playlistID, "position": location});
+    await http.post(url(player), headers: headers, body: body);
+  }
+
+  Future<void> goTo(Player player, dynamic to) async {
+    final body =
+        await _encode("Player.GoTo", {"playerid": _playerID, "to": to});
+    final r = await http.post(url(player), body: body, headers: headers);
+    print("goto: ${r.body}");
+  }
+
+  Future<void> playFile(Player player,
+      {required String file}) async {
+    final body = await _encode("Player.Open", {
+      "item": {"file": file}
+    });
+    final r = await http.post(url(player), headers: headers, body: body);
+    print("ADD: ${r.body}");
+  }
 }
 
 ApplicationProperties _parseApplicationProperties(String jsonSource) {
