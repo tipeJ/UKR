@@ -35,14 +35,10 @@ class RemoteScreen extends StatelessWidget {
       title = const Text("NO PLAYER");
     } else {
       title = Selector<UKProvider, Tuple2<String?, String?>>(
-        selector: (_, p) => Tuple2(p.socketCloseReason, p.error),
-        builder: (_, errors, __){
-          String appBarTitle = player.name;
-          if (errors.item1 != null || errors.item2 != null){
-            appBarTitle = errors.item1 ?? errors.item2!;
-          }
-          return InkWell(
-            onTap: () async {
+          selector: (_, p) => Tuple2(p.socketCloseReason, p.error),
+          builder: (_, errors, __) {
+            String appBarTitle = player.name;
+            Function() onTap = () async {
               final result = await showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
@@ -63,21 +59,28 @@ class RemoteScreen extends StatelessWidget {
                         ),
                       ));
               if (result == "Send Text") {
-                final input =
-                    Input(InputType.Keyboard, "Send Text to ${player.name}", "");
+                final input = Input(
+                    InputType.Keyboard, "Send Text to ${player.name}", "");
                 DialogService ds = GetIt.instance<DialogService>();
                 var dialogResult = await ds.showDialog(input);
                 if (dialogResult != null)
                   ApiProvider.sendTextInput(player, data: dialogResult);
               }
-            },
-            child: Container(
-              height: kBottomNavigationBarHeight,
-              alignment: Alignment.center,
-              child: Text(appBarTitle),
-            ));
-        }
-      );
+            };
+            if (errors.item1 != null || errors.item2 != null) {
+              appBarTitle = errors.item1 ?? errors.item2!;
+              onTap = () async {
+                context.read<UKProvider>().reconnect();
+              };
+            }
+            return InkWell(
+                onTap: onTap,
+                child: Container(
+                  height: kBottomNavigationBarHeight,
+                  alignment: Alignment.center,
+                  child: Text(appBarTitle),
+                ));
+          });
       actions.add(_PlayerPowerOptions());
     }
     return AppBar(centerTitle: true, title: title, actions: actions);
@@ -104,7 +107,9 @@ class _PlayerPowerOptions extends StatelessWidget {
                           child: Text(property.substring(3).capitalize()));
                     }).toList());
           }
-          return IconButton(icon: Icon(Icons.power_settings_new, color: Colors.transparent), onPressed:(){});
+          return IconButton(
+              icon: Icon(Icons.power_settings_new, color: Colors.transparent),
+              onPressed: () {});
         });
   }
 }

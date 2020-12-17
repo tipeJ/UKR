@@ -92,6 +92,15 @@ class UKProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> reconnect() async {
+    final pingResult = await ApiProvider.testPlayerConnection(player);
+    if (pingResult) {
+      error = null;
+      notifyListeners();
+      initialize(player);
+    }
+  }
+
   DialogService _dialogService = GetIt.instance<DialogService>();
   void _handleJsonResponse(Map<String, dynamic> j) async {
     final result = j['result'];

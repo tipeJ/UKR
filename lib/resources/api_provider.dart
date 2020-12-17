@@ -7,7 +7,7 @@ import 'dart:convert';
 
 class ApiProvider {
   static final ApiProvider _apiProvider = ApiProvider._internal();
-  static const _refreshInterval = Duration(milliseconds: 2000);
+  static const _refreshInterval = Duration(milliseconds: 3500);
   static const _pingTimeOut = Duration(milliseconds: 500);
 
   static const headers = {
