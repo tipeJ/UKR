@@ -123,6 +123,7 @@
 *** TODO Files
     Not nearly as important, as I don't really use this feature all that much yet.
     
+** TODO Add manual reconnect and disconnect notification.
 ** TODO Notifications
 
 *** TODO Android

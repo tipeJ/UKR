@@ -37,19 +37,18 @@ class BackgroundImageWrapper extends StatelessWidget {
     var item = context.select<UKProvider, Item?>((p) => p.currentItem);
     var art = item?.artwork ?? {};
     Widget? child;
-    if (item != null && art.isNotEmpty) {
-      String? url;
-      url = retrieveOptimalImage(item);
-      if (url.isNotEmpty) {
-        final fit = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height - 2 * kBottomNavigationBarHeight).aspectRatio > 1.0
-            ? BoxFit.fitWidth
-            : BoxFit.fitHeight;
-        child = CachedNetworkImage(fit: fit, imageUrl: art['poster']);
+    return LayoutBuilder(builder: (_, constraints) {
+      if (item != null && art.isNotEmpty) {
+        String? url;
+        url = retrieveOptimalImage(item);
+        if (url.isNotEmpty) {
+          child = CachedNetworkImage(fit: BoxFit.cover, imageUrl: art['poster']);
+        }
       }
-    }
-    return Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        child: child ?? Container());
+      return Container(
+          width: constraints.biggest.width,
+          height: constraints.biggest.height,
+          child: child ?? Container());
+    });
   }
 }

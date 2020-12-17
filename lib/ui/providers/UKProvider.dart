@@ -58,10 +58,10 @@ class UKProvider extends ChangeNotifier {
     this._player = player;
     this._ws?.close();
     this._ws = await _api.getWS(player)
+      ..handleError((e) => print("ERROR: $e"))
       ..asyncMap<Map<String, dynamic>>(
               (data) => compute(_convertJsonData, data.toString()))
-          .listen((data) => _handleJsonResponse(data))
-      ..handleError((e) => print("ERROR: $e"));
+          .listen((data) => _handleJsonResponse(data));
 
     // Refresh the initial values.
     await _refreshPlayerProperties();
