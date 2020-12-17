@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
 class UKProvider extends ChangeNotifier {
-  final _api = ApiProvider();
   Player? _player;
   Player get player => _player!;
 
@@ -26,7 +25,11 @@ class UKProvider extends ChangeNotifier {
 
   WebSocket? _ws;
   WebSocket get _w => _ws!;
+  String? get socketCloseReason => _ws?.closeReason;
+  String? error;
+
   static const _resultTimeout = const Duration(milliseconds: 5000);
+  StreamSubscription<Map<String, dynamic>>? _propertiesStream;
   StreamController<Map<String, dynamic>> _resultSink =
       StreamController.broadcast();
 
@@ -57,8 +60,8 @@ class UKProvider extends ChangeNotifier {
   void initialize(Player player) async {
     this._player = player;
     this._ws?.close();
-    this._ws = await _api.getWS(player)
-      ..handleError((e) => print("ERROR: $e"))
+    this._ws = await ApiProvider.getWS(player)
+      ..handleError((e) => print("YEP: $e"))
       ..asyncMap<Map<String, dynamic>>(
               (data) => compute(_convertJsonData, data.toString()))
           .listen((data) => _handleJsonResponse(data));
@@ -69,6 +72,23 @@ class UKProvider extends ChangeNotifier {
     await _refreshPlayerItem();
     await _refreshPlayList();
     await _fetchSystemProperties();
+
+    // Start the properties ping stream.
+    _propertiesStream?.pause();
+    _propertiesStream =
+        ApiProvider.playerPropertiesStream(player).handleError((e) async {
+      if (e.runtimeType == SocketException) {
+        await _w.close(1001, "Lost connection to ${player.name}");
+        error = "Lost connection to ${player.name}";
+        notifyListeners();
+        _propertiesStream!.pause();
+      }
+    }).listen((data) {
+      if (data.isNotEmpty) {
+        print("Update Player Properties");
+        _updatePlayerProps(data);
+      }
+    });
     notifyListeners();
   }
 
@@ -101,7 +121,7 @@ class UKProvider extends ChangeNotifier {
         var input = Input.fromJson(d);
         var dialogResult = await _dialogService.showDialog(input);
         if (dialogResult != null) {
-          _api.sendTextInput(player, data: dialogResult);
+          ApiProvider.sendTextInput(player, data: dialogResult);
         }
         return;
       case "Input.OnInputFinished":
@@ -158,7 +178,7 @@ class UKProvider extends ChangeNotifier {
         break;
       case "Playlist.OnAdd":
         int pos = d['position'];
-        var list = await _api.getPlayList(player,
+        var list = await ApiProvider.getPlayList(player,
             id: d['playlistid'], lowerLimit: pos, upperLimit: pos + 1);
         this.playList.add(list.first);
         break;
@@ -169,7 +189,7 @@ class UKProvider extends ChangeNotifier {
   // * Endpoints
   // ** Player Item Endpoints
   Future<void> _refreshPlayerItem() async {
-    final result = await _api.getPlayerItem(player);
+    final result = await ApiProvider.getPlayerItem(player);
     if (result.isNotEmpty) {
       if (result['label'].isEmpty) {
         this.currentItem = null;
@@ -183,14 +203,14 @@ class UKProvider extends ChangeNotifier {
   // ** Playlist Endpoints
   Future<void> _refreshPlayList() async {
     if (playlistID != -1) {
-      this.playList = await _api.getPlayList(player, id: playlistID);
+      this.playList = await ApiProvider.getPlayList(player, id: playlistID);
       notifyListeners();
     }
   }
 
   // ** Player Property Endpoints
   Future<void> _refreshPlayerProperties() async {
-    final r = await _api.getPlayerProperties(player);
+    final r = await ApiProvider.getPlayerProperties(player);
     if (r.isNotEmpty) _updatePlayerProps(r);
   }
 
@@ -245,14 +265,14 @@ class UKProvider extends ChangeNotifier {
     }
   }
 
-  void toggleRepeat() => _api.toggleRepeat(player);
+  void toggleRepeat() => ApiProvider.toggleRepeat(player);
 
-  void playPause() => _api.playPause(player);
+  void playPause() => ApiProvider.playPause(player);
 
   /// Navigate forward/backwards in the playlist. False for previous, true for next
-  void goto(dynamic to) async => _api.goTo(player, to);
+  void goto(dynamic to) async => ApiProvider.goTo(player, to);
 
-  void stopPlayback() => _api.stop(player);
+  void stopPlayback() => ApiProvider.stop(player);
 
   void _updateTemporaryProgress() {
     final ctime = time.inSeconds;
@@ -264,7 +284,7 @@ class UKProvider extends ChangeNotifier {
     currentTemporaryProgress = percentage;
     if (_seekTimer == null) {
       _seekTimer = new Timer(_seekTimeout, () async {
-        _api.seek(player, percentage: currentTemporaryProgress);
+        ApiProvider.seek(player, percentage: currentTemporaryProgress);
         _seekTimer = null;
       });
     }
@@ -274,13 +294,13 @@ class UKProvider extends ChangeNotifier {
   /// Skip ahead (positive) or behind (negative) by the given [amount] of seconds
   void skip(int amount) {
     var params = {"time": time.increment(amount)};
-    _api.skip(player, params);
+    ApiProvider.skip(player, params);
   }
 
   // ** Application Property Endpoints
 
   Future<void> _refreshApplicationProperties() async {
-    final r = await _api.getApplicationProperties(player);
+    final r = await ApiProvider.getApplicationProperties(player);
     if (r.isNotEmpty) {
       currentTemporaryVolume =
           r['volume']?.toDouble() ?? currentTemporaryVolume;
@@ -293,7 +313,7 @@ class UKProvider extends ChangeNotifier {
     currentTemporaryVolume = newVolume.clamp(0.0, 100.0);
     if (_volAdjustTimer == null) {
       _volAdjustTimer = new Timer(_volumeSetTimeout, () {
-        _api.adjustVolume(player,
+        ApiProvider.adjustVolume(player,
             newVolume: currentTemporaryVolume.round().clamp(0, 100));
         _volAdjustTimer = null;
       });
@@ -304,15 +324,15 @@ class UKProvider extends ChangeNotifier {
   void increaseVolumeSmall() => setVolume(currentTemporaryVolume + 5);
   void decreaseVolumeSmall() => setVolume(currentTemporaryVolume - 5);
 
-  void toggleMute() => _api.toggleMute(player, !this.muted);
+  void toggleMute() => ApiProvider.toggleMute(player, !this.muted);
 
   // ** Navigation Endpoints
 
-  void navigate(String command) => _api.navigate(player, command);
+  void navigate(String command) => ApiProvider.navigate(player, command);
 
   // ** System Endpoints
   Future<void> _fetchSystemProperties() async {
-    final result = await _api.getSystemProperties(player);
+    final result = await ApiProvider.getSystemProperties(player);
     if (result.isNotEmpty) {
       systemProps = Map<String, bool>.from(result);
       notifyListeners();
@@ -321,7 +341,8 @@ class UKProvider extends ChangeNotifier {
 
   void toggleSystemProperty(String property) {
     if (systemProps[property] ?? false)
-      _api.toggleSystemProperty(player, property.substring(3).capitalize());
+      ApiProvider.toggleSystemProperty(
+          player, property.substring(3).capitalize());
   }
 
   // ** Playlist actions
@@ -347,7 +368,7 @@ class UKProvider extends ChangeNotifier {
       // Notify the Kodi instance.
       while (_oldLocation! != newLocation) {
         var step = _oldLocation! < newLocation ? 1 : -1;
-        await _api.swapPlaylistItems(player,
+        await ApiProvider.swapPlaylistItems(player,
             playListID: playlistID,
             from: _oldLocation!,
             to: _oldLocation! + step);
@@ -360,7 +381,7 @@ class UKProvider extends ChangeNotifier {
   /// *** Remove item from playlist
   /// Removes the given item from the current playlist.
   void removePlaylistItem(Key item) async {
-    _api.removePlaylistItem(player,
+    ApiProvider.removePlaylistItem(player,
         playlistID: playlistID,
         location: playList.indexWhere((i) => i.id == item));
   }

@@ -5,7 +5,6 @@ import 'package:hive/hive.dart';
 import 'dart:async';
 
 class PlayersProvider extends ChangeNotifier {
-  final _api = ApiProvider();
   get _box => Hive.box<Player>(BOX_PLAYERS);
   get _cachedBox => Hive.box(BOX_CACHED);
   final List<Player> players = [];
@@ -21,7 +20,7 @@ class PlayersProvider extends ChangeNotifier {
           players.firstWhere((p) => p.id == id, orElse: () => players.first);
     }
   }
-  Future<bool> testPlayer(Player player) => _api.testPlayerConnection(player);
+  Future<bool> testPlayer(Player player) => ApiProvider.testPlayerConnection(player);
   void addPlayer(Player player) {
     players.add(player);
     _box.add(player);

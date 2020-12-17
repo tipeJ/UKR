@@ -7,7 +7,7 @@ import 'dart:convert';
 
 class ApiProvider {
   static final ApiProvider _apiProvider = ApiProvider._internal();
-  static const _refreshInterval = Duration(milliseconds: 750);
+  static const _refreshInterval = Duration(milliseconds: 2000);
   static const _pingTimeOut = Duration(milliseconds: 500);
 
   static const headers = {
@@ -20,8 +20,8 @@ class ApiProvider {
   static String url(Player p) => "http://${p.address}:${p.port}/jsonrpc";
   static String wsurl(Player p) => "ws://${p.address}:9090";
 
-  Future<WebSocket> getWS(Player player) => WebSocket.connect(wsurl(player),
-      headers: headers, compression: CompressionOptions.compressionOff);
+  static Future<WebSocket> getWS(Player player) => WebSocket.connect(wsurl(player),
+      headers: headers, compression: CompressionOptions.compressionDefault);
 
   factory ApiProvider() {
     return _apiProvider;
@@ -30,16 +30,16 @@ class ApiProvider {
   ApiProvider._internal();
 
   // System API endpoints
-  Future<bool> testPlayerConnection(Player player) async {
+  static Future<bool> testPlayerConnection(Player player) async {
     //TODO: Get this check working on local servers that do not have http control enabled (doesn't return anything)
-    final body = jsonEncode({"method": "JSONRPC.Ping", ...defParams});
+    final body = await _encode("JSONRPC.Ping", const {});
     final request = await http
         .post(url(player), headers: headers, body: body)
         .timeout(_pingTimeOut, onTimeout: () => http.Response("", 404));
     return request.statusCode == 200;
   }
 
-  Future<Map<String, bool>> getSystemProperties(Player player) async {
+  static Future<Map<String, bool>> getSystemProperties(Player player) async {
     final body = await _encode("System.GetProperties", const {
       "properties": ["canshutdown", "canhibernate", "canreboot", "cansuspend"]
     });
@@ -48,7 +48,7 @@ class ApiProvider {
     return Map<String, bool>.from(json['result']);
   }
 
-  void toggleSystemProperty(Player player, String property) async {
+  static void toggleSystemProperty(Player player, String property) async {
     final body = jsonEncode({"method": "System.$property", ...defParams});
     http.post(url(player), body: body, headers: headers);
   }
@@ -59,7 +59,7 @@ class ApiProvider {
   static Future<String> _encode(String method, Map<String, dynamic> params) =>
       compute(jsonEncode, {"method": method, "params": params, ...defParams});
 
-  Future<String> _getApplicationProperties(Player player) async {
+  static Future<String> _getApplicationProperties(Player player) async {
     final body = jsonEncode({
       "method": "Application.GetProperties",
       "params": {
@@ -71,7 +71,7 @@ class ApiProvider {
     return _handleHTTPResponse(response);
   }
 
-  Future<Map<String, dynamic>> getApplicationProperties(Player player) async {
+  static Future<Map<String, dynamic>> getApplicationProperties(Player player) async {
     final body = await _encode("Application.GetProperties", {
       "properties": const ["muted", "name", "version", "volume"]
     });
@@ -82,7 +82,7 @@ class ApiProvider {
     return parsed['result'] ?? const {};
   }
 
-  Future<Map<String, dynamic>> getPlayerProperties(Player player) async {
+  static Future<Map<String, dynamic>> getPlayerProperties(Player player) async {
     final body = await _encode("Player.getProperties", {
       "playerid": _playerID,
       "properties": const [
@@ -105,7 +105,7 @@ class ApiProvider {
     return parsed['result'] ?? const {};
   }
 
-  Future<Map<String, dynamic>> getPlayerItem(Player player) async {
+  static Future<Map<String, dynamic>> getPlayerItem(Player player) async {
     final body = await _encode("Player.GetItem",
         {"playerid": _playerID, "properties": FETCH_ITEM_PROPERTIES});
     final response = await http.post(url(player), headers: headers, body: body);
@@ -122,7 +122,7 @@ class ApiProvider {
     return {};
   }
 
-  Future<List<PlaylistItemModel>> getPlayList(Player player,
+  static Future<List<PlaylistItemModel>> getPlayList(Player player,
       {required int id, int lowerLimit = -1, int upperLimit = -1}) async {
     final limits =
         lowerLimit > 0 ? {"start": lowerLimit, "end": upperLimit} : const {};
@@ -151,30 +151,7 @@ class ApiProvider {
     return const [];
   }
 
-  Future<String> _getPlayerProperties(Player player) async {
-    final body = jsonEncode({
-      "method": "Player.getProperties",
-      "params": {
-        "playerid": _playerID,
-        "properties": const [
-          "position",
-          "repeat",
-          "type",
-          "speed",
-          "totaltime",
-          "time",
-          "canseek",
-          "videostreams",
-          "currentvideostream"
-        ]
-      },
-      ...defParams
-    });
-    final response = await http.post(url(player), headers: headers, body: body);
-    return _handleHTTPResponse(response);
-  }
-
-  Future<String> _getPlayerItem(Player player) async {
+  static Future<String> _getPlayerItem(Player player) async {
     final body = jsonEncode({
       "method": "Player.GetItem",
       "params": {
@@ -206,12 +183,13 @@ class ApiProvider {
     }
   }
 
-  Stream<PlayerProperties> playerPropertiesStream(Player p) async* {
+  static Stream<Map<String, dynamic>> playerPropertiesStream(Player p) async* {
     while (true) {
       await Future.delayed(_refreshInterval);
-      final response = await _getPlayerProperties(p);
-      final parsedProperties = await compute(_parsePlayerProperties, response);
-      yield parsedProperties;
+      final response = await getPlayerProperties(p);
+      yield response.isEmpty
+          ? const {"error": "No Response from remote player"}
+          : response;
     }
   }
 
@@ -225,7 +203,7 @@ class ApiProvider {
   }
 
   // * Input API endpoints
-  void navigate(Player p, String a) => http.post(url(p),
+  static void navigate(Player p, String a) => http.post(url(p),
       body: jsonEncode({
         "method": "Input.ExecuteAction",
         "params": {"action": a},
@@ -233,13 +211,13 @@ class ApiProvider {
       }),
       headers: headers);
 
-  void sendTextInput(Player p, {required String data, bool done = true}) async {
+  static void sendTextInput(Player p, {required String data, bool done = true}) async {
     final body = await _encode("Input.SendText", {"text": data, "done": done});
     http.post(url(p), body: body, headers: headers);
   }
 
   // * Application API endpoints
-  Future<int> adjustVolume(Player player, {required int newVolume}) async {
+  static Future<int> adjustVolume(Player player, {required int newVolume}) async {
     final body = jsonEncode({
       "method": "Application.SetVolume",
       "params": {"volume": newVolume},
@@ -254,7 +232,7 @@ class ApiProvider {
     }
   }
 
-  Future<bool> toggleMute(Player player, [bool? value]) async {
+  static Future<bool> toggleMute(Player player, [bool? value]) async {
     final body = jsonEncode({
       "method": "Application.SetMute",
       "params": {"mute": value ?? "toggle"},
@@ -266,7 +244,7 @@ class ApiProvider {
   }
 
   // * Player API endpoints
-  Future<int> playPause(Player player) async {
+  static Future<int> playPause(Player player) async {
     final body = jsonEncode({
       "method": "Player.PlayPause",
       "params": {"playerid": _playerID, "play": "toggle"},
@@ -276,7 +254,7 @@ class ApiProvider {
     return response.statusCode == 200 ? 200 : -1;
   }
 
-  Future<int> seek(Player player, {required double percentage}) async {
+  static Future<int> seek(Player player, {required double percentage}) async {
     final percent = (percentage * 100).round();
     final body = jsonEncode({
       "method": "Player.Seek",
@@ -287,7 +265,7 @@ class ApiProvider {
     return response.statusCode;
   }
 
-  Future<String> retrieveCachedImageURL(Player player, String source) async {
+  static Future<String> retrieveCachedImageURL(Player player, String source) async {
     final bod = await _encode("Files.PrepareDownload", {"path": source});
     final r = await http.post(url(player), headers: headers, body: bod);
     final parsed = await compute(jsonDecode, r.body);
@@ -298,7 +276,7 @@ class ApiProvider {
         parsed['result']['details']['path'];
   }
 
-  Future<void> _retrieveImageURLs(
+  static Future<void> _retrieveImageURLs(
       Player player, Map<String, dynamic> item) async {
     var art = item['art'];
     if (art != null && art.isNotEmpty) {
@@ -318,13 +296,13 @@ class ApiProvider {
     }
   }
 
-  void skip(Player player, Map<String, dynamic> params) async {
+  static Future<void> skip(Player player, Map<String, dynamic> params) async {
     final body =
         await _encode("Player.Seek", {"playerid": _playerID, "value": params});
     http.post(url(player), headers: headers, body: body);
   }
 
-  Future<int> stop(Player player) async {
+  static Future<int> stop(Player player) async {
     final body = jsonEncode({
       "method": "Player.Stop",
       "params": {"playerid": _playerID},
@@ -334,35 +312,34 @@ class ApiProvider {
     return response.statusCode;
   }
 
-  void toggleRepeat(Player player) async {
+  static void toggleRepeat(Player player) async {
     final body = await _encode(
         "Player.SetRepeat", {"repeat": "cycle", "playerid": _playerID});
     await http.post(url(player), headers: headers, body: body);
   }
 
   // * Playlist API Endpoints
-  Future<void> swapPlaylistItems(Player player,
+  static Future<void> swapPlaylistItems(Player player,
       {required int playListID, required int from, required int to}) async {
     final body = await _encode("Playlist.Swap",
         {"playlistid": playListID, "position1": from, "position2": to});
     await http.post(url(player), headers: headers, body: body);
   }
 
-  Future<void> removePlaylistItem(Player player,
+  static Future<void> removePlaylistItem(Player player,
       {required int location, required int playlistID}) async {
     final body = await _encode(
         "Playlist.Remove", {"playlistid": playlistID, "position": location});
     await http.post(url(player), headers: headers, body: body);
   }
 
-  Future<void> goTo(Player player, dynamic to) async {
+  static Future<void> goTo(Player player, dynamic to) async {
     final body =
         await _encode("Player.GoTo", {"playerid": _playerID, "to": to});
     final r = await http.post(url(player), body: body, headers: headers);
   }
 
-  Future<void> playFile(Player player,
-      {required String file}) async {
+  static Future<void> playFile(Player player, {required String file}) async {
     final body = await _encode("Player.Open", {
       "item": {"file": file}
     });
