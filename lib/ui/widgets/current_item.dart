@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:provider/provider.dart';
 import 'package:UKR/ui/providers/providers.dart';
 import 'package:UKR/utils/utils.dart';
@@ -12,18 +13,19 @@ class CurrentItem extends StatelessWidget {
     switch (currentItem.runtimeType) {
       case VideoItem:
         final item = currentItem as VideoItem;
-        List<Widget> children = [const Text("Nothing is playing")];
+        String headline = "Nothing is playing";
+        List<Widget> children = [];
         if (item.type == "movie") {
+          headline = item.label;
           children = [
-            Text(item.label, style: theme.headline5),
             item.director.nullIf(
                 Text(item.director.separateFold(', '), style: theme.subtitle1),
                 (d) => d.isNotEmpty),
             item.year.nullOr(Text(item.year.toString(), style: theme.caption)),
           ].nonNulls() as List<Widget>;
         } else if (item.type == "episode") {
+          headline = item.showTitle ?? item.label;
           children = [
-            Text(item.showTitle ?? item.label, style: theme.headline5),
             Text("S${item.season} E${item.episode} - ${item.label}",
                 style: theme.subtitle1),
             Text(
@@ -34,7 +36,7 @@ class CurrentItem extends StatelessWidget {
                 style: theme.caption)
           ];
         } else if (item.type == "unknown") {
-          children = [Text(item.label, style: theme.headline6)];
+          headline = item.label;
         }
         return Container(
             padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 10.0),
@@ -42,7 +44,10 @@ class CurrentItem extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: children));
+                children: [
+                  AutoSizeText(headline, style: theme.headline5, maxLines: 1),
+                  ...children
+                ]));
       case AudioItem:
         return Text("Audio");
       default:

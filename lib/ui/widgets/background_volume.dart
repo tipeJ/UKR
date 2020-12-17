@@ -45,10 +45,15 @@ class BackgroundImageWrapper extends StatelessWidget {
           child = CachedNetworkImage(fit: BoxFit.cover, imageUrl: art['poster']);
         }
       }
-      return Container(
-          width: constraints.biggest.width,
-          height: constraints.biggest.height,
-          child: child ?? Container());
+      return Stack(
+        children: [
+          Container(
+              width: constraints.biggest.width,
+              height: constraints.biggest.height,
+              child: child ?? Container()),
+          Container(color: Colors.black45)
+        ],
+      );
     });
   }
 }

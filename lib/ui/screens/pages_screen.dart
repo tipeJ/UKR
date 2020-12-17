@@ -37,7 +37,8 @@ class _PagesScreenState extends State<PagesScreen> {
         children: [
           Listener(
             onPointerHover: (ev) => print("hover: $ev"),
-            child: Container(color: Colors.black45, child: Text("Content be here")),
+            child: Container(
+                color: Colors.black45, child: Text("Content be here")),
           ),
           GestureDetector(
             onVerticalDragUpdate: (details) {
