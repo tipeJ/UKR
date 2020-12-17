@@ -25,6 +25,10 @@
    | Seekbar | Seekbar | Playback Controls |
    
    "Content" being either playlist or content browser.
+   
+** Desktop layout
+*** TODO Native menubar instead of mobile appbar for desktop builds.
+*** TODO Drag'n Drop
 ** Playlist controlling
 
 *** DONE Remove items

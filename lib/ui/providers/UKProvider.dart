@@ -52,16 +52,16 @@ class UKProvider extends ChangeNotifier {
     super.dispose();
   }
 
+  // * Initialize Function
+  /// Call this function every time the player object should change.
   void initialize(Player player) async {
     this._player = player;
     this._ws?.close();
-    this._ws = await _api.getWS(player);
-
-    this
-        ._w
-        .asyncMap<Map<String, dynamic>>(
-            (data) => compute(_convertJsonData, data.toString()))
-        .listen((data) => _handleJsonResponse(data));
+    this._ws = await _api.getWS(player)
+      ..asyncMap<Map<String, dynamic>>(
+              (data) => compute(_convertJsonData, data.toString()))
+          .listen((data) => _handleJsonResponse(data))
+      ..handleError((e) => print("ERROR: $e"));
 
     // Refresh the initial values.
     await _refreshPlayerProperties();
@@ -85,6 +85,12 @@ class UKProvider extends ChangeNotifier {
     final d = p['data'];
     print("RESPONSE: " + j.toString());
     switch (j['method']) {
+      case "System.OnQuit":
+        _timeUpdateTimer?.cancel();
+        this.currentItem = null;
+        this.canSeek = false;
+        this.playList = [];
+        break;
       case "Other.PlaybackStarted":
         await _refreshPlayerProperties();
         await _refreshPlayerItem();
@@ -164,8 +170,12 @@ class UKProvider extends ChangeNotifier {
   // ** Player Item Endpoints
   Future<void> _refreshPlayerItem() async {
     final result = await _api.getPlayerItem(player);
-    if (result.isNotEmpty && result['label'].isNotEmpty) {
-      this.currentItem = VideoItem.fromJson(result);
+    if (result.isNotEmpty) {
+      if (result['label'].isEmpty) {
+        this.currentItem = null;
+      } else {
+        this.currentItem = VideoItem.fromJson(result);
+      }
       notifyListeners();
     }
   }

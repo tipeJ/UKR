@@ -115,7 +115,6 @@ class ApiProvider {
     final result = parsed['result'];
     if (parsed['error'] == null && result != null) {
       var item = parsed['result']['item'];
-      print('item:::' + item.toString());
       // *** Fetch Artwork Paths
       await _retrieveImageURLs(player, item);
       return item;
@@ -360,7 +359,6 @@ class ApiProvider {
     final body =
         await _encode("Player.GoTo", {"playerid": _playerID, "to": to});
     final r = await http.post(url(player), body: body, headers: headers);
-    print("goto: ${r.body}");
   }
 
   Future<void> playFile(Player player,
@@ -369,7 +367,6 @@ class ApiProvider {
       "item": {"file": file}
     });
     final r = await http.post(url(player), headers: headers, body: body);
-    print("ADD: ${r.body}");
   }
 }
 

@@ -35,7 +35,10 @@ class _PagesScreenState extends State<PagesScreen> {
         dragStartBehavior: DragStartBehavior.down,
         allowImplicitScrolling: true,
         children: [
-          Container(color: Colors.black45, child: Text("Content be here")),
+          Listener(
+            onPointerHover: (ev) => print("hover: $ev"),
+            child: Container(color: Colors.black45, child: Text("Content be here")),
+          ),
           GestureDetector(
             onVerticalDragUpdate: (details) {
               final endPos = maxHeight - kBottomNavigationBarHeight;
