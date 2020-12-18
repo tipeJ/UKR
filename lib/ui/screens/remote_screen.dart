@@ -34,10 +34,10 @@ class RemoteScreen extends StatelessWidget {
     if (player == null) {
       title = const Text("NO PLAYER");
     } else {
-      title = Selector<UKProvider, Tuple2<String?, String?>>(
-          selector: (_, p) => Tuple2(p.socketCloseReason, p.error),
+      title = Selector<UKProvider, Tuple2<String?, ConnectionStatus>>(
+          selector: (_, p) => Tuple2(p.socketCloseReason, p.connectionStatus),
           builder: (_, errors, __) {
-            String appBarTitle = player.name;
+            String? status;
             Function() onTap = () async {
               final result = await showDialog(
                   context: context,
@@ -67,18 +67,32 @@ class RemoteScreen extends StatelessWidget {
                   ApiProvider.sendTextInput(player, data: dialogResult);
               }
             };
-            if (errors.item1 != null || errors.item2 != null) {
-              appBarTitle = errors.item1 ?? errors.item2!;
+            if (errors.item1 != null ||
+                errors.item2 == ConnectionStatus.Disconnected) {
+              status = errors.item1 ?? "Disconnected";
               onTap = () async {
                 context.read<UKProvider>().reconnect();
               };
-            }
+            } else if (errors.item2 == ConnectionStatus.Reconnecting) status = "Reconnecting";
             return InkWell(
                 onTap: onTap,
                 child: Container(
                   height: kBottomNavigationBarHeight,
                   alignment: Alignment.center,
-                  child: Text(appBarTitle),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(player.name),
+                      AnimatedContainer(
+                          duration: const Duration(milliseconds: 250),
+                          curve: Curves.easeIn,
+                          height: status != null ? 15.0 : 0,
+                          child: status != null
+                              ? Text(status,
+                                  style: Theme.of(context).textTheme.caption)
+                              : Container())
+                    ],
+                  ),
                 ));
           });
       actions.add(_PlayerPowerOptions());

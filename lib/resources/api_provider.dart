@@ -20,8 +20,9 @@ class ApiProvider {
   static String url(Player p) => "http://${p.address}:${p.port}/jsonrpc";
   static String wsurl(Player p) => "ws://${p.address}:9090";
 
-  static Future<WebSocket> getWS(Player player) => WebSocket.connect(wsurl(player),
-      headers: headers, compression: CompressionOptions.compressionDefault);
+  static Future<WebSocket> getWS(Player player) =>
+      WebSocket.connect(wsurl(player),
+          headers: headers, compression: CompressionOptions.compressionDefault);
 
   factory ApiProvider() {
     return _apiProvider;
@@ -33,10 +34,14 @@ class ApiProvider {
   static Future<bool> testPlayerConnection(Player player) async {
     //TODO: Get this check working on local servers that do not have http control enabled (doesn't return anything)
     final body = await _encode("JSONRPC.Ping", const {});
-    final request = await http
-        .post(url(player), headers: headers, body: body)
-        .timeout(_pingTimeOut, onTimeout: () => http.Response("", 404));
-    return request.statusCode == 200;
+    try {
+      final request = await http
+          .post(url(player), headers: headers, body: body)
+          .timeout(_pingTimeOut, onTimeout: () => http.Response("", 404));
+      return request.statusCode == 200;
+    } on SocketException {
+      return false;
+    }
   }
 
   static Future<Map<String, bool>> getSystemProperties(Player player) async {
@@ -71,7 +76,8 @@ class ApiProvider {
     return _handleHTTPResponse(response);
   }
 
-  static Future<Map<String, dynamic>> getApplicationProperties(Player player) async {
+  static Future<Map<String, dynamic>> getApplicationProperties(
+      Player player) async {
     final body = await _encode("Application.GetProperties", {
       "properties": const ["muted", "name", "version", "volume"]
     });
@@ -211,13 +217,15 @@ class ApiProvider {
       }),
       headers: headers);
 
-  static void sendTextInput(Player p, {required String data, bool done = true}) async {
+  static void sendTextInput(Player p,
+      {required String data, bool done = true}) async {
     final body = await _encode("Input.SendText", {"text": data, "done": done});
     http.post(url(p), body: body, headers: headers);
   }
 
   // * Application API endpoints
-  static Future<int> adjustVolume(Player player, {required int newVolume}) async {
+  static Future<int> adjustVolume(Player player,
+      {required int newVolume}) async {
     final body = jsonEncode({
       "method": "Application.SetVolume",
       "params": {"volume": newVolume},
@@ -265,7 +273,8 @@ class ApiProvider {
     return response.statusCode;
   }
 
-  static Future<String> retrieveCachedImageURL(Player player, String source) async {
+  static Future<String> retrieveCachedImageURL(
+      Player player, String source) async {
     final bod = await _encode("Files.PrepareDownload", {"path": source});
     final r = await http.post(url(player), headers: headers, body: bod);
     final parsed = await compute(jsonDecode, r.body);
