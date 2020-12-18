@@ -95,7 +95,6 @@ class UKProvider extends ChangeNotifier {
       }
     }).listen((data) {
       if (data.isNotEmpty) {
-        print("Update Player Properties");
         _updatePlayerProps(data);
       }
     });
@@ -245,7 +244,6 @@ class UKProvider extends ChangeNotifier {
       timeChanged = true;
     }
     if (r['totaltime'] != null) {
-      print("TOTALTIME: " + r['totaltime'].toString());
       totalTime = PlayerTime.fromJson(r['totaltime']);
     }
     type = r['type'] ?? type;

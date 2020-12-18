@@ -16,7 +16,13 @@ class PlaylistScreen extends StatelessWidget {
     return Selector<UKProvider, List<PlaylistItemModel>>(
         selector: (_, p) => p.playList.toList(),
         builder: (_, playList, __) {
-          return ReorderableList(
+          return playList.isEmpty ? Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Icon(Icons.playlist_play_rounded, size: 56.0),
+              Text("Playlist is Empty", style: TextStyle(color: Colors.grey))
+            ],
+          ) : ReorderableList(
               onReorder: (from, to) {
                 int draggingIndex = _indexOf(from, playList);
                 int newPositionIndex = _indexOf(to, playList);
