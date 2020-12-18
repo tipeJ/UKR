@@ -151,7 +151,8 @@
 
 *** TODO Check for memory leaks (With devtools on Android emulator)
 
-** TODO Fix local player(s) not going through with the API network check
+** DONE Fix local player(s) not going through with the API network check
+   CLOSED: [2020-12-18 pe 20:21]
 
 ** DONE Android UKProvider doesn't receive any data
    CLOSED: [2020-12-15 ti 22:39]
