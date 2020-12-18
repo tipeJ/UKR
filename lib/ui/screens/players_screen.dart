@@ -40,7 +40,10 @@ class PlayerListItemState extends State<PlayerListItem> {
   get _player => widget.player;
   @override
   Widget build(BuildContext context) => InkWell(
-        onTap: () => context.read<PlayersProvider>().setPlayer(_player),
+        onTap: () {
+          context.read<PlayersProvider>().setPlayer(_player);
+          Navigator.of(context).pop();
+        },
         child: Container(
             padding: const EdgeInsets.all(5.0),
             child: Row(
@@ -51,17 +54,23 @@ class PlayerListItemState extends State<PlayerListItem> {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: widget.compact ? [
-                    Text(_player.name, style: Theme.of(context).textTheme.bodyText1),
-                    Text("${_player.address}:${_player.port}", style: TextStyle(fontWeight: FontWeight.w200))
-                  ] : [
-                    Text(_player.name,
-                        style: Theme.of(context).textTheme.headline6),
-                    Text(_player.address,
-                        style: const TextStyle(fontWeight: FontWeight.w300)),
-                    Text(_player.port.toString(),
-                        style: const TextStyle(fontWeight: FontWeight.w200))
-                  ],
+                  children: widget.compact
+                      ? [
+                          Text(_player.name,
+                              style: Theme.of(context).textTheme.bodyText1),
+                          Text("${_player.address}:${_player.port}",
+                              style: TextStyle(fontWeight: FontWeight.w200))
+                        ]
+                      : [
+                          Text(_player.name,
+                              style: Theme.of(context).textTheme.headline6),
+                          Text(_player.address,
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.w300)),
+                          Text(_player.port.toString(),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.w200))
+                        ],
                 ),
                 Padding(
                     padding: EdgeInsets.all(widget.compact ? 5.0 : 20.0),
