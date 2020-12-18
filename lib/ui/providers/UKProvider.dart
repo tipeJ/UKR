@@ -59,6 +59,8 @@ class UKProvider extends ChangeNotifier {
   /// Call this function every time the player object should change.
   void initialize(Player player) async {
     this._player = player;
+    connectionStatus = ConnectionStatus.Disconnected;
+    notifyListeners();
     this._ws?.close();
     try {
       this._ws = await ApiProvider.getWS(player)
@@ -74,6 +76,8 @@ class UKProvider extends ChangeNotifier {
       notifyListeners();
       _propertiesStream?.pause();
       return;
+    } finally {
+      notifyListeners();
     }
 
     // Refresh the initial values.
