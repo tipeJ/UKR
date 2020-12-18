@@ -30,7 +30,7 @@ class RemoteScreen extends StatelessWidget {
     Widget title;
     List<Widget> actions = [];
     final player = context.watch<PlayersProvider>().selectedPlayer;
-    const playerActions = ["Send Text"];
+    const playerActions = ["Refresh", "Send Text"];
     if (player == null) {
       title = const Text("NO PLAYER");
     } else {
@@ -58,13 +58,18 @@ class RemoteScreen extends StatelessWidget {
                                   .toList()),
                         ),
                       ));
-              if (result == "Send Text") {
-                final input = Input(
-                    InputType.Keyboard, "Send Text to ${player.name}", "");
-                DialogService ds = GetIt.instance<DialogService>();
-                var dialogResult = await ds.showDialog(input);
-                if (dialogResult != null)
-                  ApiProvider.sendTextInput(player, data: dialogResult);
+              switch (result) {
+                case "Send Text":
+                  final input = Input(
+                      InputType.Keyboard, "Send Text to ${player.name}", "");
+                  DialogService ds = GetIt.instance<DialogService>();
+                  var dialogResult = await ds.showDialog(input);
+                  if (dialogResult != null)
+                    ApiProvider.sendTextInput(player, data: dialogResult);
+                  break;
+                case "Refresh":
+                  context.read<UKProvider>().initialize(player);
+                  break;
               }
             };
             if (errors.item1 != null ||
@@ -73,7 +78,8 @@ class RemoteScreen extends StatelessWidget {
               onTap = () async {
                 context.read<UKProvider>().reconnect();
               };
-            } else if (errors.item2 == ConnectionStatus.Reconnecting) status = "Reconnecting";
+            } else if (errors.item2 == ConnectionStatus.Reconnecting)
+              status = "Reconnecting";
             return InkWell(
                 onTap: onTap,
                 child: Container(

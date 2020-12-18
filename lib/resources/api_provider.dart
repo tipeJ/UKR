@@ -123,6 +123,7 @@ class ApiProvider {
       var item = parsed['result']['item'];
       // *** Fetch Artwork Paths
       await _retrieveImageURLs(player, item);
+      print("NEXT ITEM: $item");
       return item;
     }
     return {};
@@ -138,9 +139,6 @@ class ApiProvider {
       "limits": limits
     });
     final response = await http.post(url(player), headers: headers, body: body);
-    print("------------");
-    print("PLAYLIST: " + response.body);
-    print("------------");
     final s = _handleHTTPResponse(response);
     if (s.isNotEmpty) {
       final parsed = await compute(jsonDecode, s);

@@ -136,6 +136,7 @@ class UKProvider extends ChangeNotifier {
         this.currentItem = null;
         this.canSeek = false;
         this.playList = [];
+        connectionStatus = ConnectionStatus.Disconnected;
         break;
       case "Other.PlaybackStarted":
         await _refreshPlayerProperties();

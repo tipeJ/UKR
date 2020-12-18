@@ -23,6 +23,13 @@ const FETCH_ITEM_PROPERTIES = [
   "file",
   "plot",
   "plotoutline",
+  "tagline",
+  "tag",
+  "trailer",
+  "playcount",
+  "originaltitle",
+  "genre",
+  "studio",
   // "cast"
 ];
 
