@@ -12,7 +12,7 @@ extension ListExtensions<T> on List<T> {
     String fold = "";
     for (int i = 0; i < length; i++) {
       fold += this[i].toString();
-      if (i != length - 1) fold += " $separator";
+      if (i != length - 1) fold += "$separator ";
     }
     return fold;
   }

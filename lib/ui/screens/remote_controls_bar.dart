@@ -20,21 +20,24 @@ class _RemoteControlsBarState extends State<RemoteControlsBar>
     with SingleTickerProviderStateMixin {
   static const _tapAnimateDuration = const Duration(milliseconds: 350);
   late final AnimationController _controller;
+  late final PageController _pageController;
   double _lerp(double min, double max) =>
       lerpDouble(min, max, _controller.value) ?? 0.0;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(value: 0.0, vsync: this);
-    _controller.addListener(() {
-      setState(() {});
-    });
+    _controller = AnimationController(value: 0.0, vsync: this)
+      ..addListener(() {
+        setState(() {});
+      });
+    _pageController = PageController(initialPage: 1);
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -54,12 +57,16 @@ class _RemoteControlsBarState extends State<RemoteControlsBar>
               }
             },
             onVerticalDragUpdate: (details) {
-              _controller.value -= (details.delta.dy / maxSize);
+              if (_pageController.page == 1.0)
+                _controller.value -= (details.delta.dy / maxSize);
             },
             onVerticalDragEnd: (details) {
-              _controller.fling(velocity: -details.primaryVelocity! / maxSize);
+              if (_pageController.page == 1.0)
+                _controller.fling(
+                    velocity: -details.primaryVelocity! / maxSize);
             },
             child: PageView(
+              controller: _pageController,
               children: [
                 Container(color: Colors.blue),
                 Container(
@@ -259,10 +266,15 @@ class _BottomPlaybackInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final _contSize = min(40.0, width / 6 - 28.0);
-    final props = context.select<UKProvider,
-            Tuple5<PlayerTime, PlayerTime, double, bool, bool>>(
-        (p) => Tuple5(p.time, p.totalTime, p.currentTemporaryProgress, p.currentItem?.type != "Null" && (p.currentItem?.label.isNotEmpty ?? false),
-            p.canSeek));
+    final props = context
+        .select<UKProvider, Tuple5<PlayerTime, PlayerTime, double, bool, bool>>(
+            (p) => Tuple5(
+                p.time,
+                p.totalTime,
+                p.currentTemporaryProgress,
+                p.currentItem?.type != "Null" &&
+                    (p.currentItem?.label.isNotEmpty ?? false),
+                p.canSeek));
     if (props.item4) {
       return Positioned(
           left: _lerp(minSize, 0.0),

@@ -8,18 +8,22 @@ class Item {
   final Map<String, String> artwork;
   final String fileUrl;
   final int? year;
+  final List<String> genres;
+
   Item(Map<String, dynamic> j)
       : duration = j['duration'],
         year = j['year'] == 1601 ? null : j['year'],
         type = j['type'],
         label = j['label'],
         artwork = _castArt(j),
+        genres = j['genre'].map<String>((i) => i.toString()).toList(),
         fileUrl = j['file'] ?? "";
   @override
   bool operator ==(other) =>
       other is Item &&
       other.duration == duration &&
       other.label == label &&
+      other.genres == genres &&
       other.fileUrl == fileUrl &&
       other.year == year;
 }
@@ -53,6 +57,7 @@ class VideoItem extends Item {
   final String? plot;
   final String? tagline;
   final double? rating;
+  final String? imdbID;
 
   // * TV Specific
   final int? season;
@@ -67,6 +72,7 @@ class VideoItem extends Item {
       this.rating,
       this.tagline,
       this.season,
+      this.imdbID,
       this.episode,
       this.showTitle})
       : super(json);
@@ -76,6 +82,7 @@ class VideoItem extends Item {
       tagline: (j['tagline'] as String).nullIfEmpty(),
       cast: _parseCast(j['cast']),
       rating: j['rating'],
+      imdbID: j['imdbnumber'],
       season: j['season'] == -1 ? null : j['season'],
       episode: j['episode'],
       showTitle: j['showtitle'],
