@@ -83,7 +83,7 @@ class VideoDetailsScreen extends StatelessWidget {
                     child: i == min(item.cast.length, 10) + 1
                         ? InkWell(
                             child:
-                                Text("View Entire Cast (${item.cast.length})"),
+                                Text("View Entire Cast (${item.cast.length})", style: theme.subtitle2),
                             onTap: () => Navigator.of(context)
                                 .pushNamed(ROUTE_CAST_SCREEN, arguments: item))
                         : CastItem(
