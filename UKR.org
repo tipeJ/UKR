@@ -91,6 +91,7 @@
    + Bookmark
    + Parent folder
    + Fast forwarding
+   + Stickied shortcuts for addons, movies, etc.
    + Player view modes
    + Chapter navigation
    + Player Debug/ Process info
