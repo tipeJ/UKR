@@ -40,6 +40,8 @@ const FETCH_ITEM_PROPERTIES = [
   "originaltitle",
   "genre",
   "studio",
+  "imdbnumber",
+  "rating",
   "cast"
 ];
 

@@ -15,6 +15,7 @@ class VideoDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String image = retrieveOptimalImage(item);
+    final theme = Theme.of(context).textTheme;
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(child: Container(height: 100)),
@@ -44,13 +45,23 @@ class VideoDetailsScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 item.tagline != null
-                    ? Text(item.tagline!,
-                        style: Theme.of(context).textTheme.bodyText1)
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(item.tagline!, style: theme.bodyText1),
+                          if (item.rating != null)
+                            Text.rich(TextSpan(children: [
+                              TextSpan(
+                                  text: item.rating!.toStringAsPrecision(3),
+                                  style: theme.subtitle1),
+                              TextSpan(text: "/10", style: theme.caption)
+                            ]))
+                        ],
+                      )
                     : null,
                 item.tagline != null ? Divider() : null,
                 item.plot != null
-                    ? Text(item.plot!,
-                        style: Theme.of(context).textTheme.caption)
+                    ? Text(item.plot!, style: theme.caption)
                     : null,
               ].nonNulls() as List<Widget>),
         )),
@@ -61,26 +72,26 @@ class VideoDetailsScreen extends StatelessWidget {
             margin: _padding,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("Cast", style: Theme.of(context).textTheme.headline6),
-                Divider()
-              ],
+              children: [Text("Cast", style: theme.headline6), Divider()],
             ),
           )),
-        SliverList(
-          delegate: SliverChildBuilderDelegate(
-              (context, i) => Padding(
-                padding: const EdgeInsets.only(left: 16.0),
-                child: i == min(item.cast.length, 10) + 1
-                ? InkWell(child: Text("View Entire Cast (${item.cast.length})"), onTap:() => Navigator.of(context).pushNamed(ROUTE_CAST_SCREEN, arguments: item))
-                : CastItem(
-                    name: item.cast.keys.elementAt(i),
-                    role: item.cast.values.elementAt(i))
-              ),
-              childCount: min(item.cast.length, 10) + 2),
-        )
+        if (item.cast.isNotEmpty)
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+                (context, i) => Padding(
+                    padding: const EdgeInsets.only(left: 16.0),
+                    child: i == min(item.cast.length, 10) + 1
+                        ? InkWell(
+                            child:
+                                Text("View Entire Cast (${item.cast.length})"),
+                            onTap: () => Navigator.of(context)
+                                .pushNamed(ROUTE_CAST_SCREEN, arguments: item))
+                        : CastItem(
+                            name: item.cast.keys.elementAt(i),
+                            role: item.cast.values.elementAt(i))),
+                childCount: min(item.cast.length, 10) + 2),
+          )
       ],
     );
   }
 }
-

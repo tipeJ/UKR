@@ -52,6 +52,7 @@ class VideoItem extends Item {
   final VideoStreams? videoStreams;
   final String? plot;
   final String? tagline;
+  final double? rating;
 
   // * TV Specific
   final int? season;
@@ -63,6 +64,7 @@ class VideoItem extends Item {
       required this.videoStreams,
       this.cast = const {},
       this.plot,
+      this.rating,
       this.tagline,
       this.season,
       this.episode,
@@ -70,9 +72,10 @@ class VideoItem extends Item {
       : super(json);
 
   factory VideoItem.fromJson(dynamic j) => VideoItem(j,
-      plot: ( j['plot'] as String).nullIfEmpty(),
-      tagline: ( j['tagline'] as String).nullIfEmpty(),
+      plot: (j['plot'] as String).nullIfEmpty(),
+      tagline: (j['tagline'] as String).nullIfEmpty(),
       cast: _parseCast(j['cast']),
+      rating: j['rating'],
       season: j['season'] == -1 ? null : j['season'],
       episode: j['episode'],
       showTitle: j['showtitle'],
@@ -83,7 +86,8 @@ class VideoItem extends Item {
           ? VideoStreams.fromJson(j['streamdetails'])
           : null);
 
-  static Map<String, String> _parseCast(List<dynamic> c) {
+  static Map<String, String> _parseCast(List<dynamic>? c) {
+    if (c == null) return const {};
     Map<String, String> cast = {};
     c.forEach((i) => cast[i['name']] = i['role']);
     return cast;

@@ -29,41 +29,38 @@ class _PagesScreenState extends State<PagesScreen> {
   @override
   Widget build(BuildContext context) {
     final maxHeight = MediaQuery.of(context).size.height;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: kBottomNavigationBarHeight),
-      child: PageView(
-        controller: _controller,
-        dragStartBehavior: DragStartBehavior.down,
-        allowImplicitScrolling: true,
-        children: [
-          Container(
-              color: Colors.black45, child: Text("Content be here")),
-          GestureDetector(
-            onVerticalDragUpdate: (details) {
-              final endPos = maxHeight - kBottomNavigationBarHeight;
-              final clampedP = details.globalPosition.dy.clamp(
-                  kBottomNavigationBarHeight,
-                  maxHeight - kBottomNavigationBarHeight);
-              final newVolume = ((endPos - clampedP).abs() /
-                  (endPos - kBottomNavigationBarHeight));
-              context.read<UKProvider>().setVolume(newVolume * 100);
-            },
-            child: Listener(
-              onPointerSignal: (event) {
-                if (event is PointerScrollEvent) {
-                  if (event.scrollDelta.dy < 0) {
-                    context.read<UKProvider>().increaseVolumeSmall();
-                  } else {
-                    context.read<UKProvider>().decreaseVolumeSmall();
-                  }
+    return PageView(
+      controller: _controller,
+      dragStartBehavior: DragStartBehavior.down,
+      allowImplicitScrolling: true,
+      children: [
+        Container(
+            color: Colors.black45, child: Text("Content be here")),
+        GestureDetector(
+          onVerticalDragUpdate: (details) {
+            final endPos = maxHeight - kBottomNavigationBarHeight;
+            final clampedP = details.globalPosition.dy.clamp(
+                kBottomNavigationBarHeight,
+                maxHeight - kBottomNavigationBarHeight);
+            final newVolume = ((endPos - clampedP).abs() /
+                (endPos - kBottomNavigationBarHeight));
+            context.read<UKProvider>().setVolume(newVolume * 100);
+          },
+          child: Listener(
+            onPointerSignal: (event) {
+              if (event is PointerScrollEvent) {
+                if (event.scrollDelta.dy < 0) {
+                  context.read<UKProvider>().increaseVolumeSmall();
+                } else {
+                  context.read<UKProvider>().decreaseVolumeSmall();
                 }
-              },
-              child: _RemotePage(),
-            ),
+              }
+            },
+            child: _RemotePage(),
           ),
-          PlaylistScreen()
-        ],
-      ),
+        ),
+        PlaylistScreen()
+      ],
     );
   }
 }

@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ApiProvider {
-  static final ApiProvider _apiProvider = ApiProvider._internal();
+  static const _tmdbApiKey = "1f67bf23438d6cd46fa54a799e1210d5";
   static const _refreshInterval = Duration(milliseconds: 3500);
   static const _pingTimeOut = Duration(milliseconds: 500);
 
@@ -23,12 +23,6 @@ class ApiProvider {
   static Future<WebSocket> getWS(Player player) =>
       WebSocket.connect(wsurl(player),
           headers: headers, compression: CompressionOptions.compressionDefault);
-
-  factory ApiProvider() {
-    return _apiProvider;
-  }
-
-  ApiProvider._internal();
 
   // System API endpoints
   static Future<bool> testPlayerConnection(Player player) async {
@@ -123,7 +117,7 @@ class ApiProvider {
       var item = parsed['result']['item'];
       // *** Fetch Artwork Paths
       await _retrieveImageURLs(player, item);
-      print("item_ART: ${item['art']}");
+      print("next item: $item");
       return item;
     }
     return {};
@@ -351,6 +345,15 @@ class ApiProvider {
       "item": {"file": file}
     });
     final r = await http.post(url(player), headers: headers, body: body);
+  }
+
+  // * External API Endpoints
+  static Future<TMDBItem> fetchTMDBMovie(String imdbID) async {
+    final theaders = {"api_key": _tmdbApiKey};
+    final response = await http
+        .get("https://api.themoviedb.org/3/movie/$imdbID?api_key=$_tmdbApiKey");
+    final parsed = await compute(jsonDecode, response.body);
+    return TMDBItem.fromJson(parsed);
   }
 }
 
