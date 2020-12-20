@@ -1,3 +1,4 @@
+import 'package:UKR/resources/resources.dart';
 import 'package:UKR/ui/providers/providers.dart';
 import 'package:UKR/ui/screens/playlist_screen.dart';
 import 'package:UKR/ui/widgets/widgets.dart';
@@ -76,7 +77,10 @@ class _RemotePage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         mainAxisSize: MainAxisSize.max,
         children: [
-          CurrentItem(),
+          InkWell(
+            onTap: () => Navigator.of(context).pushNamed(ROUTE_CURRENT_ITEM_DETAILS),
+            child: CurrentItem()
+          ),
           RemoteButtons(),
         ],
       ),

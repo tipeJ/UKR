@@ -1,3 +1,7 @@
+// * Routes
+const ROUTE_CURRENT_ITEM_DETAILS = "current_item_details";
+const ROUTE_PAGES_SCREEN = "pages_screen";
+
 // * Hive Data
 const BOX_PLAYERS = "box_players";
 

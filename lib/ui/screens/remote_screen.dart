@@ -11,19 +11,24 @@ import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
 class RemoteScreen extends StatelessWidget {
+  final GlobalKey<NavigatorState> _key = GlobalKey<NavigatorState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: _buildAppBar(context),
-        drawer: Drawer(child: _PlayersBar()),
-        bottomSheet: RemoteControlsBar(),
-        body: Stack(
-          children: [
-            BackgroundImageWrapper(),
-            BackgroundVolumeWrapper(),
-            PagesScreen(),
-          ],
-        ));
+      appBar: _buildAppBar(context),
+      drawer: Drawer(child: _PlayersBar()),
+      bottomSheet: RemoteControlsBar(),
+      body: Stack(
+        children: [
+          BackgroundImageWrapper(),
+          Navigator(
+            key: _key,
+            initialRoute: ROUTE_PAGES_SCREEN,
+            onGenerateRoute: _Router.generateRoute,
+          ),
+        ],
+      ),
+    );
   }
 
   AppBar _buildAppBar(BuildContext context) {
@@ -103,7 +108,17 @@ class RemoteScreen extends StatelessWidget {
           });
       actions.add(_PlayerPowerOptions());
     }
-    return AppBar(centerTitle: true, title: title, actions: actions);
+    return AppBar(
+        leading: IconButton(
+            // TODO: Add animated icon for menu/ back button.
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () async {
+              bool popped = await _key.currentState?.maybePop() ?? false;
+              if (!popped && _key.currentContext != null) Scaffold.of(_key.currentContext!).openDrawer();
+            }),
+        centerTitle: true,
+        title: title,
+        actions: actions);
   }
 }
 
@@ -188,5 +203,25 @@ class _PlayersBar extends StatelessWidget {
             ))
       ],
     );
+  }
+}
+
+class _Router {
+  static Route generateRoute(RouteSettings settings) {
+    Widget child;
+    switch (settings.name) {
+      case ROUTE_PAGES_SCREEN:
+        child = Stack(children: [
+          BackgroundVolumeWrapper(),
+          PagesScreen(),
+        ]);
+        break;
+      case ROUTE_CURRENT_ITEM_DETAILS:
+        child = const Text("ITEM DETAILS");
+        break;
+      default:
+        child = Center(child: Text("No Router found for ${settings.name}"));
+    }
+    return MaterialPageRoute(builder: (context) => child);
   }
 }
