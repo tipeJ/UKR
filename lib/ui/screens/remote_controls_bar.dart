@@ -59,30 +59,36 @@ class _RemoteControlsBarState extends State<RemoteControlsBar>
             onVerticalDragEnd: (details) {
               _controller.fling(velocity: -details.primaryVelocity! / maxSize);
             },
-            child: Container(
-              color: Colors.transparent,
-              child: Stack(
-                children: [
-                  _BottomBackground(_lerp),
-                  _BottomPlaybackInfo(_lerp),
-                  Align(
-                      alignment: Alignment.lerp(Alignment.centerRight,
-                          Alignment.center, _controller.value)!,
-                      child: _BottomControlButtons(_lerp)),
-                  Positioned(
-                      bottom: 0.0,
-                      width: MediaQuery.of(context).size.width,
-                      child: IgnorePointer(
-                          ignoring: _controller.value < 0.5,
-                          child: Opacity(
-                              opacity: _controller.value,
-                              child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [_BottomVolumeSlider()]))))
-                ],
-              ),
+            child: PageView(
+              children: [
+                Container(color: Colors.blue),
+                Container(
+                  color: Colors.transparent,
+                  child: Stack(
+                    children: [
+                      _BottomBackground(_lerp),
+                      _BottomPlaybackInfo(_lerp),
+                      Align(
+                          alignment: Alignment.lerp(Alignment.centerRight,
+                              Alignment.center, _controller.value)!,
+                          child: _BottomControlButtons(_lerp)),
+                      Positioned(
+                          bottom: 0.0,
+                          width: MediaQuery.of(context).size.width,
+                          child: IgnorePointer(
+                              ignoring: _controller.value < 0.5,
+                              child: Opacity(
+                                  opacity: _controller.value,
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [_BottomVolumeSlider()]))))
+                    ],
+                  ),
+                ),
+                Container(color: Colors.red)
+              ],
             )));
   }
 }
