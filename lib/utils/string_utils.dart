@@ -7,7 +7,8 @@ extension StringExtensions on String {
 
   // ** Replace String
   /// Replaces everything inside given characters occurring inside the String with the replacement value. (i.e. inside brackets ()). Also replaces the starting and closing characters. Default replacement value is an empty string (removal).
-  String replaceInside(String starting, String closing, {String replacement = ""}) {
+  String replaceInside(String starting, String closing,
+      {String replacement = ""}) {
     String current = this;
     while (true) {
       int startIndex = current.indexOf(starting);
@@ -17,4 +18,6 @@ extension StringExtensions on String {
     }
     return current;
   }
+
+  String? nullIfEmpty() => this.isEmpty ? null : this;
 }

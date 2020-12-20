@@ -21,10 +21,14 @@ class RemoteScreen extends StatelessWidget {
       body: Stack(
         children: [
           BackgroundImageWrapper(),
-          Navigator(
-            key: _key,
-            initialRoute: ROUTE_PAGES_SCREEN,
-            onGenerateRoute: _Router.generateRoute,
+          Padding(
+            padding: const EdgeInsets.only(bottom: kBottomNavigationBarHeight),
+            child: Navigator(
+              observers: [HeroController()],
+              key: _key,
+              initialRoute: ROUTE_PAGES_SCREEN,
+              onGenerateRoute: _Router.generateRoute,
+            ),
           ),
         ],
       ),
@@ -114,7 +118,8 @@ class RemoteScreen extends StatelessWidget {
             icon: const Icon(Icons.arrow_back),
             onPressed: () async {
               bool popped = await _key.currentState?.maybePop() ?? false;
-              if (!popped && _key.currentContext != null) Scaffold.of(_key.currentContext!).openDrawer();
+              if (!popped && _key.currentContext != null)
+                Scaffold.of(_key.currentContext!).openDrawer();
             }),
         centerTitle: true,
         title: title,
@@ -208,7 +213,8 @@ class _PlayersBar extends StatelessWidget {
 
 class _Router {
   static Route generateRoute(RouteSettings settings) {
-    Widget child;
+    final args = settings.arguments;
+    Widget child = Center(child: Text("No Router found for ${settings.name}"));
     switch (settings.name) {
       case ROUTE_PAGES_SCREEN:
         child = Stack(children: [
@@ -217,10 +223,14 @@ class _Router {
         ]);
         break;
       case ROUTE_CURRENT_ITEM_DETAILS:
-        child = const Text("ITEM DETAILS");
+        child = ItemDetailsScreen();
         break;
-      default:
-        child = Center(child: Text("No Router found for ${settings.name}"));
+      case ROUTE_CAST_SCREEN:
+        if (args is VideoItem) {
+          child = CastScreen(args);
+        } else {
+          child = const Text("No cast for non-video items");
+        }
     }
     return MaterialPageRoute(builder: (context) => child);
   }

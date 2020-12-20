@@ -5,3 +5,6 @@ export 'remote_screen.dart';
 export 'pages_screen.dart';
 export 'remote_controls_bar.dart';
 export 'players_screen.dart';
+export 'item_details_screen.dart';
+export 'video_details_screen.dart';
+export 'cast_screen.dart';

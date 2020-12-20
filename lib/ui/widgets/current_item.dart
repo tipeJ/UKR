@@ -1,3 +1,4 @@
+import 'package:UKR/resources/resources.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:provider/provider.dart';
@@ -6,6 +7,8 @@ import 'package:UKR/utils/utils.dart';
 import 'package:UKR/models/models.dart';
 
 class CurrentItem extends StatelessWidget {
+  final CrossAxisAlignment alignment;
+  const CurrentItem({this.alignment = CrossAxisAlignment.center});
   @override
   Widget build(BuildContext context) {
     var currentItem = context.select<UKProvider, Item?>((p) => p.currentItem);
@@ -19,9 +22,14 @@ class CurrentItem extends StatelessWidget {
           headline = item.label;
           children = [
             item.director.nullIf(
-                Text(item.director.separateFold(', '), style: theme.subtitle1),
+              Hero(
+                tag: HERO_CURRENT_ITEM_CAPTION,
+                child: Text(item.director.separateFold(', '), style: theme.subtitle1)
+              ),
                 (d) => d.isNotEmpty),
-            item.year.nullOr(Text(item.year.toString(), style: theme.caption)),
+              item.year.nullOr(Hero(
+                  tag: HERO_CURRENT_ITEM_YEAR,
+                  child: Text(item.year.toString(), style: theme.caption))),
           ].nonNulls() as List<Widget>;
         } else if (item.type == "episode") {
           headline = item.showTitle ?? item.label;
@@ -43,9 +51,11 @@ class CurrentItem extends StatelessWidget {
             child: Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: alignment,
                 children: [
-                  AutoSizeText(headline, style: theme.headline5, maxLines: 1),
+                  Hero(
+                    tag: HERO_CURRENT_ITEM_HEADLINE,
+                    child: AutoSizeText(headline, style: theme.headline5, maxLines: 1, overflow: TextOverflow.ellipsis,)),
                   ...children
                 ]));
       case AudioItem:

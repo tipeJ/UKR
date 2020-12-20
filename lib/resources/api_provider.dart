@@ -123,7 +123,7 @@ class ApiProvider {
       var item = parsed['result']['item'];
       // *** Fetch Artwork Paths
       await _retrieveImageURLs(player, item);
-      print("NEXT ITEM: $item");
+      print("item_ART: ${item['art']}");
       return item;
     }
     return {};

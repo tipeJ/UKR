@@ -1,4 +1,5 @@
 import 'models.dart';
+import 'package:UKR/utils/utils.dart';
 
 class Item {
   final String type;
@@ -16,7 +17,11 @@ class Item {
         fileUrl = j['file'] ?? "";
   @override
   bool operator ==(other) =>
-      other is Item && other.duration == duration && other.label == label && other.fileUrl == fileUrl && other.year == year;
+      other is Item &&
+      other.duration == duration &&
+      other.label == label &&
+      other.fileUrl == fileUrl &&
+      other.year == year;
 }
 
 enum AlbumReleaseType { Album, Single }
@@ -43,8 +48,10 @@ class AudioItem extends Item {
 
 class VideoItem extends Item {
   final List<String> director;
+  final Map<String, String> cast;
   final VideoStreams? videoStreams;
   final String? plot;
+  final String? tagline;
 
   // * TV Specific
   final int? season;
@@ -54,14 +61,18 @@ class VideoItem extends Item {
   VideoItem(json,
       {required this.director,
       required this.videoStreams,
+      this.cast = const {},
       this.plot,
+      this.tagline,
       this.season,
       this.episode,
       this.showTitle})
       : super(json);
 
   factory VideoItem.fromJson(dynamic j) => VideoItem(j,
-      plot: j['plot'],
+      plot: ( j['plot'] as String).nullIfEmpty(),
+      tagline: ( j['tagline'] as String).nullIfEmpty(),
+      cast: _parseCast(j['cast']),
       season: j['season'] == -1 ? null : j['season'],
       episode: j['episode'],
       showTitle: j['showtitle'],
@@ -71,6 +82,13 @@ class VideoItem extends Item {
       videoStreams: j['streamdetails'] != null
           ? VideoStreams.fromJson(j['streamdetails'])
           : null);
+
+  static Map<String, String> _parseCast(List<dynamic> c) {
+    Map<String, String> cast = {};
+    c.forEach((i) => cast[i['name']] = i['role']);
+    return cast;
+  }
 }
 
-Map<String, String> _castArt(dynamic j) => j['art'] != null ? Map<String, String>.from(j['art']) : const {};
+Map<String, String> _castArt(dynamic j) =>
+    j['art'] != null ? Map<String, String>.from(j['art']) : const {};
