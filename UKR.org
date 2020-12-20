@@ -101,6 +101,11 @@
 ** TODO Movie/TV Show cast
    the cast parameter returns an insane number of items.
 
+*** DONE Movies
+    CLOSED: [2020-12-20 su 18:48]
+
+*** TODO TV
+
 ** TODO Advanced player management
 
 *** DONE Automatic latest player selection on startup
@@ -168,3 +173,5 @@
    Causes the seekbar to show the live tag even though the stream may be seekable.
 
 ** TODO Time and totaltime sometimes not syncing when navigating in the playlist
+   
+** TODO Current item shows unknown item when playback is stopped
