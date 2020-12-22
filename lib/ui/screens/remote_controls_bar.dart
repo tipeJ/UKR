@@ -422,7 +422,7 @@ class _ChannelControlsBar extends StatelessWidget {
   static Widget _buildAudioStreamsTile(BuildContext context, AudioStream current, List<AudioStream> streams) {
     return ListTile(
       title: const Text("Audio Stream"),
-      subtitle: Text(
+      subtitle: Text(current.index == -1 ? "None" :
           "${current.bitrate.toKbps()}kbps ${current.codec?.toUpperCase()}"),
       trailing: DropdownButton<AudioStream>(
         items: streams
@@ -430,7 +430,7 @@ class _ChannelControlsBar extends StatelessWidget {
                 child: Text(i.name ?? i.index.toString()), value: i))
             .toList(),
         value: current,
-        // onChanged: (newItem) => context.read<UKProvider>().
+        onChanged: (current.index != -1 && streams.length > 1) ? (newAudioStream) {} : null,
       ),
     );
   }
@@ -438,14 +438,14 @@ class _ChannelControlsBar extends StatelessWidget {
   static Widget _buildVideoStreamsTile(BuildContext context, VideoStream current, List<VideoStream> streams) {
     return ListTile(
       title: const Text("Video Stream"),
-      subtitle: Text("$current"),
+      subtitle: Text(current.index == -1 ? "None" : "$current"),
       trailing: DropdownButton<VideoStream>(
         items: streams
             .map<DropdownMenuItem<VideoStream>>(
                 (i) => DropdownMenuItem(child: Text("$i"), value: i))
             .toList(),
         value: current,
-        // onChanged: (newItem) => context.read<UKProvider>().
+        onChanged: (current.index != -1 && streams.length > 1) ? (newVideoStream) {} : null,
       ),
     );
   }
@@ -461,8 +461,8 @@ class _ChannelControlsBar extends StatelessWidget {
                 (i) => DropdownMenuItem(child: Text(i.index == -1 ? "None" : "$i"), value: i))
             .toList(),
         value: current,
-        // onChanged: (newItem) => context.read<UKProvider>().
-      ),
+        onChanged: (current.index != -1 && streams.length > 1) ? (newSubtitle){} : null,
+      )
     );
   }
 }

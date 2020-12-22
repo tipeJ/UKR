@@ -113,7 +113,7 @@ class VideoStream {
       width: j['width'],
       height: j['height'],
       codec: j['codec'],
-      index: j['index'],
+      index: j['index'] ?? -1,
       language: (j['language'] as String).nullIfEmpty(),
       name: (j['name'] as String).nullIfEmpty());
 
@@ -144,7 +144,7 @@ class AudioStream {
   const AudioStream(
       {this.bitrate = 0,
       this.channels = 0,
-      this.index = 0,
+      this.index = -1,
       this.samplerate = 0,
       this.isDefault = false,
       this.isOriginal = false,
@@ -155,7 +155,7 @@ class AudioStream {
   factory AudioStream.fromJson(dynamic j) => AudioStream(
         bitrate: j['bitrate'] ?? 0,
         channels: j['channels'] ?? 0,
-        index: j['index'] ?? 0,
+        index: j['index'] ?? -1,
         samplerate: j['samplerate'] ?? 0,
         isDefault: j['isdefault'] ?? false,
         isOriginal: j['isoriginal'] ?? false,
