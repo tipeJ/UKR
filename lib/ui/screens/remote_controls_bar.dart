@@ -227,21 +227,21 @@ class _BottomVolumeSlider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         width: MediaQuery.of(context).size.width,
+        margin: const EdgeInsets.only(left: 10.0),
         child: Row(mainAxisSize: MainAxisSize.max, children: [
-          Container(
-            width: 25.0,
-            height: 15.0,
-            margin: const EdgeInsets.only(left: 10.0),
-            alignment: Alignment.center,
-            child: InkWell(
-                onTap: () => context.read<UKProvider>().toggleMute(),
-                child: context.select<UKProvider, bool>((p) => p.muted)
-                    ? const Icon(Icons.volume_off)
+          InkWell(
+            onTap: () => context.read<UKProvider>().toggleMute(),
+            child: Container(
+              padding: const EdgeInsets.all(5.0),
+              alignment: Alignment.center,
+              child: context.select<UKProvider, bool>((p) => p.muted)
+                    ? const Icon(Icons.volume_off, size: 15.0)
                     : Text(context
                         .select<UKProvider, double>(
                             (p) => p.currentTemporaryVolume)
                         .round()
-                        .toString())),
+                        .toString()),
+            ),
           ),
           Expanded(
             child: Slider(

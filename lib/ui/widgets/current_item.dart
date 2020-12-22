@@ -34,14 +34,20 @@ class CurrentItem extends StatelessWidget {
         } else if (item.type == "episode") {
           headline = item.showTitle ?? item.label;
           children = [
-            Text("S${item.season} E${item.episode} - ${item.label}",
-                style: theme.subtitle1),
-            Text(
-                (item.director.nullIf(item.director.separateFold(', '),
-                            (d) => d.isNotEmpty) ??
-                        "") +
-                    (item.year != null ? " - " + item.year.toString() : ""),
-                style: theme.caption)
+            Hero(
+              tag: HERO_CURRENT_ITEM_CAPTION,
+              child: Text("S${item.season} E${item.episode} - ${item.label}",
+                  style: theme.subtitle1),
+            ),
+            Hero(
+              tag: HERO_CURRENT_ITEM_YEAR,
+              child: Text(
+                  (item.director.nullIf(item.director.separateFold(', '),
+                              (d) => d.isNotEmpty) ??
+                          "") +
+                      (item.year != null ? " - " + item.year.toString() : ""),
+                  style: theme.caption),
+            )
           ];
         } else if (item.type == "unknown") {
           headline = item.label;

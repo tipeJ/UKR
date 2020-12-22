@@ -319,6 +319,7 @@ class UKProvider extends ChangeNotifier {
 
   /// Skip ahead (positive) or behind (negative) by the given [amount] of seconds
   void skip(int amount) {
+    print((currentItem as VideoItem).videoStreams);
     var params = {"time": time.increment(amount)};
     ApiProvider.skip(player, params);
   }

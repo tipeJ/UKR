@@ -129,7 +129,8 @@
 *** TODO Files
     Not nearly as important, as I don't really use this feature all that much yet.
     
-** TODO Add manual reconnect and disconnect notification.
+** DONE Add manual reconnect and disconnect notification.
+   CLOSED: [2020-12-22 ti 18:20]
 ** TODO Notifications
 
 *** TODO Android
