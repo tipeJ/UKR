@@ -95,7 +95,10 @@ class ApiProvider {
         "time",
         "canseek",
         "videostreams",
-        "currentvideostream"
+        "audiostreams",
+        "subtitles",
+        "currentvideostream",
+        "currentaudiostream"
       ]
     });
     final response = await http.post(url(player), headers: headers, body: body);
@@ -117,7 +120,6 @@ class ApiProvider {
       var item = parsed['result']['item'];
       // *** Fetch Artwork Paths
       await _retrieveImageURLs(player, item);
-      print("next item: $item");
       return item;
     }
     return {};

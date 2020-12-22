@@ -2,7 +2,6 @@ export 'image_utils.dart';
 export 'string_utils.dart';
 export 'platform_utils.dart';
 
-
 extension ListExtensions<T> on List<T> {
   /// A version of this list where the null values are filtered.
   List<T> nonNulls() => where((i) => i != null).toList();
@@ -28,6 +27,10 @@ extension MapsExtensions<T, E> on Map<T, E> {
     }
     return def;
   }
+}
+
+extension IntExtensions on int {
+  int toKbps() => (this / 1000).round();
 }
 
 extension Generals on dynamic {

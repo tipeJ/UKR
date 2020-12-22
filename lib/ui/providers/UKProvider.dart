@@ -269,6 +269,14 @@ class UKProvider extends ChangeNotifier {
           .map<VideoStream>((v) => VideoStream.fromJson(v))
           .toList();
     }
+    if (r['currentaudiostream'] != null) {
+      currentAudioStream = AudioStream.fromJson(r['currentaudiostream']);
+    }
+    if (r['audiostreams'] != null) {
+      audioStreams = r['audiostreams']
+          .map<AudioStream>((v) => AudioStream.fromJson(v))
+          .toList();
+    }
     if (timeChanged || speedChanged) {
       _timeUpdateTimer?.cancel();
       _updateTimeTimer();
@@ -433,6 +441,12 @@ class UKProvider extends ChangeNotifier {
 
   List<VideoStream> videoStreams = [];
   VideoStream? currentVideoStream;
+
+  List<AudioStream> audioStreams = [];
+  AudioStream? currentAudioStream;
+
+  List<String> subtitles = [];
+  bool subtitlesEnabled = false;
 
   bool get playing => speed > 0;
 

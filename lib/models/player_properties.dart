@@ -1,3 +1,5 @@
+import 'package:UKR/utils/utils.dart';
+
 class PlayerProperties {
   final PlayerTime time;
   final PlayerTime totalTime;
@@ -96,7 +98,66 @@ class VideoStream {
   final int height;
   final String codec;
 
-  const VideoStream({this.width = 0, this.height = 0, this.codec = "h264"});
+  const VideoStream({this.width = 0, this.height = 0, this.codec = "null"});
   factory VideoStream.fromJson(dynamic j) =>
       VideoStream(width: j['width'], height: j['height'], codec: j['codec']);
+
+  @override
+  String toString() => codec;
+
+  @override
+  bool operator ==(other) =>
+      other is VideoStream &&
+      other.width == width &&
+      other.height == height &&
+      other.codec.toLowerCase() == codec.toLowerCase();
+}
+
+class AudioStream {
+  final int bitrate;
+  final int channels;
+  final int index;
+  final bool isDefault;
+  final bool isOriginal;
+  final int samplerate;
+  final String? language;
+  final String? name;
+  final String? codec;
+
+  const AudioStream(
+      {this.bitrate = 0,
+      this.channels = 0,
+      this.index = 0,
+      this.samplerate = 0,
+      this.isDefault = false,
+      this.isOriginal = false,
+      this.language,
+      this.name,
+      this.codec});
+
+  factory AudioStream.fromJson(dynamic j) => AudioStream(
+        bitrate: j['bitrate'] ?? 0,
+        channels: j['channels'] ?? 0,
+        index: j['index'] ?? 0,
+        samplerate: j['samplerate'] ?? 0,
+        isDefault: j['isdefault'] ?? false,
+        isOriginal: j['isoriginal'] ?? false,
+        language: (j['language'] as String).nullIfEmpty(),
+        name: (j['name'] as String).nullIfEmpty(),
+        codec: (j['codec'] as String).nullIfEmpty(),
+      );
+
+  @override
+  String toString() => "$name : $bitrate : $language : $codec";
+
+  @override
+  bool operator ==(other) =>
+      other is AudioStream &&
+      other.bitrate == bitrate &&
+      other.channels == channels &&
+      other.index == index &&
+      other.isDefault == isDefault &&
+      other.name == name &&
+      other.language == language &&
+      other.codec == codec;
 }

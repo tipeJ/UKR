@@ -31,7 +31,7 @@ class _RemoteControlsBarState extends State<RemoteControlsBar>
       ..addListener(() {
         setState(() {});
       });
-    _pageController = PageController(initialPage: 1);
+    _pageController = PageController();
   }
 
   @override
@@ -48,54 +48,63 @@ class _RemoteControlsBarState extends State<RemoteControlsBar>
         height: _lerp(minSize, maxSize),
         child: GestureDetector(
             onTap: () {
-              if (_controller.value == 0.0) {
-                _controller.animateTo(1.0,
-                    duration: _tapAnimateDuration, curve: Curves.ease);
-              } else if (_controller.value == 1.0) {
-                _controller.animateTo(0.0,
-                    duration: _tapAnimateDuration, curve: Curves.ease);
+              if (_pageController.page == 0.0) {
+                if (_controller.value == 0.0) {
+                  _controller.animateTo(1.0,
+                      duration: _tapAnimateDuration, curve: Curves.ease);
+                } else if (_controller.value == 1.0) {
+                  _controller.animateTo(0.0,
+                      duration: _tapAnimateDuration, curve: Curves.ease);
+                }
               }
             },
             onVerticalDragUpdate: (details) {
-              if (_pageController.page == 1.0)
+              if (_pageController.page == 0.0)
                 _controller.value -= (details.delta.dy / maxSize);
             },
             onVerticalDragEnd: (details) {
-              if (_pageController.page == 1.0)
+              if (_pageController.page == 0.0)
                 _controller.fling(
                     velocity: -details.primaryVelocity! / maxSize);
             },
-            child: PageView(
-              controller: _pageController,
-              children: [
-                Container(color: Colors.blue),
-                Container(
-                  color: Colors.transparent,
-                  child: Stack(
-                    children: [
-                      _BottomBackground(_lerp),
-                      _BottomPlaybackInfo(_lerp),
-                      Align(
-                          alignment: Alignment.lerp(Alignment.centerRight,
-                              Alignment.center, _controller.value)!,
-                          child: _BottomControlButtons(_lerp)),
-                      Positioned(
-                          bottom: 0.0,
-                          width: MediaQuery.of(context).size.width,
-                          child: IgnorePointer(
-                              ignoring: _controller.value < 0.5,
-                              child: Opacity(
-                                  opacity: _controller.value,
-                                  child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [_BottomVolumeSlider()]))))
-                    ],
-                  ),
-                ),
-                Container(color: Colors.red)
-              ],
+            child: Container(
+              color: Colors.transparent,
+              child: Stack(
+                children: [
+                  _BottomBackground(_lerp),
+                  PageView(
+                      physics: _controller.value == 1.0
+                          ? AlwaysScrollableScrollPhysics()
+                          : NeverScrollableScrollPhysics(),
+                      controller: _pageController,
+                      children: [
+                        Stack(
+                          children: [
+                            _BottomPlaybackInfo(_lerp),
+                            Align(
+                                alignment: Alignment.lerp(Alignment.centerRight,
+                                    Alignment.center, _controller.value)!,
+                                child: _BottomControlButtons(_lerp)),
+                            Positioned(
+                                bottom: 0.0,
+                                width: MediaQuery.of(context).size.width,
+                                child: IgnorePointer(
+                                    ignoring: _controller.value < 0.5,
+                                    child: Opacity(
+                                        opacity: _controller.value,
+                                        child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.stretch,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              _BottomVolumeSlider()
+                                            ]))))
+                          ],
+                        ),
+                        _ChannelControlsBar()
+                      ])
+                ],
+              ),
             )));
   }
 }
@@ -235,12 +244,12 @@ class _BottomVolumeSlider extends StatelessWidget {
               padding: const EdgeInsets.all(5.0),
               alignment: Alignment.center,
               child: context.select<UKProvider, bool>((p) => p.muted)
-                    ? const Icon(Icons.volume_off, size: 15.0)
-                    : Text(context
-                        .select<UKProvider, double>(
-                            (p) => p.currentTemporaryVolume)
-                        .round()
-                        .toString()),
+                  ? const Icon(Icons.volume_off, size: 15.0)
+                  : Text(context
+                      .select<UKProvider, double>(
+                          (p) => p.currentTemporaryVolume)
+                      .round()
+                      .toString()),
             ),
           ),
           Expanded(
@@ -385,5 +394,60 @@ class _BottomBackground extends StatelessWidget {
                     .createShader(Rect.fromLTRB(0, 0, rect.width, rect.height)),
             blendMode: BlendMode.dstIn,
             child: CachedNetworkImage(imageUrl: url, fit: BoxFit.cover)));
+  }
+}
+
+class _ChannelControlsBar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Selector<
+            UKProvider,
+            Tuple4<AudioStream, VideoStream, List<AudioStream>,
+                List<VideoStream>>>(
+        selector: (_, p) => Tuple4(p.currentAudioStream, p.currentVideoStream,
+            p.audioStreams, p.videoStreams),
+        builder: (_, value, __) {
+          return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildAudioStreamsTile(
+                    context, value.item1 ?? AudioStream(), value.item3),
+                _buildVideoStreamsTile(
+                    context, value.item2 ?? VideoStream(), value.item4),
+                Text("Subtitles placeholder")
+              ]);
+        });
+  }
+
+  static Widget _buildAudioStreamsTile(BuildContext context, AudioStream current, List<AudioStream> streams) {
+    return ListTile(
+      title: const Text("Audio Stream"),
+      subtitle: Text(
+          "${current.bitrate.toKbps()}kbps ${current.codec?.toUpperCase()}"),
+      trailing: DropdownButton<AudioStream>(
+        items: streams
+            .map<DropdownMenuItem<AudioStream>>((i) => DropdownMenuItem(
+                child: Text(i.name ?? i.index.toString()), value: i))
+            .toList(),
+        value: current,
+        // onChanged: (newItem) => context.read<UKProvider>().
+      ),
+    );
+  }
+
+  static Widget _buildVideoStreamsTile(BuildContext context, VideoStream current, List<VideoStream> streams) {
+    return ListTile(
+      title: const Text("Video Stream"),
+      subtitle: Text("$current"),
+      trailing: DropdownButton<VideoStream>(
+        items: streams
+            .map<DropdownMenuItem<VideoStream>>(
+                (i) => DropdownMenuItem(child: Text("$current"), value: i))
+            .toList(),
+        value: current,
+        // onChanged: (newItem) => context.read<UKProvider>().
+      ),
+    );
   }
 }
