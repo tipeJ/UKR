@@ -96,11 +96,26 @@ class PlayerTime {
 class VideoStream {
   final int width;
   final int height;
+  final int index;
   final String codec;
+  final String? name;
+  final String? language;
 
-  const VideoStream({this.width = 0, this.height = 0, this.codec = "null"});
-  factory VideoStream.fromJson(dynamic j) =>
-      VideoStream(width: j['width'], height: j['height'], codec: j['codec']);
+  const VideoStream(
+      {this.width = 0,
+      this.height = 0,
+      this.codec = "null",
+      this.index = -1,
+      this.name,
+      this.language});
+
+  factory VideoStream.fromJson(dynamic j) => VideoStream(
+      width: j['width'],
+      height: j['height'],
+      codec: j['codec'],
+      index: j['index'],
+      language: (j['language'] as String).nullIfEmpty(),
+      name: (j['name'] as String).nullIfEmpty());
 
   @override
   String toString() => codec;
@@ -110,6 +125,8 @@ class VideoStream {
       other is VideoStream &&
       other.width == width &&
       other.height == height &&
+      other.name == name &&
+      other.index == index &&
       other.codec.toLowerCase() == codec.toLowerCase();
 }
 
@@ -160,4 +177,42 @@ class AudioStream {
       other.name == name &&
       other.language == language &&
       other.codec == codec;
+}
+
+class Subtitle {
+  final int index;
+  final bool isDefault;
+  final bool isForced;
+  final bool isImpaired;
+  final String? language;
+  final String? name;
+
+  const Subtitle(
+      {this.index = -1,
+      this.isDefault = false,
+      this.isForced = false,
+      this.isImpaired = false,
+      this.language,
+      this.name});
+
+  factory Subtitle.fromJson(dynamic j) => Subtitle(
+      index: j['index'] ?? -1,
+      isDefault: j['isdefault'] ?? false,
+      isForced: j['isforced'] ?? false,
+      isImpaired: j['isimpaired'] ?? false,
+      language: (j['language'] as String).nullIfEmpty(),
+      name: (j['name'] as String).nullIfEmpty());
+
+  @override
+  String toString() => "$language, $name";
+
+  @override
+  bool operator ==(other) =>
+      other is Subtitle &&
+      other.index == index &&
+      other.isDefault == isDefault &&
+      other.isForced == isForced &&
+      other.isImpaired == isImpaired &&
+      other.name == name &&
+      other.language == language;
 }

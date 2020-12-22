@@ -402,20 +402,19 @@ class _ChannelControlsBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Selector<
             UKProvider,
-            Tuple4<AudioStream, VideoStream, List<AudioStream>,
-                List<VideoStream>>>(
-        selector: (_, p) => Tuple4(p.currentAudioStream, p.currentVideoStream,
-            p.audioStreams, p.videoStreams),
+            Tuple6<AudioStream, List<AudioStream>, VideoStream, List<VideoStream>, Subtitle, List<Subtitle>>>(
+        selector: (_, p) => Tuple6(p.currentAudioStream, p.audioStreams,
+            p.currentVideoStream, p.videoStreams, p.currentSubtitle, p.subtitles),
         builder: (_, value, __) {
           return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
                 _buildAudioStreamsTile(
-                    context, value.item1 ?? AudioStream(), value.item3),
+                    context, value.item1 ?? AudioStream(), value.item2),
                 _buildVideoStreamsTile(
-                    context, value.item2 ?? VideoStream(), value.item4),
-                Text("Subtitles placeholder")
+                    context, value.item3 ?? VideoStream(), value.item4),
+                _buildSubtitlesTile(context, value.item5, value.item6)
               ]);
         });
   }
@@ -443,7 +442,23 @@ class _ChannelControlsBar extends StatelessWidget {
       trailing: DropdownButton<VideoStream>(
         items: streams
             .map<DropdownMenuItem<VideoStream>>(
-                (i) => DropdownMenuItem(child: Text("$current"), value: i))
+                (i) => DropdownMenuItem(child: Text("$i"), value: i))
+            .toList(),
+        value: current,
+        // onChanged: (newItem) => context.read<UKProvider>().
+      ),
+    );
+  }
+
+  static Widget _buildSubtitlesTile(
+      BuildContext context, Subtitle current, List<Subtitle> streams) {
+    return ListTile(
+      title: const Text("Subtitles"),
+      subtitle: Text(current.index == -1 ? "None" : "$current"),
+      trailing: DropdownButton<Subtitle>(
+        items: streams
+            .map<DropdownMenuItem<Subtitle>>(
+                (i) => DropdownMenuItem(child: Text(i.index == -1 ? "None" : "$i"), value: i))
             .toList(),
         value: current,
         // onChanged: (newItem) => context.read<UKProvider>().

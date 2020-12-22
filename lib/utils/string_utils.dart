@@ -19,5 +19,5 @@ extension StringExtensions on String {
     return current;
   }
 
-  String? nullIfEmpty() => this.isEmpty ? null : this;
+  String? nullIfEmpty() => (this == null || this.isEmpty ) ? null : this;
 }

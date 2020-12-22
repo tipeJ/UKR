@@ -97,6 +97,7 @@ class ApiProvider {
         "videostreams",
         "audiostreams",
         "subtitles",
+        "currentsubtitle",
         "currentvideostream",
         "currentaudiostream"
       ]
