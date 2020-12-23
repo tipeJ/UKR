@@ -402,40 +402,49 @@ class _ChannelControlsBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Selector<
             UKProvider,
-            Tuple6<AudioStream, List<AudioStream>, VideoStream, List<VideoStream>, Subtitle, List<Subtitle>>>(
-        selector: (_, p) => Tuple6(p.currentAudioStream, p.audioStreams,
-            p.currentVideoStream, p.videoStreams, p.currentSubtitle, p.subtitles),
+            Tuple6<AudioStream, List<AudioStream>, VideoStream,
+                List<VideoStream>, Subtitle, List<Subtitle>>>(
+        selector: (_, p) => Tuple6(
+            p.currentAudioStream ?? AudioStream(),
+            p.audioStreams,
+            p.currentVideoStream ?? VideoStream(),
+            p.videoStreams,
+            p.currentSubtitle,
+            p.subtitles),
         builder: (_, value, __) {
           return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                _buildAudioStreamsTile(
-                    context, value.item1 ?? AudioStream(), value.item2),
-                _buildVideoStreamsTile(
-                    context, value.item3 ?? VideoStream(), value.item4),
+                _buildAudioStreamsTile(context, value.item1, value.item2),
+                _buildVideoStreamsTile(context, value.item3, value.item4),
                 _buildSubtitlesTile(context, value.item5, value.item6)
               ]);
         });
   }
 
-  static Widget _buildAudioStreamsTile(BuildContext context, AudioStream current, List<AudioStream> streams) {
+  static Widget _buildAudioStreamsTile(
+      BuildContext context, AudioStream current, List<AudioStream> streams) {
     return ListTile(
       title: const Text("Audio Stream"),
-      subtitle: Text(current.index == -1 ? "None" :
-          "${current.bitrate.toKbps()}kbps ${current.codec?.toUpperCase()}"),
+      subtitle: Text(current.index == -1
+          ? "None"
+          : "${current.bitrate.toKbps()}kbps ${current.codec?.toUpperCase()}"),
       trailing: DropdownButton<AudioStream>(
         items: streams
             .map<DropdownMenuItem<AudioStream>>((i) => DropdownMenuItem(
                 child: Text(i.name ?? i.index.toString()), value: i))
             .toList(),
         value: current,
-        onChanged: (current.index != -1 && streams.length > 1) ? (newAudioStream) {} : null,
+        onChanged: (current.index != -1 && streams.length > 1)
+            ? (newAudioStream) {}
+            : null,
       ),
     );
   }
 
-  static Widget _buildVideoStreamsTile(BuildContext context, VideoStream current, List<VideoStream> streams) {
+  static Widget _buildVideoStreamsTile(
+      BuildContext context, VideoStream current, List<VideoStream> streams) {
     return ListTile(
       title: const Text("Video Stream"),
       subtitle: Text(current.index == -1 ? "None" : "$current"),
@@ -445,7 +454,9 @@ class _ChannelControlsBar extends StatelessWidget {
                 (i) => DropdownMenuItem(child: Text("$i"), value: i))
             .toList(),
         value: current,
-        onChanged: (current.index != -1 && streams.length > 1) ? (newVideoStream) {} : null,
+        onChanged: (current.index != -1 && streams.length > 1)
+            ? (newVideoStream) {}
+            : null,
       ),
     );
   }
@@ -453,16 +464,17 @@ class _ChannelControlsBar extends StatelessWidget {
   static Widget _buildSubtitlesTile(
       BuildContext context, Subtitle current, List<Subtitle> streams) {
     return ListTile(
-      title: const Text("Subtitles"),
-      subtitle: Text(current.index == -1 ? "None" : "$current"),
-      trailing: DropdownButton<Subtitle>(
-        items: streams
-            .map<DropdownMenuItem<Subtitle>>(
-                (i) => DropdownMenuItem(child: Text(i.index == -1 ? "None" : "$i"), value: i))
-            .toList(),
-        value: current,
-        onChanged: (current.index != -1 && streams.length > 1) ? (newSubtitle){} : null,
-      )
-    );
+        title: const Text("Subtitles"),
+        subtitle: Text(current.index == -1 ? "None" : "$current"),
+        trailing: DropdownButton<Subtitle>(
+          items: streams
+              .map<DropdownMenuItem<Subtitle>>((i) => DropdownMenuItem(
+                  child: Text(i.index == -1 ? "None" : "$i"), value: i))
+              .toList(),
+          value: current,
+          onChanged: (current.index != -1 && streams.length > 1)
+              ? (newSubtitle) {}
+              : null,
+        ));
   }
 }
