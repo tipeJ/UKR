@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:UKR/models/models.dart';
 import 'package:provider/provider.dart';
@@ -22,14 +24,73 @@ class PlayersScreen extends StatelessWidget {
         ),
         body: ListView(
             children: List<Widget>.generate(
-                players.length, (i) => PlayerListItem(players[i]))));
+                players.length, (i) => _ReorderablePlayerListItem(players[i]))));
+  }
+}
+
+class _ReorderablePlayerListItem extends StatefulWidget {
+  final Player player;
+  final bool compact;
+
+  const _ReorderablePlayerListItem(this.player, {this.compact = false});
+
+  @override
+  _ReorderablePlayerListItemState createState() =>
+      _ReorderablePlayerListItemState();
+}
+
+class _ReorderablePlayerListItemState
+    extends State<_ReorderablePlayerListItem> {
+  var _tapPosition;
+
+  void _showCustomMenu() async {
+    final overlay = Overlay.of(context)?.context.findRenderObject();
+
+    if (_tapPosition != null && overlay != null && overlay is RenderBox) {
+      final r = await showMenu(
+          position: RelativeRect.fromRect(
+              _tapPosition & const Size(40, 40), Offset.zero & overlay.size),
+          context: context,
+          items: <PopupMenuEntry<String>>[
+            PopupMenuItem(value: "Remove", child: Text("Remove"))
+          ]);
+      if (r.toString() == "Remove") {
+        // TODO: Implement player removal.
+        // context.read<PlayersProvider>();
+      }
+    }
+  }
+
+  void _storePosition(TapDownDetails details) {
+    _tapPosition = details.globalPosition;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Listener(
+      onPointerDown: (details) {
+        // Detect mouse right clicks:
+        if (details.kind == PointerDeviceKind.mouse && details.buttons == 2) {
+          _tapPosition = details.position;
+          _showCustomMenu();
+        }
+      },
+      child: PlayerListItem(widget.player,
+          compact: widget.compact,
+          onTapDown: _storePosition,
+          onLongPress: _showCustomMenu),
+    );
   }
 }
 
 class PlayerListItem extends StatefulWidget {
   final Player player;
   final bool compact;
-  const PlayerListItem(this.player, {this.compact = false});
+  final VoidCallback? onLongPress;
+  final Function(TapDownDetails)? onTapDown;
+
+  const PlayerListItem(this.player,
+      {this.compact = false, this.onLongPress, this.onTapDown});
 
   @override
   State<StatefulWidget> createState() => PlayerListItemState();
@@ -44,6 +105,8 @@ class PlayerListItemState extends State<PlayerListItem> {
           context.read<PlayersProvider>().setPlayer(_player);
           Navigator.of(context).pop();
         },
+        onTapDown: widget.onTapDown,
+        onLongPress: widget.onLongPress,
         child: Container(
             padding: const EdgeInsets.all(5.0),
             child: Row(
