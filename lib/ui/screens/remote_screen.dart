@@ -81,7 +81,9 @@ class RemoteScreen extends StatelessWidget {
                   break;
               }
             };
-            if (errors.item1 != null ||
+            if (errors.item2 == ConnectionStatus.Unauthorized) {
+              status = "Unauthorized";
+            } else if (errors.item1 != null ||
                 errors.item2 == ConnectionStatus.Disconnected) {
               status = errors.item1 ?? "Disconnected";
               onTap = () async {

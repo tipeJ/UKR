@@ -117,7 +117,8 @@
 
 *** TODO Player editing
 
-*** TODO Player Password/Username implementation
+*** DONE Player Password/Username implementation
+    CLOSED: [2020-12-28 ma 00:37]
     Current implementation does not support auth.
 
 ** TODO Content browsing

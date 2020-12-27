@@ -61,61 +61,61 @@ class UKProvider extends ChangeNotifier {
     this._player = player;
     connectionStatus = ConnectionStatus.Disconnected;
     notifyListeners();
-    this._ws?.close();
-    try {
-      this._ws = await ApiProvider.getWS(player)
-        ..handleError((e) => print("WebsocketError: $e"))
-        ..asyncMap<Map<String, dynamic>>(
-                (data) => compute(_convertJsonData, data.toString()))
-            .listen((data) => _handleJsonResponse(data));
-      connectionStatus = ConnectionStatus.Connected;
-    } on SocketException {
-      // Listen for error in initial socket connection / handshake
-      await _ws?.close(1001, "Lostconnection to ${player.name}");
-      connectionStatus = ConnectionStatus.Disconnected;
-      notifyListeners();
-      _propertiesStream?.pause();
-      return;
-    } finally {
-      notifyListeners();
-    }
-
-    // Refresh the initial values.
-    await _refreshPlayerProperties();
-    await _refreshApplicationProperties();
-    await _refreshPlayerItem();
-    await _refreshPlayList();
-    await _fetchSystemProperties();
-
-    // Start the properties ping stream.
-    _propertiesStream?.pause();
-    _propertiesStream =
-        ApiProvider.playerPropertiesStream(player).handleError((e) async {
-      if (e.runtimeType == SocketException) {
-        await _w.close(1001, "Lost connection to ${player.name}");
+    final ping = await ApiProvider.testPlayerConnection(player);
+    if (ping == 200) {
+      this._ws?.close();
+      try {
+        this._ws = await ApiProvider.getWS(player)
+          ..handleError((e) => print("WebsocketError: $e"))
+          ..asyncMap<Map<String, dynamic>>(
+                  (data) => compute(_convertJsonData, data.toString()))
+              .listen((data) => _handleJsonResponse(data));
+        connectionStatus = ConnectionStatus.Connected;
+      } on SocketException {
+        // Listen for error in initial socket connection / handshake
+        await _ws?.close(1001, "Lostconnection to ${player.name}");
         connectionStatus = ConnectionStatus.Disconnected;
         notifyListeners();
-        _propertiesStream!.pause();
+        _propertiesStream?.pause();
+        return;
+      } finally {
+        notifyListeners();
       }
-    }).listen((data) {
-      if (data.isNotEmpty) {
-        _updatePlayerProps(data);
-      }
-    });
+
+      // Refresh the initial values.
+      await _refreshPlayerProperties();
+      await _refreshApplicationProperties();
+      await _refreshPlayerItem();
+      await _refreshPlayList();
+      await _fetchSystemProperties();
+
+      // Start the properties ping stream.
+      _propertiesStream?.pause();
+      _propertiesStream =
+          ApiProvider.playerPropertiesStream(player).handleError((e) async {
+        if (e.runtimeType == SocketException) {
+          await _w.close(1001, "Lost connection to ${player.name}");
+          connectionStatus = ConnectionStatus.Disconnected;
+          notifyListeners();
+          _propertiesStream!.pause();
+        }
+      }).listen((data) {
+        if (data.isNotEmpty) {
+          _updatePlayerProps(data);
+        }
+      });
+    } else if (ping == 401) {
+      connectionStatus = ConnectionStatus.Unauthorized;
+    } else {
+      return;
+    }
     notifyListeners();
   }
 
-  Future<void> reconnect() async {
+  void reconnect() {
     connectionStatus = ConnectionStatus.Reconnecting;
     notifyListeners();
-    final pingResult = await ApiProvider.testPlayerConnection(player);
-    if (pingResult) {
-      connectionStatus = ConnectionStatus.Connected;
-      initialize(player);
-    } else {
-      connectionStatus = ConnectionStatus.Disconnected;
-    }
-    notifyListeners();
+    initialize(player);
   }
 
   DialogService _dialogService = GetIt.instance<DialogService>();

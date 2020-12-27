@@ -17,24 +17,24 @@ class ApiProvider {
 
   static const defParams = {"jsonrpc": jsonRPCVersion, "id": 27928};
   static const _playerID = 1;
-  static String url(Player p) => "http://${p.address}:${p.port}/jsonrpc";
+  static String url(Player p) => "http://" + (p.hasCredentials ? "${p.username}:${p.password}@" : "") + "${p.address}:${p.port}/jsonrpc";
   static String wsurl(Player p) => "ws://${p.address}:9090";
 
   static Future<WebSocket> getWS(Player player) =>
       WebSocket.connect(wsurl(player),
           headers: headers, compression: CompressionOptions.compressionDefault);
 
-  // System API endpoints
-  static Future<bool> testPlayerConnection(Player player) async {
+  // * System API endpoints
+  static Future<int> testPlayerConnection(Player player) async {
     //TODO: Get this check working on local servers that do not have http control enabled (doesn't return anything)
     final body = await _encode("JSONRPC.Ping", const {});
     try {
       final request = await http
           .post(url(player), headers: headers, body: body)
           .timeout(_pingTimeOut, onTimeout: () => http.Response("", 404));
-      return request.statusCode == 200;
+      return request.statusCode;
     } on SocketException {
-      return false;
+      return 408;
     }
   }
 
@@ -52,7 +52,7 @@ class ApiProvider {
     http.post(url(player), body: body, headers: headers);
   }
 
-  // Properties endpoints
+  // * Properties endpoints
   static String _handleHTTPResponse(http.Response r) =>
       r.statusCode == 200 ? r.body : "";
   static Future<String> _encode(String method, Map<String, dynamic> params) =>

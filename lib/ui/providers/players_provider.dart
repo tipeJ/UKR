@@ -20,7 +20,9 @@ class PlayersProvider extends ChangeNotifier {
           players.firstWhere((p) => p.id == id, orElse: () => players.first);
     }
   }
-  Future<bool> testPlayer(Player player) => ApiProvider.testPlayerConnection(player);
+  Future<bool> testPlayer(Player player) async =>
+      await ApiProvider.testPlayerConnection(player) == 200;
+
   void addPlayer(Player player) {
     players.add(player);
     _box.add(player);

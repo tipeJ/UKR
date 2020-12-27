@@ -1,4 +1,5 @@
 import 'package:UKR/models/player.dart';
+import 'package:UKR/utils/utils.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter/material.dart';
 
@@ -12,6 +13,8 @@ class _AddPlayerDialogState extends State<AddPlayerDialog> {
   final _nameController = TextEditingController();
   final _addressController = TextEditingController();
   final _portController = TextEditingController();
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -19,8 +22,14 @@ class _AddPlayerDialogState extends State<AddPlayerDialog> {
     _nameController.dispose();
     _addressController.dispose();
     _portController.dispose();
+    _usernameController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
+
+  bool get _credentialsGiven =>
+      _usernameController.text.isNotEmpty &&
+      _passwordController.text.isNotEmpty;
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +63,19 @@ class _AddPlayerDialogState extends State<AddPlayerDialog> {
                 keyboardType: TextInputType.number,
                 maxLength: 5,
               ),
+              TextField(
+                controller: _usernameController,
+                decoration: const InputDecoration(
+                  labelText: "Username (Optional)",
+                ),
+              ),
+              TextField(
+                controller: _passwordController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: "Password (Optional)",
+                ),
+              ),
               Row(
                 children: [
                   FlatButton(
@@ -67,10 +89,15 @@ class _AddPlayerDialogState extends State<AddPlayerDialog> {
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         final newPlayer = Player(
-                            id: uuid.v1(),
-                            name: _nameController.text,
-                            address: _addressController.text,
-                            port: int.parse(_portController.text));
+                          id: uuid.v1(),
+                          name: _nameController.text,
+                          address: _addressController.text,
+                          port: int.parse(_portController.text),
+                          username: _credentialsGiven ? _usernameController.text : null,
+                          password: _credentialsGiven
+                              ? _passwordController.text
+                              : null,
+                        );
                         Navigator.of(context).pop(newPlayer);
                       }
                     },

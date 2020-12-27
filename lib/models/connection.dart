@@ -1,1 +1,1 @@
-enum ConnectionStatus {Connected, Reconnecting, Disconnected}
+enum ConnectionStatus {Connected, Reconnecting, Disconnected, Unauthorized}
