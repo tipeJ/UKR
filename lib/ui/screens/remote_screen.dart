@@ -170,8 +170,16 @@ class _PlayersBar extends StatelessWidget {
               SliverToBoxAdapter(
                   child: Padding(
                 padding: const EdgeInsets.all(10.0),
-                child: Text("Players",
-                    style: Theme.of(context).textTheme.headline5),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Players", style: Theme.of(context).textTheme.headline5),
+                    IconButton(
+                      icon: const Icon(Icons.edit),
+                      onPressed: () => Navigator.of(context).pushNamed(ROUTE_PLAYERS),
+                    )
+                  ],
+                ),
               )),
               SliverList(
                   delegate: SliverChildListDelegate(

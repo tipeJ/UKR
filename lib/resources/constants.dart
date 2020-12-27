@@ -1,7 +1,11 @@
 // * Routes
+// ** Player Navigation Routes
 const ROUTE_CURRENT_ITEM_DETAILS = "current_item_details";
 const ROUTE_PAGES_SCREEN = "pages_screen";
 const ROUTE_CAST_SCREEN = "cast_screen";
+// ** Main Navigation Routes
+const ROUTE_MAIN = "route_main_screen";
+const ROUTE_PLAYERS = "route_players_screen";
 
 // ** Hero Animation Tags
 const HERO_CURRENT_ITEM_HEADLINE = "hero_current_headline";
