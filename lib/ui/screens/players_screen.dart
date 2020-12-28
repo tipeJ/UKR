@@ -23,8 +23,8 @@ class PlayersScreen extends StatelessWidget {
           child: const Icon(Icons.add),
         ),
         body: ListView(
-            children: List<Widget>.generate(
-                players.length, (i) => _ReorderablePlayerListItem(players[i]))));
+            children: List<Widget>.generate(players.length,
+                (i) => _ReorderablePlayerListItem(players[i]))));
   }
 }
 
@@ -55,8 +55,7 @@ class _ReorderablePlayerListItemState
             PopupMenuItem(value: "Remove", child: Text("Remove"))
           ]);
       if (r.toString() == "Remove") {
-        // TODO: Implement player removal.
-        // context.read<PlayersProvider>();
+        context.read<PlayersProvider>().removePlayer(widget.player);
       }
     }
   }
