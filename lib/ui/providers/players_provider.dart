@@ -20,6 +20,7 @@ class PlayersProvider extends ChangeNotifier {
           players.firstWhere((p) => p.id == id, orElse: () => players.first);
     }
   }
+
   Future<bool> testPlayer(Player player) async =>
       await ApiProvider.testPlayerConnection(player) == 200;
 
@@ -27,7 +28,6 @@ class PlayersProvider extends ChangeNotifier {
   void addPlayer(Player player) {
     players.add(player);
     _box.put(player.id, player);
-    _box.add(player);
     selectedPlayer = player;
     notifyListeners();
   }
@@ -53,7 +53,7 @@ class PlayersProvider extends ChangeNotifier {
   /// Modify the selected player, replacing the old values with the new.
   void modifyPlayer(Player original, Player modified) {
     final index = players.indexOf(original);
-    if (index != -1) {
+    if (index != -1 && original.id == modified.id) {
       players[index] = modified;
       notifyListeners();
       _box.putAt(index, modified);
