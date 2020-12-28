@@ -88,6 +88,7 @@ class UKProvider extends ChangeNotifier {
       await _refreshPlayerItem();
       await _refreshPlayList();
       await _fetchSystemProperties();
+      await ApiProvider.fetchFiles(player);
 
       // Start the properties ping stream.
       _propertiesStream?.pause();

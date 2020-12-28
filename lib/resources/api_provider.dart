@@ -17,7 +17,10 @@ class ApiProvider {
 
   static const defParams = {"jsonrpc": jsonRPCVersion, "id": 27928};
   static const _playerID = 1;
-  static String url(Player p) => "http://" + (p.hasCredentials ? "${p.username}:${p.password}@" : "") + "${p.address}:${p.port}/jsonrpc";
+  static String url(Player p) =>
+      "http://" +
+      (p.hasCredentials ? "${p.username}:${p.password}@" : "") +
+      "${p.address}:${p.port}/jsonrpc";
   static String wsurl(Player p) => "ws://${p.address}:9090";
 
   static Future<WebSocket> getWS(Player player) =>
@@ -348,6 +351,27 @@ class ApiProvider {
       "item": {"file": file}
     });
     final r = await http.post(url(player), headers: headers, body: body);
+  }
+
+  // * Sources API Endpoints
+  static Future<void> fetchFiles(Player player) async {
+    final body = await _encode("Addons.GetAddons", const {
+      "properties": [
+        "name",
+        // "version"
+        // "summary",
+        // "description",
+        // "path",
+        // "author",
+        // "thumbnail",
+        // "disclaimer",
+        // "broken",
+        // "enabled",
+        // "installed"
+      ]
+    });
+    final r = await http.post(url(player), headers: headers, body: body);
+    print("BODY: ${r.body}");
   }
 
   // * External API Endpoints

@@ -8,3 +8,4 @@ export 'players_screen.dart';
 export 'item_details_screen.dart';
 export 'video_details_screen.dart';
 export 'cast_screen.dart';
+export 'content_screen.dart';
