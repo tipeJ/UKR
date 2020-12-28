@@ -99,23 +99,28 @@
    Maybe even touch scrolling pad :thinking
    Probably should be included in a separate screen.
    
-** TODO Movie/TV Show cast
+** DONE Movie/TV Show cast
+   CLOSED: [2020-12-28 ma 23:27]
    the cast parameter returns an insane number of items.
 
 *** DONE Movies
     CLOSED: [2020-12-20 su 18:48]
 
-*** TODO TV
+*** DONE TV
+    CLOSED: [2020-12-28 ma 23:27]
 
-** TODO Advanced player management
+** DONE Advanced player management
+   CLOSED: [2020-12-28 ma 23:27]
 
 *** DONE Automatic latest player selection on startup
     CLOSED: [2020-12-15 ti 14:38]
     Currently takes the first player in the storage box.
 
-*** TODO Player deletion
+*** DONE Player deletion
+    CLOSED: [2020-12-28 ma 23:27]
 
-*** TODO Player editing
+*** DONE Player editing
+    CLOSED: [2020-12-28 ma 23:27]
 
 *** DONE Player Password/Username implementation
     CLOSED: [2020-12-28 ma 00:37]
@@ -177,4 +182,5 @@
 
 ** TODO Time and totaltime sometimes not syncing when navigating in the playlist
    
-** TODO Current item shows unknown item when playback is stopped
+** DONE Current item shows unknown item when playback is stopped
+   CLOSED: [2020-12-28 ma 23:28]
