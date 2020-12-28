@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:UKR/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:UKR/models/models.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +11,7 @@ class PlayersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final players = context.watch<PlayersProvider>().players;
+    bool compact = isDesktop();
     return Scaffold(
         appBar: AppBar(title: const Text("Manage Players")),
         floatingActionButton: FloatingActionButton(
@@ -24,7 +26,7 @@ class PlayersScreen extends StatelessWidget {
         ),
         body: ListView(
             children: List<Widget>.generate(players.length,
-                (i) => _ReorderablePlayerListItem(players[i]))));
+                (i) => _ReorderablePlayerListItem(players[i], compact: compact))));
   }
 }
 
