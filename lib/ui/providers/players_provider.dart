@@ -26,6 +26,7 @@ class PlayersProvider extends ChangeNotifier {
   /// Adds the given player to the list of players, and saves it to the local database.
   void addPlayer(Player player) {
     players.add(player);
+    _box.put(player.id, player);
     _box.add(player);
     selectedPlayer = player;
     notifyListeners();
@@ -33,12 +34,11 @@ class PlayersProvider extends ChangeNotifier {
 
   /// Removes the player from the list and the local database.
   void removePlayer(Player player) {
-    final index = players.indexOf(player);
-    if (index != -1) {
-      players.removeAt(index);
+    if (players.remove(player)) {
       notifyListeners();
-      _box.deleteAt(index);
+      _box.delete(player.id);
 
+      // Switch to first player, if exists.
       if (player == selectedPlayer) {
         if (players.isNotEmpty) {
           setPlayer(players[0]);
@@ -46,6 +46,21 @@ class PlayersProvider extends ChangeNotifier {
           selectedPlayer = null;
           notifyListeners();
         }
+      }
+    }
+  }
+
+  /// Modify the selected player, replacing the old values with the new.
+  void modifyPlayer(Player original, Player modified) {
+    final index = players.indexOf(original);
+    if (index != -1) {
+      players[index] = modified;
+      notifyListeners();
+      _box.putAt(index, modified);
+
+      if (original == selectedPlayer) {
+        selectedPlayer = modified;
+        notifyListeners();
       }
     }
   }

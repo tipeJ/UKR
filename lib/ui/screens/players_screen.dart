@@ -51,11 +51,23 @@ class _ReorderablePlayerListItemState
           position: RelativeRect.fromRect(
               _tapPosition & const Size(40, 40), Offset.zero & overlay.size),
           context: context,
-          items: <PopupMenuEntry<String>>[
-            PopupMenuItem(value: "Remove", child: Text("Remove"))
-          ]);
-      if (r.toString() == "Remove") {
-        context.read<PlayersProvider>().removePlayer(widget.player);
+          items: const ["Remove", "Edit"]
+              .map<PopupMenuEntry<String>>(
+                  (i) => PopupMenuItem(value: i, child: Text(i)))
+              .toList());
+      switch (r.toString()) {
+        case "Remove":
+          context.read<PlayersProvider>().removePlayer(widget.player);
+          break;
+        case "Edit":
+          final modified = await showDialog<Player>(
+              context: context,
+              builder: (_) => AddPlayerDialog(initialValue: widget.player));
+          if (modified != null)
+            context
+                .read<PlayersProvider>()
+                .modifyPlayer(widget.player, modified);
+          break;
       }
     }
   }

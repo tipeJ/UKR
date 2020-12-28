@@ -4,18 +4,31 @@ import 'package:uuid/uuid.dart';
 import 'package:flutter/material.dart';
 
 class AddPlayerDialog extends StatefulWidget {
+  final Player? initialValue;
+
+  const AddPlayerDialog({this.initialValue});
   @override
   State<AddPlayerDialog> createState() => _AddPlayerDialogState();
 }
 
 class _AddPlayerDialogState extends State<AddPlayerDialog> {
   static final uuid = Uuid();
-  final _nameController = TextEditingController();
-  final _addressController = TextEditingController();
-  final _portController = TextEditingController();
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
+  late final TextEditingController _nameController;
+  late final TextEditingController _addressController;
+  late final TextEditingController _portController;
+  late final TextEditingController _usernameController;
+  late final TextEditingController _passwordController;
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    _nameController = TextEditingController(text: widget.initialValue?.name);
+    _addressController = TextEditingController(text: widget.initialValue?.address);
+    _portController = TextEditingController(text: widget.initialValue?.port.toString());
+    _usernameController = TextEditingController(text: widget.initialValue?.username);
+    _passwordController = TextEditingController(text: widget.initialValue?.password);
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -89,11 +102,13 @@ class _AddPlayerDialogState extends State<AddPlayerDialog> {
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         final newPlayer = Player(
-                          id: uuid.v1(),
+                          id: widget.initialValue?.id ?? uuid.v1(),
                           name: _nameController.text,
                           address: _addressController.text,
                           port: int.parse(_portController.text),
-                          username: _credentialsGiven ? _usernameController.text : null,
+                          username: _credentialsGiven
+                              ? _usernameController.text
+                              : null,
                           password: _credentialsGiven
                               ? _passwordController.text
                               : null,
