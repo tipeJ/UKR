@@ -9,7 +9,8 @@
 ** TODO Clean old implementation
 *** TODO Clean api_provider
     Currently has a lot of deprecated endpoints that are now used in the UKProvider class
-*** TODO Clean up providers
+*** DONE Clean up providers
+    CLOSED: [2020-12-28 ma 23:29]
     The following providers are no longer used:
     1. Main_Provider
     2. Application_Provider
