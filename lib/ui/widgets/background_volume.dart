@@ -39,10 +39,10 @@ class BackgroundImageWrapper extends StatelessWidget {
     Widget? child;
     return LayoutBuilder(builder: (_, constraints) {
       if (item != null && art.isNotEmpty) {
-        String? url;
-        url = retrieveOptimalImage(item);
+        String url = retrieveOptimalImage(item);
         if (url.isNotEmpty) {
-          child = CachedNetworkImage(fit: BoxFit.cover, imageUrl: art['poster']);
+          child =
+              CachedNetworkImage(fit: BoxFit.cover, imageUrl: url);
         }
       }
       return Stack(

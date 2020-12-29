@@ -19,7 +19,12 @@ String retrieveOptimalImage(Item item) {
         'banner'
       ], "");
     default:
-      return a.getPreferred(
-          const ['poster', 'season.poster', 'fanart', 'thumb', 'banner'], "");
+      if (item is VideoItem){
+        return a.getPreferred(
+              const ['poster', 'season.poster', 'thumb', 'fanart', 'banner'], "");
+      } else {
+        return a.getPreferred(
+              const ['poster', 'season.poster', 'fanart', 'thumb', 'banner'], "");
+      }
   }
 }
