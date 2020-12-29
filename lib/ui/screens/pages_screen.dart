@@ -1,5 +1,6 @@
 import 'package:UKR/resources/resources.dart';
 import 'package:UKR/ui/providers/providers.dart';
+import 'package:UKR/ui/screens/content_screen.dart';
 import 'package:UKR/ui/screens/playlist_screen.dart';
 import 'package:UKR/ui/widgets/widgets.dart';
 import 'package:flutter/gestures.dart';
@@ -34,8 +35,7 @@ class _PagesScreenState extends State<PagesScreen> {
       dragStartBehavior: DragStartBehavior.down,
       allowImplicitScrolling: true,
       children: [
-        Container(
-            color: Colors.black45, child: Text("Content be here")),
+        ContentScreen(),
         GestureDetector(
           onVerticalDragUpdate: (details) {
             final endPos = maxHeight - kBottomNavigationBarHeight;

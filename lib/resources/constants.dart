@@ -6,11 +6,15 @@ const ROUTE_CAST_SCREEN = "cast_screen";
 // ** Main Navigation Routes
 const ROUTE_MAIN = "route_main_screen";
 const ROUTE_PLAYERS = "route_players_screen";
+// ** Content navigation Routes
+const ROUTE_CONTENT_ADDONS = "content_addons";
 
 // ** Hero Animation Tags
 const HERO_CURRENT_ITEM_HEADLINE = "hero_current_headline";
 const HERO_CURRENT_ITEM_CAPTION = "hero_current_caption";
 const HERO_CURRENT_ITEM_YEAR = "hero_current_year";
+
+const HERO_CONTENT_ADDONS_HEADER = "hero_content_addons_header";
 
 // * Hive Data
 const BOX_PLAYERS = "box_players";

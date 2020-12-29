@@ -354,8 +354,9 @@ class ApiProvider {
   }
 
   // * Sources API Endpoints
-  static Future<void> fetchFiles(Player player) async {
-    final body = await _encode("Addons.GetAddons", const {
+  static Future<void> fetchFiles(Player player, {String content = "unknown"}) async {
+    final body = await _encode("Addons.GetAddons", {
+      "content": content,
       "properties": [
         "name",
         // "version"

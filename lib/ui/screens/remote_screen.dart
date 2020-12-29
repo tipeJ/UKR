@@ -173,10 +173,12 @@ class _PlayersBar extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Players", style: Theme.of(context).textTheme.headline5),
+                    Text("Players",
+                        style: Theme.of(context).textTheme.headline5),
                     IconButton(
                       icon: const Icon(Icons.edit),
-                      onPressed: () => Navigator.of(context).pushNamed(ROUTE_PLAYERS),
+                      onPressed: () =>
+                          Navigator.of(context).pushNamed(ROUTE_PLAYERS),
                     )
                   ],
                 ),
@@ -241,6 +243,10 @@ class _Router {
         } else {
           child = const Text("No cast for non-video items");
         }
+        break;
+      case ROUTE_CONTENT_ADDONS:
+        child = AddonsListScreen();
+        break;
     }
     return MaterialPageRoute(builder: (context) => child);
   }
