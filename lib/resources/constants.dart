@@ -6,6 +6,7 @@ const ROUTE_CAST_SCREEN = "cast_screen";
 // ** Main Navigation Routes
 const ROUTE_MAIN = "route_main_screen";
 const ROUTE_PLAYERS = "route_players_screen";
+const ROUTE_ADD_PLAYER = "route_add_player";
 // ** Content navigation Routes
 const ROUTE_CONTENT_ADDONS = "content_addons";
 

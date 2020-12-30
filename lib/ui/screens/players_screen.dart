@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:UKR/resources/resources.dart';
 import 'package:UKR/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:UKR/models/models.dart';
@@ -16,12 +17,10 @@ class PlayersScreen extends StatelessWidget {
         appBar: AppBar(title: const Text("Manage Players")),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            Navigator.of(context).pushNamed("newplayer");
-            return;
-            final result = await showDialog(
-                context: context, builder: (_) => AddPlayerDialog());
-            if (result != null) {
-              context.read<PlayersProvider>().addPlayer(result);
+            context.read<PlayersProvider>().resetSearchState();
+            final r = await Navigator.of(context).pushNamed(ROUTE_ADD_PLAYER);
+            if (r != null) {
+              context.read<PlayersProvider>().addPlayer(r as Player);
             }
           },
           child: const Icon(Icons.add),

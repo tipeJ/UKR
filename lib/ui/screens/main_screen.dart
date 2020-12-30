@@ -42,7 +42,7 @@ class _Router {
       case ROUTE_PLAYERS:
         child = PlayersScreen();
         break;
-      case "newplayer":
+      case ROUTE_ADD_PLAYER:
         child = AddPlayerScreen();
         break;
     }

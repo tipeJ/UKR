@@ -18,10 +18,10 @@ class AddPlayerScreen extends StatelessWidget {
           children: [
             Selector<PlayersProvider, bool>(
               selector: (_, p) => p.networkDiscoveryPlayers != null,
-              builder: (_, hasSearched, __) =>
-                FlatButton(
-                      child: Text(hasSearched ? "Search Again" : "Search for Players"),
-                      onPressed: () => context.read<PlayersProvider>().discoVERY()),
+              builder: (_, hasSearched, __) => FlatButton(
+                  child:
+                      Text(hasSearched ? "Search Again" : "Search for Players"),
+                  onPressed: () => context.read<PlayersProvider>().discoVERY()),
             ),
             FlatButton(
                 child: Text("Add Manually"),
@@ -46,7 +46,7 @@ class AddPlayerScreen extends StatelessWidget {
                     ? ListView.builder(
                         itemCount: snapshot.data!.length,
                         itemBuilder: (_, i) =>
-                            PlayerListItem(snapshot.data![i]))
+                            _DiscoveryPlayerListItem(snapshot.data![i]))
                     : CircularProgressIndicator();
               },
             );
@@ -55,6 +55,20 @@ class AddPlayerScreen extends StatelessWidget {
           return Container();
         },
       ),
+    );
+  }
+}
+
+class _DiscoveryPlayerListItem extends StatelessWidget {
+  final Player player;
+  const _DiscoveryPlayerListItem(this.player);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(player.name),
+      subtitle: Text(player.port.toString()),
+      onTap: () => Navigator.of(context).pop(player),
     );
   }
 }

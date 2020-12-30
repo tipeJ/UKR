@@ -89,23 +89,30 @@ class PlayersProvider extends ChangeNotifier {
     print("Client started");
     networkDiscoveryPlayers = client
         .lookup<PtrResourceRecord>(ResourceRecordQuery.serverPointer(name))
-        .asyncMap<Tuple2<PtrResourceRecord, SrvResourceRecord>>((p) async =>
-            Tuple2(
-                p,
+        .asyncMap<SrvResourceRecord>((p) async =>
                 await client
                     .lookup<SrvResourceRecord>(
                         ResourceRecordQuery.service(p.domainName))
-                    .first))
-        .map<List<Player>>((t) {
-      final newPlayer = Player(
+                      .first)
+        .map<Player>((t) {
+      return Player(
         id: Uuid().v1(),
-        address: t.item2.target,
-        port: t.item2.port,
-        name: t.item2.target,
+        address: t.target,
+        port: t.port,
+        name: t.target.replaceAll(".local", "")
       );
+    }).asyncMap<List<Player>>((p) async {
+      final props = await ApiProvider.getApplicationProperties(p);
+      var newPlayer = Player(
+          address: p.address,
+          port: p.port,
+          id: p.id,
+          name: props['name'] != null ? "${props['name']} (${p.name})" : p.name);
       if (!currentList.contains(newPlayer)) currentList.add(newPlayer);
       return currentList;
     });
     notifyListeners();
   }
+
+  void resetSearchState() => networkDiscoveryPlayers = null;
 }
