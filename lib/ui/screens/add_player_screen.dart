@@ -8,6 +8,31 @@ class AddPlayerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: const Text("Add Player")),
+      bottomNavigationBar: Container(
+        width: MediaQuery.of(context).size.width,
+        height: kBottomNavigationBarHeight,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Selector<PlayersProvider, bool>(
+              selector: (_, p) => p.networkDiscoveryPlayers != null,
+              builder: (_, hasSearched, __) =>
+                FlatButton(
+                      child: Text(hasSearched ? "Search Again" : "Search for Players"),
+                      onPressed: () => context.read<PlayersProvider>().discoVERY()),
+            ),
+            FlatButton(
+                child: Text("Add Manually"),
+                onPressed: () async {
+                  final r = await showDialog(
+                      context: context, builder: (_) => AddPlayerDialog());
+                  if (r != null) Navigator.pop(context, r);
+                })
+          ],
+        ),
+      ),
       body: Selector<PlayersProvider, Stream<List<Player>>?>(
         selector: (_, p) => p.networkDiscoveryPlayers,
         builder: (_, stream, __) {
@@ -16,22 +41,18 @@ class AddPlayerScreen extends StatelessWidget {
               stream: stream,
               builder: (_, snapshot) {
                 return snapshot.connectionState != ConnectionState.none &&
-                        snapshot.hasData && snapshot.data!.isNotEmpty
-                    ? ListView.builder(itemCount: snapshot.data!.length, itemBuilder: (_, i) => PlayerListItem(snapshot.data![i]))
+                        snapshot.hasData &&
+                        snapshot.data!.isNotEmpty
+                    ? ListView.builder(
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (_, i) =>
+                            PlayerListItem(snapshot.data![i]))
                     : CircularProgressIndicator();
               },
             );
           }
-          return Center(
-            child: Column(
-              children: [
-                Text("STREAM NULL"),
-                FlatButton(
-                    child: Text("START NETWORK DISCOVERY"),
-                    onPressed: () => context.read<PlayersProvider>().discoVERY())
-              ],
-            ),
-          );
+          // Return empty container
+          return Container();
         },
       ),
     );
