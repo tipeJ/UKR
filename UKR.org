@@ -196,3 +196,5 @@
    
 ** DONE Current item shows unknown item when playback is stopped
    CLOSED: [2020-12-28 ma 23:28]
+
+** TODO Network player discovery doesn't seem to work on android devices
