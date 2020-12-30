@@ -29,12 +29,12 @@ class Player {
   @override
   bool operator ==(other) =>
       (other is Player) &&
+      (other.id == id || (
       other.username == username &&
       other.password == password &&
-      other.id == id &&
       other.name == name &&
       other.address == address &&
-      other.port == port;
+      other.port == port ));
 }
 
 class PlayerAdapter extends TypeAdapter<Player> {

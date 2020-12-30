@@ -38,6 +38,7 @@ dependencies:
   get_it: ^5.0.3
   flutter_reorderable_list: ^0.1.5
   auto_size_text: ^2.1.0
+  multicast_dns: ^0.2.2
 
 dev_dependencies:
   flutter_test:

@@ -16,6 +16,8 @@ class PlayersScreen extends StatelessWidget {
         appBar: AppBar(title: const Text("Manage Players")),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
+            Navigator.of(context).pushNamed("newplayer");
+            return;
             final result = await showDialog(
                 context: context, builder: (_) => AddPlayerDialog());
             if (result != null) {
@@ -25,8 +27,10 @@ class PlayersScreen extends StatelessWidget {
           child: const Icon(Icons.add),
         ),
         body: ListView(
-            children: List<Widget>.generate(players.length,
-                (i) => _ReorderablePlayerListItem(players[i], compact: compact))));
+            children: List<Widget>.generate(
+                players.length,
+                (i) =>
+                    _ReorderablePlayerListItem(players[i], compact: compact))));
   }
 }
 

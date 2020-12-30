@@ -4,6 +4,10 @@ import 'package:UKR/resources/resources.dart';
 import 'package:hive/hive.dart';
 import 'dart:async';
 
+import 'package:multicast_dns/multicast_dns.dart';
+import 'package:tuple/tuple.dart';
+import 'package:uuid/uuid.dart';
+
 class PlayersProvider extends ChangeNotifier {
   Box<Player> get _box => Hive.box<Player>(BOX_PLAYERS);
   get _cachedBox => Hive.box(BOX_CACHED);
@@ -71,5 +75,50 @@ class PlayersProvider extends ChangeNotifier {
     selectedPlayer = player;
     _cachedBox.put(DATA_MOST_RECENT_PLAYERID, player.id);
     notifyListeners();
+  }
+
+  Stream<List<Player>>? networkDiscoveryPlayers;
+
+  Future<void> discoVERY() async {
+    if (networkDiscoveryPlayers == null) {
+      print("Started network discovery");
+      const String name = "_xbmc-jsonrpc-h._tcp";
+      final MDnsClient client = MDnsClient();
+      await client.start();
+      List<Player> currentList = [];
+
+      print("Client started");
+      networkDiscoveryPlayers = client
+          .lookup<PtrResourceRecord>(ResourceRecordQuery.serverPointer(name))
+          .asyncMap<Tuple2<PtrResourceRecord, SrvResourceRecord>>((p) async =>
+              Tuple2(
+                  p,
+                  await client
+                      .lookup<SrvResourceRecord>(
+                          ResourceRecordQuery.service(p.domainName))
+                      .first))
+          .map<List<Player>>((t) {
+        final newPlayer = Player(
+          id: Uuid().v1(),
+          address: t.item2.target,
+          port: t.item2.port,
+          name: t.item2.target,
+        );
+        if (!currentList.contains(newPlayer)) currentList.add(newPlayer);
+        return currentList;
+      });
+      notifyListeners();
+    }
+    // await for (PtrResourceRecord ptr in client
+    //     .lookup<PtrResourceRecord>(ResourceRecordQuery.serverPointer(name))) {
+    //   await for (SrvResourceRecord srv in client.lookup<SrvResourceRecord>(
+    //       ResourceRecordQuery.service(ptr.domainName))) {
+    //     final String bundleId = ptr.domainName;
+    //     print(
+    //         "Open Kodi instance found at ${srv.name} - ${srv.target}:${srv.port} for $bundleId");
+    //   }
+    // }
+    // client.stop();
+    // print("Done.");
   }
 }

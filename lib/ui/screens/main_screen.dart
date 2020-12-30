@@ -23,24 +23,27 @@ class _Router {
       case ROUTE_MAIN:
         UKProvider? ukProvider;
         child = Selector<PlayersProvider, Player>(
-          selector: (context, provider) => provider.selectedPlayer,
-          builder: (_, value, __) {
-            if (value == null) return PlayersScreen();
-            if (ukProvider == null) {
-              ukProvider = new UKProvider(value);
-            } else {
-              ukProvider!.initialize(value);
-            }
-            return MultiProvider(
-              providers: [
-                ChangeNotifierProvider<UKProvider>(create: (_) => ukProvider),
-              ],
-              builder: (context, child) => RemoteScreen(),
-            );
-          });
+            selector: (context, provider) => provider.selectedPlayer,
+            builder: (_, value, __) {
+              if (value == null) return PlayersScreen();
+              if (ukProvider == null) {
+                ukProvider = new UKProvider(value);
+              } else {
+                ukProvider!.initialize(value);
+              }
+              return MultiProvider(
+                providers: [
+                  ChangeNotifierProvider<UKProvider>(create: (_) => ukProvider),
+                ],
+                builder: (context, child) => RemoteScreen(),
+              );
+            });
         break;
       case ROUTE_PLAYERS:
         child = PlayersScreen();
+        break;
+      case "newplayer":
+        child = AddPlayerScreen();
         break;
     }
     return MaterialPageRoute(builder: (context) => child);
