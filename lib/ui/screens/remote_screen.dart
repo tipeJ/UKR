@@ -192,11 +192,11 @@ class _PlayersBar extends StatelessWidget {
               SliverToBoxAdapter(
                   child: InkWell(
                       onTap: () async {
-                        final result = await showDialog(
-                            context: context,
-                            builder: (_) => AddPlayerDialog());
+                        context.read<PlayersProvider>().resetSearchState();
+                        final result = await
+                            Navigator.of(context).pushNamed(ROUTE_ADD_PLAYER);
                         if (result != null) {
-                          context.read<PlayersProvider>().addPlayer(result);
+                          context.read<PlayersProvider>().addPlayer(result as Player);
                         }
                       },
                       child: Padding(

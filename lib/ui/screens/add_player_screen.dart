@@ -47,7 +47,7 @@ class AddPlayerScreen extends StatelessWidget {
                         itemCount: snapshot.data!.length,
                         itemBuilder: (_, i) =>
                             _DiscoveryPlayerListItem(snapshot.data![i]))
-                    : CircularProgressIndicator();
+                    : Center(child: CircularProgressIndicator());
               },
             );
           }
