@@ -147,7 +147,7 @@ class UKProvider extends ChangeNotifier {
         _dialogService.dismissDialog();
         _dialogService.dialogComplete();
         var input = Input.fromJson(d);
-        var dialogResult = await _dialogService.showDialog(input);
+        var dialogResult = await _dialogService.showInputDialog(input);
         if (dialogResult != null) {
           ApiProvider.sendTextInput(player, data: dialogResult);
         }
@@ -345,7 +345,7 @@ class UKProvider extends ChangeNotifier {
 
   Future<void> _refreshApplicationProperties() async {
     final r = await ApiProvider.getApplicationProperties(player);
-    if (r.isNotEmpty) {
+    if (r.isNotEmpty && r['error'] == null) {
       currentTemporaryVolume =
           r['volume']?.toDouble() ?? currentTemporaryVolume;
       muted = r['muted'] ?? muted;

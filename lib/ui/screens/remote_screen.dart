@@ -72,7 +72,7 @@ class RemoteScreen extends StatelessWidget {
                   final input = Input(
                       InputType.Keyboard, "Send Text to ${player.name}", "");
                   DialogService ds = GetIt.instance<DialogService>();
-                  var dialogResult = await ds.showDialog(input);
+                  var dialogResult = await ds.showInputDialog(input);
                   if (dialogResult != null)
                     ApiProvider.sendTextInput(player, data: dialogResult);
                   break;

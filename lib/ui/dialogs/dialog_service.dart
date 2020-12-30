@@ -12,7 +12,7 @@ class DialogService {
   void registerDialogDismiss(Function dismissDialog) =>
       _dialogDismisser = dismissDialog;
 
-  Future<dynamic> showDialog(Input input) {
+  Future<dynamic> showInputDialog(Input input) {
     _dialogCompleter = Completer();
     if (_showDialogListener != null) {
       _showDialogListener!(input);

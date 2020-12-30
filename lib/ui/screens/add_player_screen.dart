@@ -1,8 +1,10 @@
 import 'package:UKR/models/models.dart';
+import 'package:UKR/resources/resources.dart';
 import 'package:UKR/ui/providers/providers.dart';
 import 'package:UKR/ui/screens/screens.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tuple/tuple.dart';
 
 class AddPlayerScreen extends StatelessWidget {
   @override
@@ -33,11 +35,11 @@ class AddPlayerScreen extends StatelessWidget {
           ],
         ),
       ),
-      body: Selector<PlayersProvider, Stream<List<Player>>?>(
+      body: Selector<PlayersProvider, Stream<List<Tuple2<Player, bool>>>?>(
         selector: (_, p) => p.networkDiscoveryPlayers,
         builder: (_, stream, __) {
           if (stream != null) {
-            return StreamBuilder<List<Player>>(
+            return StreamBuilder<List<Tuple2<Player, bool>>>(
               stream: stream,
               builder: (_, snapshot) {
                 return snapshot.connectionState != ConnectionState.none &&
@@ -45,8 +47,8 @@ class AddPlayerScreen extends StatelessWidget {
                         snapshot.data!.isNotEmpty
                     ? ListView.builder(
                         itemCount: snapshot.data!.length,
-                        itemBuilder: (_, i) =>
-                            _DiscoveryPlayerListItem(snapshot.data![i]))
+                        itemBuilder: (_, i) => _DiscoveryPlayerListItem(
+                            snapshot.data![i].item1, snapshot.data![i].item2))
                     : Center(child: CircularProgressIndicator());
               },
             );
@@ -61,14 +63,103 @@ class AddPlayerScreen extends StatelessWidget {
 
 class _DiscoveryPlayerListItem extends StatelessWidget {
   final Player player;
-  const _DiscoveryPlayerListItem(this.player);
+  final bool auth;
+  const _DiscoveryPlayerListItem(this.player, this.auth);
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       title: Text(player.name),
       subtitle: Text(player.port.toString()),
-      onTap: () => Navigator.of(context).pop(player),
+      onTap: () async {
+        if (auth) {
+          Navigator.of(context).pop(player);
+        } else {
+          final result = await showDialog(
+              context: context,
+              builder: (_) => _PlayerAuthDialog(player: player));
+          if (result != null) {
+            final authResult = await ApiProvider.getApplicationProperties(
+                Player(
+                    address: player.address,
+                    id: player.id,
+                    name: player.name,
+                    port: player.port,
+                    username: result.item1,
+                    password: result.item2));
+            if (authResult['error'] == null) {
+              // Success!
+              Navigator.of(context).pop(Player(
+                  address: player.address,
+                  id: player.id,
+                  name: authResult['name'] + " (${player.name})",
+                  port: player.port,
+                  username: result.item1,
+                  password: result.item2));
+            }
+          }
+        }
+      },
+    );
+  }
+}
+
+class _PlayerAuthDialog extends StatefulWidget {
+  const _PlayerAuthDialog({
+    Key? key,
+    required this.player,
+  }) : super(key: key);
+
+  final Player player;
+
+  @override
+  __PlayerAuthDialogState createState() => __PlayerAuthDialogState();
+}
+
+class __PlayerAuthDialogState extends State<_PlayerAuthDialog> {
+  late final TextEditingController _nameController;
+  late final TextEditingController _passwordController;
+
+  @override
+  void initState() {
+    _nameController = TextEditingController()
+      ..addListener(() {
+        setState(() {});
+      });
+    _passwordController = TextEditingController()
+      ..addListener(() {
+        setState(() {});
+      });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text("Authentification for ${widget.player.name}"),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller: _nameController,
+            decoration: const InputDecoration(labelText: "Name"),
+          ),
+          TextField(
+            controller: _passwordController,
+            obscureText: true,
+            decoration: const InputDecoration(labelText: "Password"),
+          ),
+        ],
+      ),
+      actions: [
+        FlatButton(
+            child: const Text("Cancel"),
+            onPressed: () => Navigator.of(context).pop()),
+        FlatButton(
+            child: const Text("OK"),
+            onPressed: () => Navigator.of(context)
+                .pop(Tuple2(_nameController.text, _passwordController.text))),
+      ],
     );
   }
 }

@@ -79,10 +79,13 @@ class ApiProvider {
       "properties": const ["muted", "name", "version", "volume"]
     });
     final response = await http.post(url(player), headers: headers, body: body);
-    final s = _handleHTTPResponse(response);
-    if (s.isEmpty) return const {};
-    final parsed = await compute(jsonDecode, s);
-    return parsed['result'] ?? const {};
+    if (response.statusCode != 200) {
+      // Handle Unauthorized response
+      return {"error": response.statusCode};
+    } else {
+      final parsed = await compute(jsonDecode, response.body);
+      return parsed['result'] ?? const {};
+    }
   }
 
   static Future<Map<String, dynamic>> getPlayerProperties(Player player) async {
@@ -354,7 +357,8 @@ class ApiProvider {
   }
 
   // * Sources API Endpoints
-  static Future<void> fetchFiles(Player player, {String content = "unknown"}) async {
+  static Future<void> fetchFiles(Player player,
+      {String content = "unknown"}) async {
     final body = await _encode("Addons.GetAddons", {
       "content": content,
       "properties": [

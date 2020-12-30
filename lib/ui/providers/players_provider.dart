@@ -77,37 +77,41 @@ class PlayersProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Stream<List<Player>>? networkDiscoveryPlayers;
+  Stream<List<Tuple2<Player, bool>>>? networkDiscoveryPlayers;
 
   Future<void> discoVERY() async {
     print("Started network discovery");
     const String name = "_xbmc-jsonrpc-h._tcp";
     final MDnsClient client = MDnsClient();
     await client.start();
-    List<Player> currentList = [];
+    List<Tuple2<Player, bool>> currentList = [];
 
     print("Client started");
     networkDiscoveryPlayers = client
         .lookup<PtrResourceRecord>(ResourceRecordQuery.serverPointer(name))
-        .asyncMap<SrvResourceRecord>((p) async =>
-                await client
-                    .lookup<SrvResourceRecord>(
-                        ResourceRecordQuery.service(p.domainName))
-                      .first)
+        .asyncMap<SrvResourceRecord>((p) async => await client
+            .lookup<SrvResourceRecord>(
+                ResourceRecordQuery.service(p.domainName))
+            .first)
         .map<Player>((t) {
       return Player(
-        id: Uuid().v1(),
-        address: t.target,
-        port: t.port,
-        name: t.target.replaceAll(".local", "")
-      );
-    }).asyncMap<List<Player>>((p) async {
+          id: Uuid().v1(),
+          address: t.target,
+          port: t.port,
+          name: t.target.replaceAll(".local", ""));
+    }).asyncMap<List<Tuple2<Player, bool>>>((p) async {
       final props = await ApiProvider.getApplicationProperties(p);
-      var newPlayer = Player(
+      bool auth = true;
+      if (props['error'] == 401) {
+        // Handle auth
+        auth = false;
+      }
+      var newPlayer = Tuple2(Player(
           address: p.address,
           port: p.port,
           id: p.id,
-          name: props['name'] != null ? "${props['name']} (${p.name})" : p.name);
+          name:
+              props['name'] != null ? "${props['name']} (${p.name})" : p.name), auth);
       if (!currentList.contains(newPlayer)) currentList.add(newPlayer);
       return currentList;
     });
