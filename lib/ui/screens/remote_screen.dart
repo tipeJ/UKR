@@ -167,22 +167,24 @@ class _PlayersBar extends StatelessWidget {
         Expanded(
           child: CustomScrollView(
             slivers: [
-              SliverToBoxAdapter(
-                  child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("Players",
-                        style: Theme.of(context).textTheme.headline5),
-                    IconButton(
-                      icon: const Icon(Icons.edit),
-                      onPressed: () =>
-                          Navigator.of(context).pushNamed(ROUTE_PLAYERS),
-                    )
-                  ],
-                ),
-              )),
+              SliverSafeArea(
+                sliver: SliverToBoxAdapter(
+                    child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Players",
+                          style: Theme.of(context).textTheme.headline5),
+                      IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: () =>
+                            Navigator.of(context).pushNamed(ROUTE_PLAYERS),
+                      )
+                    ],
+                  ),
+                )),
+              ),
               SliverList(
                   delegate: SliverChildListDelegate(
                       List<PlayerListItem>.generate(

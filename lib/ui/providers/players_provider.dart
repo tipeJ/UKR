@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:UKR/models/models.dart';
 import 'package:UKR/resources/resources.dart';
@@ -82,7 +84,13 @@ class PlayersProvider extends ChangeNotifier {
   Future<void> discoVERY() async {
     print("Started network discovery");
     const String name = "_xbmc-jsonrpc-h._tcp";
-    final MDnsClient client = MDnsClient();
+
+    // Workaround needed for android, which doesn't seem to support reusePort
+    final MDnsClient client = MDnsClient(rawDatagramSocketFactory:
+        (dynamic host, int port, {bool reuseAddress = true, bool reusePort = true, int ttl = 10}) {
+      return RawDatagramSocket.bind(host, port,
+          reuseAddress: reuseAddress, reusePort: Platform.isAndroid ? false : reusePort, ttl: ttl);
+    });
     await client.start();
     List<Tuple2<Player, bool>> currentList = [];
 
@@ -106,12 +114,15 @@ class PlayersProvider extends ChangeNotifier {
         // Handle auth
         auth = false;
       }
-      var newPlayer = Tuple2(Player(
-          address: p.address,
-          port: p.port,
-          id: p.id,
-          name:
-              props['name'] != null ? "${props['name']} (${p.name})" : p.name), auth);
+      var newPlayer = Tuple2(
+          Player(
+              address: p.address,
+              port: p.port,
+              id: p.id,
+              name: props['name'] != null
+                  ? "${props['name']} (${p.name})"
+                  : p.name),
+          auth);
       if (!currentList.contains(newPlayer)) currentList.add(newPlayer);
       return currentList;
     });
