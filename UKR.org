@@ -197,4 +197,10 @@
 ** DONE Current item shows unknown item when playback is stopped
    CLOSED: [2020-12-28 ma 23:28]
 
-** TODO Network player discovery doesn't seem to work on android devices
+** DONE Network player discovery doesn't seem to work on android devices
+   CLOSED: [2021-01-01 pe 16:10]
+   Still doesn't seem to work on android devices. Works fine on real devices with either debug/release mode.
+   See below.
+   
+** TODO Android devices require platform channel Mdns implementation.
+   A pure dart solution would be ideal, as provided by the multicast_dns plugin.

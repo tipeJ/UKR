@@ -22,7 +22,7 @@ class _Router {
     switch (settings.name) {
       case ROUTE_MAIN:
         UKProvider? ukProvider;
-        child = Selector<PlayersProvider, Player>(
+        child = Selector<PlayersProvider, Player?>(
             selector: (context, provider) => provider.selectedPlayer,
             builder: (_, value, __) {
               if (value == null) return PlayersScreen();
