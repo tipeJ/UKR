@@ -42,14 +42,35 @@ class AddPlayerScreen extends StatelessWidget {
             return StreamBuilder<List<Tuple2<Player, bool>>>(
               stream: stream,
               builder: (_, snapshot) {
-                return snapshot.connectionState != ConnectionState.none &&
-                        snapshot.hasData &&
-                        snapshot.data!.isNotEmpty
-                    ? ListView.builder(
-                        itemCount: snapshot.data!.length,
-                        itemBuilder: (_, i) => _DiscoveryPlayerListItem(
-                            snapshot.data![i].item1, snapshot.data![i].item2))
-                    : Center(child: CircularProgressIndicator());
+                final data = snapshot.data ?? const [];
+                Widget loadingIndicator = Container(
+                    width: 30,
+                    height: 30,
+                    margin: const EdgeInsets.all(5.0),
+                    alignment: Alignment.center,
+                    child: CircularProgressIndicator());
+                if (snapshot.connectionState == ConnectionState.done &&
+                    snapshot.hasData &&
+                    data.isEmpty) {
+                  return const Padding(
+                      padding: EdgeInsets.all(15.0),
+                      child: Text(
+                          "No players Found. You can try adding a player manually below"));
+                } else if (snapshot.hasData) {
+                  return ListView.builder(
+                    itemCount:
+                        snapshot.connectionState == ConnectionState.active
+                            ? data.length + 1
+                            : data.length,
+                    itemBuilder: (_, i) =>
+                        snapshot.connectionState == ConnectionState.active &&
+                                i == data.length
+                            ? loadingIndicator
+                            : _DiscoveryPlayerListItem(
+                                data[i].item1, data[i].item2),
+                  );
+                }
+                return Align(alignment: Alignment.topCenter, child: loadingIndicator);
               },
             );
           }
