@@ -84,25 +84,26 @@ class PlayersProvider extends ChangeNotifier {
 
   Stream<List<Tuple2<Player, bool>>>? networkDiscoveryPlayers;
 
+  /// Zeroconf player information search. Uses multicast DNS for indexing.
   Future<void> discoVERY() async {
     print("Started network discovery");
 
-    // Workaround needed for android, which doesn't seem to support reusePort
-    final MDnsClient client = MDnsClient(rawDatagramSocketFactory:
-        (dynamic host, int port,
-            {bool reuseAddress = true, bool reusePort = true, int ttl = 10}) {
-      return RawDatagramSocket.bind(host, port,
-          reuseAddress: reuseAddress,
-          reusePort: Platform.isAndroid ? false : reusePort,
-          ttl: ttl);
-    });
-    await client.start();
     List<Tuple2<Player, bool>> currentList = [];
 
     print("Client started");
     if (isMobile()) {
       networkDiscoveryPlayers = _nativeMdnsStream();
     } else {
+      // Workaround needed for android, which doesn't seem to support reusePort
+      final MDnsClient client = MDnsClient(rawDatagramSocketFactory:
+          (dynamic host, int port,
+              {bool reuseAddress = true, bool reusePort = true, int ttl = 10}) {
+        return RawDatagramSocket.bind(host, port,
+            reuseAddress: reuseAddress,
+            reusePort: Platform.isAndroid ? false : reusePort,
+            ttl: ttl);
+      });
+      await client.start();
       networkDiscoveryPlayers = client
           .lookup<PtrResourceRecord>(
               ResourceRecordQuery.serverPointer(_zeroconfServiceName))
@@ -162,7 +163,9 @@ class PlayersProvider extends ChangeNotifier {
             address: p.address,
             port: p.port,
             id: p.id,
-            name: props['name'] != null && !RegExp(r'\(.*?\)', caseSensitive: false, multiLine: false).hasMatch(p.name)
+            name: props['name'] != null &&
+                    !RegExp(r'\(.*?\)', caseSensitive: false, multiLine: false)
+                        .hasMatch(p.name)
                 ? "${props['name']} (${p.name})"
                 : p.name),
         auth);
