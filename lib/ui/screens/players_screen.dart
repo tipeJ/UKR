@@ -4,11 +4,14 @@ import 'package:UKR/resources/resources.dart';
 import 'package:UKR/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:UKR/models/models.dart';
+import 'package:flutter_reorderable_list/flutter_reorderable_list.dart';
 import 'package:provider/provider.dart';
 import 'package:UKR/ui/providers/providers.dart';
 import 'package:UKR/ui/screens/screens.dart';
 
 class PlayersScreen extends StatelessWidget {
+  static int _findPlayerIndexByKey(Key key, List<Player> players) =>
+      players.indexWhere((p) => Key(p.id) == key);
   @override
   Widget build(BuildContext context) {
     final players = context.watch<PlayersProvider>().players;
@@ -25,11 +28,33 @@ class PlayersScreen extends StatelessWidget {
           },
           child: const Icon(Icons.add),
         ),
-        body: ListView(
-            children: List<Widget>.generate(
-                players.length,
-                (i) =>
-                    _ReorderablePlayerListItem(players[i], compact: compact))));
+        body: ReorderableList(
+          onReorder: (_, __) => false,
+          // onReorder: (from, to) {
+          //   var fromIndex = _findPlayerIndexByKey(from, players);
+          //   var toIndex = _findPlayerIndexByKey(to, players);
+          //   if (fromIndex >= 0 && toIndex >= 0) {
+          //     context
+          //         .read<PlayersProvider>()
+          //         .temporarilyReorder(fromIndex, toIndex);
+          //     return true;
+          //   }
+          //   return false;
+          // },
+          // onReorderDone: (to) {
+          //   final index = _findPlayerIndexByKey(to, players);
+          //   if (index != -1) {
+          //     context
+          //         .read<PlayersProvider>()
+          //         .syncReorder();
+          //   }
+          // },
+          child: ListView(
+              children: List<Widget>.generate(
+                  players.length,
+                  (i) => _ReorderablePlayerListItem(players[i],
+                      compact: compact))),
+        ));
   }
 }
 
@@ -91,10 +116,69 @@ class _ReorderablePlayerListItemState
           _showCustomMenu();
         }
       },
-      child: PlayerListItem(widget.player,
-          compact: widget.compact,
-          onTapDown: _storePosition,
-          onLongPress: _showCustomMenu),
+      child: ReorderableItem(
+        key: Key(widget.player.id),
+        childBuilder: (_, buildState) => IntrinsicHeight(
+          child: Row(
+            children: [
+              Expanded(
+                  child: InkWell(
+                onLongPress: _showCustomMenu,
+                onTapDown: _storePosition,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: _SmallPlayerListItem(widget.player,
+                      compact: widget.compact),
+                ),
+              )),
+              ReorderableListener(
+                child: Container(
+                  padding: const EdgeInsets.only(right: 18.0, left: 18.0),
+                  color: Color(0x08000000),
+                  child: Center(
+                    child: const Icon(Icons.reorder, color: Color(0xFF888888)),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SmallPlayerListItem extends StatelessWidget {
+  final Player _player;
+  final bool compact;
+  final bool current;
+
+  const _SmallPlayerListItem(this._player,
+      {this.compact = false, this.current = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: compact
+          ? [
+              Text(_player.name,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText1
+                      ?.apply(fontWeightDelta: current ? 2 : 0)),
+              Text("${_player.address}:${_player.port}",
+                  style: TextStyle(fontWeight: FontWeight.w200))
+            ]
+          : [
+              Text(_player.name, style: Theme.of(context).textTheme.headline6),
+              Text(_player.address,
+                  style: const TextStyle(fontWeight: FontWeight.w300)),
+              Text(_player.port.toString(),
+                  style: const TextStyle(fontWeight: FontWeight.w200))
+            ],
     );
   }
 }
@@ -107,7 +191,10 @@ class PlayerListItem extends StatefulWidget {
   final Function(TapDownDetails)? onTapDown;
 
   const PlayerListItem(this.player,
-      {this.compact = false, this.current = false, this.onLongPress, this.onTapDown});
+      {this.compact = false,
+      this.current = false,
+      this.onLongPress,
+      this.onTapDown});
 
   @override
   State<StatefulWidget> createState() => PlayerListItemState();
@@ -130,28 +217,8 @@ class PlayerListItemState extends State<PlayerListItem> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: widget.compact
-                      ? [
-                          Text(_player.name,
-                              style: Theme.of(context).textTheme.bodyText1?.apply(fontWeightDelta: widget.current ? 2 : 0)),
-                          Text("${_player.address}:${_player.port}",
-                              style: TextStyle(fontWeight: FontWeight.w200))
-                        ]
-                      : [
-                          Text(_player.name,
-                              style: Theme.of(context).textTheme.headline6),
-                          Text(_player.address,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.w300)),
-                          Text(_player.port.toString(),
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.w200))
-                        ],
-                ),
+                _SmallPlayerListItem(_player,
+                    compact: widget.compact, current: widget.current),
                 Padding(
                     padding: EdgeInsets.all(widget.compact ? 5.0 : 20.0),
                     child: Center(
