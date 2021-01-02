@@ -102,11 +102,12 @@ class _ReorderablePlayerListItemState
 class PlayerListItem extends StatefulWidget {
   final Player player;
   final bool compact;
+  final bool current;
   final VoidCallback? onLongPress;
   final Function(TapDownDetails)? onTapDown;
 
   const PlayerListItem(this.player,
-      {this.compact = false, this.onLongPress, this.onTapDown});
+      {this.compact = false, this.current = false, this.onLongPress, this.onTapDown});
 
   @override
   State<StatefulWidget> createState() => PlayerListItemState();
@@ -136,7 +137,7 @@ class PlayerListItemState extends State<PlayerListItem> {
                   children: widget.compact
                       ? [
                           Text(_player.name,
-                              style: Theme.of(context).textTheme.bodyText1),
+                              style: Theme.of(context).textTheme.bodyText1?.apply(fontWeightDelta: widget.current ? 2 : 0)),
                           Text("${_player.address}:${_player.port}",
                               style: TextStyle(fontWeight: FontWeight.w200))
                         ]

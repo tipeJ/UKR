@@ -159,7 +159,9 @@ class _PlayerPowerOptions extends StatelessWidget {
 class _PlayersBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final players = context.watch<PlayersProvider>().players;
+    final provider = context.watch<PlayersProvider>();
+    final players = provider.players;
+    final currentPlayer = provider.selectedPlayer;
     bool compact = isDesktop();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -190,15 +192,17 @@ class _PlayersBar extends StatelessWidget {
                       List<PlayerListItem>.generate(
                           players.length,
                           (i) =>
-                              PlayerListItem(players[i], compact: compact)))),
+                          PlayerListItem(players[i], compact: compact, current: players[i] == currentPlayer)))),
               SliverToBoxAdapter(
                   child: InkWell(
                       onTap: () async {
                         context.read<PlayersProvider>().resetSearchState();
-                        final result = await
-                            Navigator.of(context).pushNamed(ROUTE_ADD_PLAYER);
+                        final result = await Navigator.of(context)
+                            .pushNamed(ROUTE_ADD_PLAYER);
                         if (result != null) {
-                          context.read<PlayersProvider>().addPlayer(result as Player);
+                          context
+                              .read<PlayersProvider>()
+                              .addPlayer(result as Player);
                         }
                       },
                       child: Padding(
