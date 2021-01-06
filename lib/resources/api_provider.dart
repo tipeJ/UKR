@@ -16,7 +16,7 @@ class ApiProvider {
   static const jsonRPCVersion = "2.0";
 
   static const defParams = {"jsonrpc": jsonRPCVersion, "id": 27928};
-  static const _playerID = 1;
+  static const _playerID = 0;
   static String url(Player p) =>
       "http://" +
       (p.hasCredentials ? "${p.username}:${p.password}@" : "") +

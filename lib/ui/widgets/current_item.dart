@@ -22,14 +22,14 @@ class CurrentItem extends StatelessWidget {
           headline = item.label;
           children = [
             item.director.nullIf(
-              Hero(
-                tag: HERO_CURRENT_ITEM_CAPTION,
-                child: Text(item.director.separateFold(', '), style: theme.subtitle1)
-              ),
+                Hero(
+                    tag: HERO_CURRENT_ITEM_CAPTION,
+                    child: Text(item.director.separateFold(', '),
+                        style: theme.subtitle1)),
                 (d) => d.isNotEmpty),
-              item.year.nullOr(Hero(
-                  tag: HERO_CURRENT_ITEM_YEAR,
-                  child: Text(item.year.toString(), style: theme.caption))),
+            item.year.nullOr(Hero(
+                tag: HERO_CURRENT_ITEM_YEAR,
+                child: Text(item.year.toString(), style: theme.caption))),
           ].nonNulls() as List<Widget>;
         } else if (item.type == "episode") {
           headline = item.showTitle ?? item.label;
@@ -51,6 +51,8 @@ class CurrentItem extends StatelessWidget {
           ];
         } else if (item.type == "unknown") {
           headline = item.label;
+        } else if (item.type == "song") {
+          headline = item.label;
         }
         return Container(
             padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 10.0),
@@ -60,8 +62,13 @@ class CurrentItem extends StatelessWidget {
                 crossAxisAlignment: alignment,
                 children: [
                   Hero(
-                    tag: HERO_CURRENT_ITEM_HEADLINE,
-                    child: AutoSizeText(headline, style: theme.headline5, maxLines: 1, overflow: TextOverflow.ellipsis,)),
+                      tag: HERO_CURRENT_ITEM_HEADLINE,
+                      child: AutoSizeText(
+                        headline,
+                        style: theme.headline5,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      )),
                   ...children
                 ]));
       case AudioItem:
