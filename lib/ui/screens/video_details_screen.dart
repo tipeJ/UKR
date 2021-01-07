@@ -45,9 +45,8 @@ class VideoDetailsScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (item.tagline != null) Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(item.tagline!, style: theme.bodyText1),
+                              Expanded(child: Text(item.tagline!, style: theme.bodyText1)),
                               if (item.rating != null)
                                 Text.rich(TextSpan(children: [
                                   TextSpan(
