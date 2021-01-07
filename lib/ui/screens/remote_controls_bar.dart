@@ -173,6 +173,10 @@ class _BottomControlButtons extends StatelessWidget {
                       onTap: () {
                         if (canSeek) context.read<UKProvider>().skip(-10);
                       },
+                      onLongPress: () {
+                        // Skip 1 min
+                        if (canSeek) context.read<UKProvider>().skip(-60);
+                      },
                       child: Container(
                           width: _lerp(0.0, _contSize),
                           margin: EdgeInsets.symmetric(
@@ -198,6 +202,10 @@ class _BottomControlButtons extends StatelessWidget {
                   builder: (_, canSeek, __) => InkWell(
                       onTap: () {
                         if (canSeek) context.read<UKProvider>().skip(30);
+                      },
+                      onLongPress: () {
+                        // Skip 3 min
+                        if (canSeek) context.read<UKProvider>().skip(180);
                       },
                       child: Container(
                           width: _lerp(0.0, _contSize),
