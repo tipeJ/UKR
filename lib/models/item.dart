@@ -78,7 +78,7 @@ class VideoItem extends Item {
       : super(json);
 
   factory VideoItem.fromJson(dynamic j) => VideoItem(j,
-      plot: (j['plot'] as String).nullIfEmpty(),
+      plot: (j['plot'] as String).nullIfEmpty()?.replaceAll('â', ""),
       tagline: (j['tagline'] as String).nullIfEmpty(),
       cast: _parseCast(j['cast']),
       rating: j['rating'],

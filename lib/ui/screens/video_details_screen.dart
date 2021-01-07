@@ -47,7 +47,7 @@ class VideoDetailsScreen extends StatelessWidget {
                     if (item.tagline != null) Row(
                             children: [
                               Expanded(child: Text(item.tagline!, style: theme.bodyText1)),
-                              if (item.rating != null)
+                              if (item.rating != null && item.rating != 0.0)
                                 Text.rich(TextSpan(children: [
                                   TextSpan(
                                       text: item.rating!.toStringAsPrecision(3),
