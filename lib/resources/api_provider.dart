@@ -16,7 +16,7 @@ class ApiProvider {
   static const jsonRPCVersion = "2.0";
 
   static const defParams = {"jsonrpc": jsonRPCVersion, "id": 27928};
-  static const _playerID = 0;
+  static const _playerID = 1;
   static String url(Player p) =>
       "http://" +
       (p.hasCredentials ? "${p.username}:${p.password}@" : "") +
@@ -357,7 +357,7 @@ class ApiProvider {
   }
 
   // * Sources API Endpoints
-  static Future<void> fetchFiles(Player player,
+  static Future<List<Addon>> fetchAddons(Player player,
       {String content = "unknown"}) async {
     final body = await _encode("Addons.GetAddons", {
       "content": content,
@@ -365,10 +365,10 @@ class ApiProvider {
         "name",
         // "version"
         // "summary",
-        // "description",
+        "description",
         // "path",
         // "author",
-        // "thumbnail",
+        "thumbnail",
         // "disclaimer",
         // "broken",
         // "enabled",
@@ -376,7 +376,20 @@ class ApiProvider {
       ]
     });
     final r = await http.post(url(player), headers: headers, body: body);
-    print("BODY: ${r.body}");
+    if (content == 'video') print(r.body);
+    final parsed = jsonDecode(r.body);
+    if (parsed['result']['limits']['total'] == 0) return const [];
+    final addons = parsed['result']['addons'] as List<dynamic>;
+    List<Addon> addonsList = [];
+    for (int i = 0; i < addons.length; i++) {
+      final addon = addons[i];
+      if (addon['thumbnail'] != null && addon['thumbnail'].isNotEmpty) {
+        addon['thumbnail'] =
+            await retrieveCachedImageURL(player, addon['thumbnail']);
+      }
+      addonsList.add(Addon.fromJson(addon));
+    }
+    return addonsList;
   }
 
   // * External API Endpoints

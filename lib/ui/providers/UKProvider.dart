@@ -88,7 +88,6 @@ class UKProvider extends ChangeNotifier {
       await _refreshPlayerItem();
       await _refreshPlayList();
       await _fetchSystemProperties();
-      await ApiProvider.fetchFiles(player);
 
       // Start the properties ping stream.
       _propertiesStream?.pause();
@@ -218,6 +217,7 @@ class UKProvider extends ChangeNotifier {
   // ** Player Item Endpoints
   Future<void> _refreshPlayerItem() async {
     final result = await ApiProvider.getPlayerItem(player);
+    print("ITEM: $result");
     if (result.isNotEmpty) {
       if (result['label'].isEmpty) {
         this.currentItem = null;

@@ -191,8 +191,9 @@ class _PlayersBar extends StatelessWidget {
                   delegate: SliverChildListDelegate(
                       List<PlayerListItem>.generate(
                           players.length,
-                          (i) =>
-                          PlayerListItem(players[i], compact: compact, current: players[i] == currentPlayer)))),
+                          (i) => PlayerListItem(players[i],
+                              compact: compact,
+                              current: players[i] == currentPlayer)))),
               SliverToBoxAdapter(
                   child: InkWell(
                       onTap: () async {
@@ -252,6 +253,11 @@ class _Router {
         break;
       case ROUTE_CONTENT_ADDONS:
         child = AddonsListScreen();
+        break;
+      case ROUTE_ADDON_DETAILS:
+        if (args is Addon) {
+          child = AddonDetailsScreen(args);
+        }
         break;
     }
     return MaterialPageRoute(builder: (context) => child);
