@@ -392,6 +392,38 @@ class ApiProvider {
     return addonsList;
   }
 
+  static Future<String> getAddonDetails(Player player,
+      {required String addonID}) async {
+    final body = await _encode("Addons.GetAddonDetails", {
+      'addonid': addonID,
+      "properties": ["name", "version", "path", "disclaimer"]
+    });
+    final r = await http.post(url(player), headers: headers, body: body);
+    return r.body;
+  }
+
+  static Future<void> getDirectory(Player player,
+      {required String path,
+      Function(List<File>)? onSuccess,
+      Function(String)? onError}) async {
+    final body = await _encode("Files.GetDirectory", {"directory": path});
+    final r = await http.post(url(player), headers: headers, body: body);
+    final j = await compute(jsonDecode, r.body);
+    if (j['result']?['error'] != null) {
+      onError?.call(j['result']['error']['message']);
+    } else {
+      var files = j['result']['files'].map<File>((f) => File.fromJson(f));
+      onSuccess?.call(files.toList());
+    }
+  }
+
+  static Future<String> executeAddon(Player player,
+      {required String addonID}) async {
+    final body = await _encode(
+        "Addons.ExecuteAddon", {"addonid": addonID, "wait": true});
+    return (await http.post(url(player), headers: headers, body: body)).body;
+  }
+
   // * External API Endpoints
   static Future<TMDBItem> fetchTMDBMovie(String imdbID) async {
     final theaders = {"api_key": _tmdbApiKey};

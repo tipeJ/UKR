@@ -8,3 +8,4 @@ export 'application_properties.dart';
 export 'item.dart';
 export 'addon.dart';
 export 'tmdb_item.dart';
+export 'file.dart';

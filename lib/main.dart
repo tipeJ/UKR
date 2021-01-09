@@ -16,6 +16,11 @@ void main() async {
   await Hive.openBox<Player>(BOX_PLAYERS);
   await Hive.openBox(BOX_CACHED);
 
+  final testPlayer =
+      Player(address: "192.168.100.16", port: 8080, name: "SD", id: "asd");
+  final r = await ApiProvider.getDirectory(testPlayer,
+      path: "plugin://plugin.video.twitch/");
+
   final getIt = GetIt.instance;
   getIt.registerLazySingleton(() => DialogService());
   runApp(MyApp());

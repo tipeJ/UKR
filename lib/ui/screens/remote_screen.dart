@@ -259,6 +259,16 @@ class _Router {
           child = AddonDetailsScreen(args);
         }
         break;
+      case ROUTE_FILELIST:
+        if (args is Tuple2<Player, String>) {
+          child = ChangeNotifierProvider(
+            create: (_) => FilelistProvider(args.item1, rootPath: args.item2),
+            builder: (_, __) => FilelistScreen(),
+          );
+        } else {
+          child = const Text("Invalid parameters");
+        }
+        break;
     }
     return MaterialPageRoute(builder: (context) => child);
   }

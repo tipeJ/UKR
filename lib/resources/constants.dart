@@ -10,6 +10,7 @@ const ROUTE_ADD_PLAYER = "route_add_player";
 // ** Content navigation Routes
 const ROUTE_CONTENT_ADDONS = "content_addons";
 const ROUTE_ADDON_DETAILS = "content_addon_details";
+const ROUTE_FILELIST = "content_filelist";
 
 // ** Hero Animation Tags
 const HERO_CURRENT_ITEM_HEADLINE = "hero_current_headline";
