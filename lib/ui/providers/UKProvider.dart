@@ -430,6 +430,10 @@ class UKProvider extends ChangeNotifier {
         location: playList.indexWhere((i) => i.id == item));
   }
 
+  // *** Open a single file
+  /// Opens the selected file
+  void openFile(String path) => ApiProvider.playFile(player, file: path);
+
   // * Properties
   // ** Application Properties
   bool muted = false;

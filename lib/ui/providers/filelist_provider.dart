@@ -33,6 +33,9 @@ class FilelistProvider extends ChangeNotifier {
 
   /// Navigate up in the tree. Does not go above root directory. Returns a boolean value, indicating the success of the operation.
   Future<bool> navigateUp() async {
+    // Required to prevent unwanted route pops
+    if (files == null) return true;
+
     if (_paths.length > 1) {
       _paths.removeLast();
       await _fetchFiles(_paths.last);
