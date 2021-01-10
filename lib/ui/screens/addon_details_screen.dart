@@ -36,9 +36,11 @@ class AddonDetailsScreen extends StatelessWidget {
               FlatButton(
                   child: const Text("Content"),
                   onPressed: () {
-                    var args = Tuple2<Player, String>(
+                    var args = Tuple3<Player, String, String>(
                         context.read<PlayersProvider>().selectedPlayer,
-                        "plugin://${addon.addonID}/");
+                        "plugin://${addon.addonID}/",
+                        addon.name
+                      );
                     Navigator.of(context)
                         .pushNamed(ROUTE_FILELIST, arguments: args);
                   }),

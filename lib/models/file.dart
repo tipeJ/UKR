@@ -17,6 +17,9 @@ class File {
       fileType: enumFromString(FileType.values, j['filetype']),
       type: j['type'],
       label: j['label']);
+
+  @override
+  String toString() => label;
 }
 
 enum FileType { Directory, File }

@@ -3,6 +3,8 @@ import 'package:UKR/ui/providers/providers.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tuple/tuple.dart';
+import 'package:UKR/utils/utils.dart';
 
 class FilelistScreen extends StatelessWidget {
   @override
@@ -11,16 +13,16 @@ class FilelistScreen extends StatelessWidget {
       onWillPop: () async {
         return !(await context.read<FilelistProvider>().navigateUp());
       },
-      child: Selector<FilelistProvider, List<File>?>(
-          selector: (_, p) => p.files,
+      child: Selector<FilelistProvider, Tuple3<List<File>?, List<File>, String>>(
+          selector: (_, p) => Tuple3(p.files, p.paths, p.title),
           builder: (_, files, __) {
-            if (files == null) {
+            if (files.item1 == null) {
               return const Center(child: CircularProgressIndicator());
             } else {
               return RefreshIndicator(
                 onRefresh: () => context.read<FilelistProvider>().refresh(),
                 child: ListView.builder(
-                  itemCount: files.length + 1,
+                  itemCount: files.item1!.length + 1,
                   itemBuilder: (_, i) {
                     return (i == 0)
                         ? Row(children: [
@@ -28,7 +30,19 @@ class FilelistScreen extends StatelessWidget {
                                 child: InkWell(
                                     child: Padding(
                                       padding: const EdgeInsets.all(16.0),
-                                      child: const Text("//"),
+                                      child: files.item2.length > 1
+                                      ? Text.rich(
+                                          TextSpan(children: [
+                                              TextSpan(text: "//"),
+                                              TextSpan(
+                                                text: " " + files.item2.getRange(1, files.item2.length).toList().separateFold(" >"),
+                                                style: Theme.of(context).textTheme.caption
+                                              )
+                                          ]),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        )
+                                        : Text(files.item3)
                                     ),
                                     onTap: () => context
                                         .read<FilelistProvider>()
@@ -38,7 +52,7 @@ class FilelistScreen extends StatelessWidget {
                                 onPressed: () =>
                                     context.read<FilelistProvider>().refresh())
                           ])
-                        : _FileTile(files[i - 1]);
+                        : _FileTile(files.item1![i - 1]);
                   },
                 ),
               );
@@ -96,7 +110,7 @@ class __FileTileState extends State<_FileTile> {
             ],
           )),
           onTap: () =>
-              context.read<FilelistProvider>().navigateDown(widget.file.file));
+              context.read<FilelistProvider>().navigateDown(widget.file));
     } else if (widget.file.fileType == FileType.File) {
       return Listener(
         onPointerDown: (details) {

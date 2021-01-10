@@ -4,13 +4,18 @@ import 'package:flutter/material.dart';
 
 class FilelistProvider extends ChangeNotifier {
   final String rootPath;
+  final String title;
   final Player player;
 
   List<File>? files;
-  List<String> _paths = [];
+  List<File> paths = [];
 
-  FilelistProvider(this.player, {required this.rootPath}) {
-    navigateDown(rootPath);
+  FilelistProvider(this.player, {required this.title, required this.rootPath}) {
+    navigateDown(File(
+        file: rootPath,
+        label: rootPath,
+        fileType: FileType.Directory,
+        type: "unknown"));
   }
 
   /// Retrieves the tree from the host player.
@@ -26,9 +31,9 @@ class FilelistProvider extends ChangeNotifier {
   }
 
   /// Navigate down in the tree.
-  void navigateDown(String path) {
-    _paths.add(path);
-    _fetchFiles(path);
+  void navigateDown(File path) {
+    paths.add(path);
+    _fetchFiles(path.file);
   }
 
   /// Navigate up in the tree. Does not go above root directory. Returns a boolean value, indicating the success of the operation.
@@ -36,13 +41,13 @@ class FilelistProvider extends ChangeNotifier {
     // Required to prevent unwanted route pops
     if (files == null) return true;
 
-    if (_paths.length > 1) {
-      _paths.removeLast();
-      await _fetchFiles(_paths.last);
+    if (paths.length > 1) {
+      paths.removeLast();
+      await _fetchFiles(paths.last.file);
       return true;
     }
     return false;
   }
 
-  Future<void> refresh() => _fetchFiles(_paths.last);
+  Future<void> refresh() => _fetchFiles(paths.last.file);
 }
