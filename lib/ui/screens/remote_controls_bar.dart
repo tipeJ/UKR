@@ -31,7 +31,7 @@ class _RemoteControlsBarState extends State<RemoteControlsBar>
       ..addListener(() {
         setState(() {});
       });
-    _pageController = PageController();
+    _pageController = PageController(initialPage: 1);
   }
 
   @override
@@ -48,7 +48,7 @@ class _RemoteControlsBarState extends State<RemoteControlsBar>
         height: _lerp(minSize, maxSize),
         child: GestureDetector(
             onTap: () {
-              if (_pageController.page == 0.0) {
+              if (_pageController.page == 1.0) {
                 if (_controller.value == 0.0) {
                   _controller.animateTo(1.0,
                       duration: _tapAnimateDuration, curve: Curves.ease);
@@ -59,11 +59,11 @@ class _RemoteControlsBarState extends State<RemoteControlsBar>
               }
             },
             onVerticalDragUpdate: (details) {
-              if (_pageController.page == 0.0)
+              if (_pageController.page == 1.0)
                 _controller.value -= (details.delta.dy / maxSize);
             },
             onVerticalDragEnd: (details) {
-              if (_pageController.page == 0.0)
+              if (_pageController.page == 1.0)
                 _controller.fling(
                     velocity: -details.primaryVelocity! / maxSize);
             },
@@ -78,6 +78,7 @@ class _RemoteControlsBarState extends State<RemoteControlsBar>
                           : NeverScrollableScrollPhysics(),
                       controller: _pageController,
                       children: [
+                        _RemoteButtonsLite(),
                         Stack(
                           children: [
                             _BottomPlaybackInfo(_lerp),
@@ -484,5 +485,31 @@ class _ChannelControlsBar extends StatelessWidget {
               ? (newSubtitle) {}
               : null,
         ));
+  }
+}
+
+class _RemoteButtonsLite extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            IconButton(
+              icon: Icon(Icons.keyboard_arrow_down),
+              onPressed: () {},
+            ),
+            IconButton(
+              icon: Icon(Icons.keyboard_arrow_down),
+              onPressed: () {},
+            ),
+            IconButton(
+              icon: Icon(Icons.keyboard_arrow_down),
+              onPressed: () {},
+            ),
+          ],
+        )
+      ],
+    );
   }
 }
