@@ -43,4 +43,6 @@ class FilelistProvider extends ChangeNotifier {
     }
     return false;
   }
+
+  Future<void> refresh() => _fetchFiles(_paths.last);
 }

@@ -16,16 +16,19 @@ class FilelistScreen extends StatelessWidget {
             if (files == null) {
               return const Center(child: CircularProgressIndicator());
             } else {
-              return ListView.builder(
-                itemCount: files.length + 1,
-                itemBuilder: (_, i) {
-                  return (i == 0)
-                      ? ListTile(
-                          title: const Text("//"),
-                          onTap: () =>
-                              context.read<FilelistProvider>().navigateUp())
-                      : _FileTile(files[i - 1]);
-                },
+              return RefreshIndicator(
+                onRefresh: () => context.read<FilelistProvider>().refresh(),
+                child: ListView.builder(
+                  itemCount: files.length + 1,
+                  itemBuilder: (_, i) {
+                    return (i == 0)
+                        ? ListTile(
+                            title: const Text("//"),
+                            onTap: () =>
+                                context.read<FilelistProvider>().navigateUp())
+                        : _FileTile(files[i - 1]);
+                  },
+                ),
               );
             }
           }),
