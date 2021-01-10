@@ -17,7 +17,10 @@ class AddonDetailsScreen extends StatelessWidget {
       slivers: [
         SliverAppBar(
             automaticallyImplyLeading: false,
-            title: Text(addon.name),
+            title: Hero(
+              tag: HERO_CONTENT_ADDON_TITLE + addon.addonID,
+              child: Text(addon.name)
+            ),
             expandedHeight: 150,
             flexibleSpace: addon.thumbnail != null
                 ? CachedNetworkImage(

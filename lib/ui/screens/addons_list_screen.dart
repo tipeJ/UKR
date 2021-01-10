@@ -70,7 +70,10 @@ class _AddonListTile extends StatelessWidget {
               ),
           )
           : null,
-      title: Text(addon.name),
+          title: Hero(
+            tag: HERO_CONTENT_ADDON_TITLE + addon.addonID,
+            child: Text(addon.name)
+          ),
       subtitle: addon.description != null ? Text(addon.description!, maxLines: 2, overflow: TextOverflow.ellipsis,) : null,
     );
   }

@@ -18,6 +18,7 @@ const HERO_CURRENT_ITEM_CAPTION = "hero_current_caption";
 const HERO_CURRENT_ITEM_YEAR = "hero_current_year";
 
 const HERO_CONTENT_ADDONS_HEADER = "hero_content_addons_header";
+const HERO_CONTENT_ADDON_TITLE = "hero_content_addon_title";
 
 // * Hive Data
 const BOX_PLAYERS = "box_players";
