@@ -22,11 +22,19 @@ class FilelistScreen extends StatelessWidget {
                   itemCount: files.length + 1,
                   itemBuilder: (_, i) {
                     return (i == 0)
-                        ? ListTile(
-                            title: const Text("//"),
-                            onTap: () =>
-                                context.read<FilelistProvider>().navigateUp())
-                        : _FileTile(files[i - 1]);
+                    ? Row(children: [
+                        Expanded(child: InkWell(
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: const Text("//"),
+                            ),
+                            onTap: () => context.read<FilelistProvider>().navigateUp())
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.refresh),
+                          onPressed: () => context.read<FilelistProvider>().refresh())
+                    ])
+                    : _FileTile(files[i - 1]);
                   },
                 ),
               );
