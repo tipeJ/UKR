@@ -9,6 +9,7 @@ class ApiProvider {
   static const _tmdbApiKey = "1f67bf23438d6cd46fa54a799e1210d5";
   static const _refreshInterval = Duration(milliseconds: 3500);
   static const _pingTimeOut = Duration(milliseconds: 500);
+  static const _httpRequestTimeout = const Duration(milliseconds: 5000);
 
   static const headers = {
     "Content-Type": "application/json",
@@ -65,9 +66,10 @@ class ApiProvider {
           {Function(String)? timeOut}) =>
       http
           .post(url(player), headers: headers, body: body)
-          .timeout(const Duration(milliseconds: 3500), onTimeout: () {
+          .timeout(_httpRequestTimeout, onTimeout: () {
         timeOut?.call("Request Timed Out");
-        return http.Response('{"result": {"error": {"message": "Request Timed Out"}}}', 404);
+        return http.Response(
+            '{"result": {"error": {"message": "Request Timed Out"}}}', 404);
       });
 
   static Future<String> _getApplicationProperties(Player player) async {
