@@ -13,10 +13,31 @@ class FilelistScreen extends StatelessWidget {
       onWillPop: () async {
         return !(await context.read<FilelistProvider>().navigateUp());
       },
-      child: Selector<FilelistProvider, Tuple3<List<File>?, List<File>, String>>(
-          selector: (_, p) => Tuple3(p.files, p.paths, p.title),
+      child: Selector<FilelistProvider,
+              Tuple4<List<File>?, List<File>, String, String?>>(
+          selector: (_, p) => Tuple4(p.files, p.paths, p.title, p.errorMessage),
           builder: (_, files, __) {
-            if (files.item1 == null) {
+            if (files.item4 != null) {
+              // Handle errorMessage
+              return RefreshIndicator(
+                onRefresh: () => context.read<FilelistProvider>().refresh(),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(files.item4!),
+                      FlatButton(
+                        child: const Text("Refresh"),
+                        onPressed: () => context.read<FilelistProvider>().refresh()
+                      )
+                    ],
+                  ),
+                )
+              );
+            } else if (files.item1 == null) {
               return const Center(child: CircularProgressIndicator());
             } else {
               return RefreshIndicator(
@@ -29,21 +50,24 @@ class FilelistScreen extends StatelessWidget {
                             Expanded(
                                 child: InkWell(
                                     child: Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: files.item2.length > 1
-                                      ? Text.rich(
-                                          TextSpan(children: [
-                                              TextSpan(text: "//"),
-                                              TextSpan(
-                                                text: " " + files.item2.getRange(1, files.item2.length).toList().separateFold(" >"),
-                                                style: Theme.of(context).textTheme.caption
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: files.item2.length > 1
+                                            ? Text.rich(
+                                                TextSpan(children: [
+                                                  TextSpan(text: "//"),
+                                                  TextSpan(
+                                                    text: " " + files.item2.getRange(1, files.item2.length)
+                                                              .toList()
+                                                              .separateFold(
+                                                                  " >"),
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .caption)
+                                                ]),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
                                               )
-                                          ]),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        )
-                                        : Text(files.item3)
-                                    ),
+                                            : Text(files.item3)),
                                     onTap: () => context
                                         .read<FilelistProvider>()
                                         .navigateUp())),
@@ -103,12 +127,14 @@ class __FileTileState extends State<_FileTile> {
     final padding = EdgeInsets.all(widget.compact ? 8.0 : 12.0);
     if (widget.file.fileType == FileType.Directory) {
       return InkWell(
-          child: Padding(padding: padding, child: Row(
-            children: [
-              Icon(Icons.subdirectory_arrow_right),
-              Text(widget.file.label),
-            ],
-          )),
+          child: Padding(
+              padding: padding,
+              child: Row(
+                children: [
+                  Icon(Icons.subdirectory_arrow_right),
+                  Text(widget.file.label),
+                ],
+              )),
           onTap: () =>
               context.read<FilelistProvider>().navigateDown(widget.file));
     } else if (widget.file.fileType == FileType.File) {
@@ -127,8 +153,7 @@ class __FileTileState extends State<_FileTile> {
             ),
             onTapDown: _storePosition,
             onLongPress: _showCustomMenu,
-            onTap: () => context.read<UKProvider>().openFile(widget.file.file)
-          ),
+            onTap: () => context.read<UKProvider>().openFile(widget.file.file)),
       );
     }
     return const Text("Unknown file type");

@@ -36,7 +36,7 @@ class AddonDetailsScreen extends StatelessWidget {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              FlatButton(
+              if (addon.type == KODI_PLUGIN_TYPE_PLUGINSOURCE) FlatButton(
                   child: const Text("Content"),
                   onPressed: () {
                     var args = Tuple3<Player, String, String>(

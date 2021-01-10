@@ -9,6 +9,7 @@ class FilelistProvider extends ChangeNotifier {
 
   List<File>? files;
   List<File> paths = [];
+  String? errorMessage;
 
   FilelistProvider(this.player, {required this.title, required this.rootPath}) {
     navigateDown(File(
@@ -21,9 +22,12 @@ class FilelistProvider extends ChangeNotifier {
   /// Retrieves the tree from the host player.
   Future<void> _fetchFiles(String path) async {
     files = null;
+    errorMessage = null;
     notifyListeners();
     ApiProvider.getDirectory(player, path: path, onError: (s) {
-      print("ERROR DIRECTORY: $s");
+      errorMessage = s;
+      this.files = const [];
+      notifyListeners();
     }, onSuccess: (files) {
       this.files = files;
       notifyListeners();

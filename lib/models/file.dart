@@ -1,4 +1,5 @@
 import 'package:UKR/models/models.dart';
+import 'package:UKR/utils/utils.dart';
 
 class File {
   final String file;
@@ -16,7 +17,8 @@ class File {
       file: j['file'],
       fileType: enumFromString(FileType.values, j['filetype']),
       type: j['type'],
-      label: j['label']);
+      label: (j['label'] as String).replaceInside('[', ']').replaceAll("Â¤", "").trim()
+    );
 
   @override
   String toString() => label;

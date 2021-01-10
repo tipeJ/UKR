@@ -65,9 +65,9 @@ class ApiProvider {
           {Function(String)? timeOut}) =>
       http
           .post(url(player), headers: headers, body: body)
-          .timeout(const Duration(milliseconds: 1250), onTimeout: () {
-        timeOut?.call("Request Time Out");
-        return http.Response("Timeout", 404);
+          .timeout(const Duration(milliseconds: 3500), onTimeout: () {
+        timeOut?.call("Request Timed Out");
+        return http.Response('{"result": {"error": {"message": "Request Timed Out"}}}', 404);
       });
 
   static Future<String> _getApplicationProperties(Player player) async {
@@ -416,11 +416,7 @@ class ApiProvider {
       Function(List<File>)? onSuccess,
       Function(String)? onError}) async {
     final body = await _encode("Files.GetDirectory", {"directory": path});
-    final r = await _post(player, body, timeOut: (msg) {
-      onError?.call(msg);
-      return;
-    });
-    print("RBODY: ${r.body}");
+    final r = await _post(player, body);
     final j = await compute(jsonDecode, r.body);
     if (j['result']?['error'] != null) {
       onError?.call(j['result']['error']['message']);

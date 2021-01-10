@@ -7,7 +7,7 @@ import 'package:UKR/ui/providers/providers.dart';
 import 'package:provider/provider.dart';
 import 'package:UKR/models/models.dart';
 import 'package:get_it/get_it.dart';
-
+import 'package:UKR/utils/utils.dart';
 import 'ui/dialogs/dialogs.dart';
 
 void main() async {
@@ -15,11 +15,6 @@ void main() async {
   await Hive.initFlutter();
   await Hive.openBox<Player>(BOX_PLAYERS);
   await Hive.openBox(BOX_CACHED);
-
-  final testPlayer =
-      Player(address: "192.168.100.16", port: 8080, name: "SD", id: "asd");
-  final r = await ApiProvider.getDirectory(testPlayer,
-      path: "plugin://plugin.video.twitch/");
 
   final getIt = GetIt.instance;
   getIt.registerLazySingleton(() => DialogService());

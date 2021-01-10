@@ -26,8 +26,7 @@ class RemoteScreen extends StatelessWidget {
             child: Navigator(
               observers: [HeroController()],
               key: _key,
-              // initialRoute: ROUTE_PAGES_SCREEN,
-              initialRoute: ROUTE_FILELIST,
+              initialRoute: ROUTE_PAGES_SCREEN,
               onGenerateRoute: _Router.generateRoute,
             ),
           ),
@@ -261,23 +260,12 @@ class _Router {
         }
         break;
       case ROUTE_FILELIST:
-        if (args is Tuple2<Player, String>) {
+        if (args is Tuple3<Player, String, String>) {
           child = ChangeNotifierProvider(
-            create: (_) => FilelistProvider(args.item1, rootPath: args.item2),
+            create: (_) => FilelistProvider(args.item1, rootPath: args.item2, title: args.item3),
             builder: (_, __) => FilelistScreen(),
           );
         } else {
-          child = ChangeNotifierProvider(
-            create: (_) => FilelistProvider(
-                new Player(
-                    address: "192.168.100.16",
-                    port: 8080,
-                    id: "asd",
-                    name: "AD"),
-                rootPath: "plugin://plugin.video.twitch/"),
-            builder: (_, __) => FilelistScreen(),
-          );
-          break;
           child = const Text("Invalid parameters");
         }
         break;

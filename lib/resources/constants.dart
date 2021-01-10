@@ -20,6 +20,11 @@ const HERO_CURRENT_ITEM_YEAR = "hero_current_year";
 const HERO_CONTENT_ADDONS_HEADER = "hero_content_addons_header";
 const HERO_CONTENT_ADDON_TITLE = "hero_content_addon_title";
 
+// * Kodi constants
+// ** Add-On information
+const KODI_PLUGIN_TYPE_SCRIPT = "xbmc.python.script";
+const KODI_PLUGIN_TYPE_PLUGINSOURCE = "xbmc.python.pluginsource";
+
 // * Hive Data
 const BOX_PLAYERS = "box_players";
 

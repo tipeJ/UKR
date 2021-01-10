@@ -12,7 +12,7 @@ class Addon {
   const Addon({required this.addonID, required this.type, required this.name, this.description, this.thumbnail});
 
   factory Addon.fromJson(dynamic j) =>
-      Addon(name: j['name'], addonID: j['addonid'], type: j['type'], description: j['description'], thumbnail: j['thumbnail']);
+      Addon(name: (j['name'] as String).replaceInside('[', ']'), addonID: j['addonid'], type: j['type'], description: j['description'], thumbnail: j['thumbnail']);
 
   @override
   String toString() {
