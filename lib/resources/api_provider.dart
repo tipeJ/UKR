@@ -61,6 +61,15 @@ class ApiProvider {
   static Future<String> _encode(String method, Map<String, dynamic> params) =>
       compute(jsonEncode, {"method": method, "params": params, ...defParams});
 
+  static Future<http.Response> _post(Player player, String body,
+          {Function(String)? timeOut}) =>
+      http
+          .post(url(player), headers: headers, body: body)
+          .timeout(const Duration(milliseconds: 1250), onTimeout: () {
+        timeOut?.call("Request Time Out");
+        return http.Response("Timeout", 404);
+      });
+
   static Future<String> _getApplicationProperties(Player player) async {
     final body = jsonEncode({
       "method": "Application.GetProperties",
@@ -407,7 +416,11 @@ class ApiProvider {
       Function(List<File>)? onSuccess,
       Function(String)? onError}) async {
     final body = await _encode("Files.GetDirectory", {"directory": path});
-    final r = await http.post(url(player), headers: headers, body: body);
+    final r = await _post(player, body, timeOut: (msg) {
+      onError?.call(msg);
+      return;
+    });
+    print("RBODY: ${r.body}");
     final j = await compute(jsonDecode, r.body);
     if (j['result']?['error'] != null) {
       onError?.call(j['result']['error']['message']);

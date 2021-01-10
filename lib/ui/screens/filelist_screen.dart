@@ -15,10 +15,30 @@ class FilelistScreen extends StatelessWidget {
             return ListView.builder(
               itemCount: files.length + 1,
               itemBuilder: (_, i) {
-                if (i == 0) return const Text("//");
-                return Text(files[i - 1].label);
+                return (i == 0)
+                ? ListTile(
+                    title: const Text("//"),
+                    onTap: () => context.read<FilelistProvider>().navigateUp()
+                  )
+                : _FileTile(files[i - 1]);
               },
             );
+          }
+        });
+  }
+}
+
+class _FileTile extends StatelessWidget {
+  final File file;
+  const _FileTile(this.file);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+        title: Text(file.label),
+        onTap: () {
+          if (file.fileType == FileType.Directory) {
+            context.read<FilelistProvider>().navigateDown(file.file);
           }
         });
   }
