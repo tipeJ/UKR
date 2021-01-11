@@ -490,26 +490,57 @@ class _ChannelControlsBar extends StatelessWidget {
 
 class _RemoteButtonsLite extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return Column(
+  Widget build(BuildContext c) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Row(
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            IconButton(
-              icon: Icon(Icons.keyboard_arrow_down),
-              onPressed: () {},
+            Row(
+              children: [
+                _BottomRemoteButton(Icons.arrow_back, "back"),
+                _BottomRemoteButton(Icons.notes_outlined, "contextmenu"),
+              ],
             ),
-            IconButton(
-              icon: Icon(Icons.keyboard_arrow_down),
-              onPressed: () {},
-            ),
-            IconButton(
-              icon: Icon(Icons.keyboard_arrow_down),
-              onPressed: () {},
-            ),
+            Row(
+              children: [
+                _BottomRemoteButton(Icons.info_outline_rounded, "info"),
+                _BottomRemoteButton(Icons.menu_outlined, "osd"),
+              ],
+            )
           ],
-        )
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _BottomRemoteButton(Icons.keyboard_arrow_up, "up"),
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              _BottomRemoteButton(Icons.keyboard_arrow_left, "left"),
+              _BottomRemoteButton(Icons.trip_origin, "select"),
+              _BottomRemoteButton(Icons.keyboard_arrow_right, "right"),
+            ]),
+            _BottomRemoteButton(Icons.keyboard_arrow_down, "down"),
+          ],
+        ),
       ],
+    );
+  }
+}
+
+class _BottomRemoteButton extends StatelessWidget {
+  final IconData icon;
+  final String navigationAction;
+
+  const _BottomRemoteButton(this.icon, this.navigationAction);
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    return IconButton(
+      icon: Icon(icon),
+      iconSize: min(size.width / 6 - 20.0, maxSize / 3 - 20.0),
+      onPressed: () => context.read<UKProvider>().navigate(navigationAction),
     );
   }
 }

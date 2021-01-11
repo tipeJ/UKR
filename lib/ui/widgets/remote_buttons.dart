@@ -33,7 +33,7 @@ class RemoteButtons extends StatelessWidget {
             _RemoteButton(
                 Icons.arrow_back, () => _executeAction(context, "back"), 30.0),
             _RemoteButton(Icons.notes_outlined,
-                () => _executeAction(context, "left"), 30.0),
+                () => _executeAction(context, "contextmenu"), 30.0),
             _RemoteButton(Icons.keyboard_arrow_down,
                 () => _executeAction(context, "down")),
             _RemoteButton(Icons.info_outline_rounded,
