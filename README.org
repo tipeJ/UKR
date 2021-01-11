@@ -8,6 +8,33 @@ Universal Kodi Remote. This is a cross-platform Kodi remote designed to work not
 
 Currently only supports english.
 
+* Features
+** Currently supports
+  - mDNS network zeroconf player discovery.
+  - Manual player configuration.
+  - Support for multiple players.
+  - Content browsing (Currently supports only addons)
+  - Dark theme (The only theme)
+  - Detailed screens for
+    * Addons
+    * Currently Playing item
+    * Playlist (Video only)
+  - Intuitive remote and playback controls via bottom sheet.
+    - Volume adjustment
+    - Seeking
+    - Skip forward/backward by +30s/3m & -10s/1m
+  - Power controls (Hibernate, Reboot, Shutdown, Suspend)
+  - Send text input.
+
+** To be added
+   - Light theme (who even uses this) / AMOLED theme
+   - Advanced remote controls
+   - Files browsing
+   - Media casting to remote
+   - Support for Audio/Picture playlists
+   - Support for changing Audio/Video streams and subtitles
+   - File downloading to device
+
 * Screenshots
   [[./images/Screenshot_item.png][Currently Playing Item]]
   [[./images/Screenshot_addons.png][Addons]]
