@@ -31,12 +31,16 @@ class AddonDetailsScreen extends StatelessWidget {
               child: Container(
                   padding: const EdgeInsets.all(5.0),
                   child: Text(addon.description!))),
+        if (addon.disclaimer != null) SliverToBoxAdapter(child: Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: Text(addon.disclaimer!)
+            )),
         SliverToBoxAdapter(
           child: Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              if (addon.type == KODI_PLUGIN_TYPE_PLUGINSOURCE) FlatButton(
+              if (addon.type == KODI_PLUGIN_TYPE_PLUGINSOURCE) TextButton(
                   child: const Text("Content"),
                   onPressed: () {
                     var args = Tuple3<Player, String, String>(
@@ -47,7 +51,7 @@ class AddonDetailsScreen extends StatelessWidget {
                     Navigator.of(context)
                         .pushNamed(ROUTE_FILELIST, arguments: args);
                   }),
-              FlatButton(
+              TextButton(
                 child: const Text("Launch"),
                 onPressed: () async {
                   final p = context.read<PlayersProvider>().selectedPlayer;
