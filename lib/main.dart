@@ -1,3 +1,5 @@
+// @dart=2.9
+// Uncomment above to build with sound null safety.
 import 'package:flutter/material.dart';
 import 'package:UKR/resources/resources.dart';
 import 'package:hive/hive.dart';

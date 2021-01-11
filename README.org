@@ -8,6 +8,9 @@ Universal Kodi Remote. This is a cross-platform Kodi remote designed to work not
 
 Currently only supports english.
 
+* Installation
+  Will be added soon to the Google Play Store. Builds for android are available on the releases page.
+
 * Features
 ** Currently supports
   - mDNS network zeroconf player discovery.
@@ -41,3 +44,13 @@ Currently only supports english.
   [[./images/Screenshot_content.png][Content Browser]]
   [[./images/Screenshot_drawer.png][Players]]
   [[./images/Screenshots_features_1.png][Power options and playback controls]]
+
+* Building
+  Many of the packages that this application use older versions of dart, and you need to have the following flag at the beginning of main.dart (Includede by default) before any imports:
+  #+BEGIN_SRC dart
+    // @dart=2.9
+    import ..
+    import ..
+  #+END_SRC
+
+  Run flutter build in the root directory.
