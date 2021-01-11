@@ -4,13 +4,25 @@
 
 Universal Kodi Remote. This is a cross-platform Kodi remote designed to work not only on mobile platforms (iOS, Android, Fuschia), but also on Desktop environments, and maybe even as a Web application. Created as a reactive programming learning exercise.
 
+This application makes use of the [[https://kodi.wiki/view/JSON-RPC_API/v12][Kodi JSONRPC Api.
+]]
 ** Languages
 
 Currently only supports english.
 
 * Installation
+** Android
   Will be added soon to the Google Play Store. Builds for android are available on the releases page.
 
+** Linux
+  Currently being built and tested on Linux. Builds are not available yet. Will be added in the future. Feel free to build it yourself using the instructions below.
+
+** MacOS / iOS
+   Probable not available any time soon. I'm not about to pay Apple 120€ to ship free open source software on their platforms. Features should be stable for both platforms. Feel free to release a build if you use MacOS.
+
+** Windows
+   Will be made available when flutter for windows is more stable.
+  
 * Features
 ** Currently supports
   - mDNS network zeroconf player discovery.
@@ -31,6 +43,7 @@ Currently only supports english.
 
 ** To be added
    - Light theme (who even uses this) / AMOLED theme
+   - An icon :)
    - Advanced remote controls
    - Files browsing
    - Media casting to remote
