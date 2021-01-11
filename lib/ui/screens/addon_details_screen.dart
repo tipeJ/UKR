@@ -23,8 +23,16 @@ class AddonDetailsScreen extends StatelessWidget {
             ),
             expandedHeight: 150,
             flexibleSpace: addon.thumbnail != null
-                ? CachedNetworkImage(
-                    fit: BoxFit.cover, imageUrl: addon.thumbnail)
+                ? Stack(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: CachedNetworkImage(
+                          fit: BoxFit.cover, imageUrl: addon.thumbnail),
+                    ),
+                    Container(color: Colors.black26)
+                  ],
+                )
                 : Container()),
         if (addon.description != null)
           SliverToBoxAdapter(

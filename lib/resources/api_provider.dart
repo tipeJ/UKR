@@ -380,7 +380,7 @@ class ApiProvider {
         // "path",
         // "author",
         "thumbnail",
-        // "disclaimer",
+        "disclaimer",
         // "broken",
         // "enabled",
         // "installed"
