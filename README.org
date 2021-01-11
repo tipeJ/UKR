@@ -1,0 +1,16 @@
+#+TITLE: UKR
+
+* About
+
+Universal Kodi Remote. This is a cross-platform Kodi remote designed to work not only on mobile platforms (iOS, Android, Fuschia), but also on Desktop environments, and maybe even as a Web application. Created as a reactive programming learning exercise.
+
+** Languages
+
+Currently only supports english.
+
+* Screenshots
+  [[./images/Screenshot_item.png][Currently Playing Item]]
+  [[./images/Screenshot_addons.png][Addons]]
+  [[./images/Screenshot_content.png][Content Browser]]
+  [[./images/Screenshot_drawer.png][Players]]
+  [[./images/Screenshots_features_1.png][Power options and playback controls]]
