@@ -20,6 +20,7 @@ void main() async {
 
   // final x =
   //     Player(address: "192.168.100.16", port: 8080, name: "ASD", id: "SD");
+  //     await ApiProvider.getVideoLibraryItems(x, method: "GetMovies", onSuccess: (s) => print("SUCCESS: $s"), onError: (s) => print("ERROR: $s"));
 
   final getIt = GetIt.instance;
   getIt.registerLazySingleton(() => DialogService());

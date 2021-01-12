@@ -40,12 +40,13 @@ Currently only supports english.
     - Skip forward/backward by +30s/3m & -10s/1m
   - Power controls (Hibernate, Reboot, Shutdown, Suspend)
   - Send text input.
+  - Files browsing
 
 ** To be added
    - Light theme (who even uses this) / AMOLED theme
    - An icon :)
+   - Movie / TV Show lists
    - Advanced remote controls
-   - Files browsing
    - Media casting to remote
    - Support for Audio/Picture playlists
    - Support for changing Audio/Video streams and subtitles

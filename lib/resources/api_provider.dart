@@ -421,6 +421,17 @@ class ApiProvider {
     return (await http.post(url(player), headers: headers, body: body)).body;
   }
 
+  static Future<void> getVideoLibraryItems(Player player,
+      {required String method, Function(String)? onSuccess, Function(String)? onError}) async {
+    final body = await _encode("VideoLibrary.$method", const {});
+    final j = await _postAndParse(player, body);
+    if (j['result']?['error'] != null) {
+      onError?.call(j['result']['error']['message']);
+    } else {
+      onSuccess?.call(j.toString());
+    }
+  }
+
   static Future<void> getFileMediaSources(Player player,
       {required String media,
       Function(List<File>)? onSuccess,
