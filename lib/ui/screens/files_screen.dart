@@ -35,31 +35,33 @@ class _FilesScreenState extends State<FilesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Column(
-      children: [
-        BottomNavigationBar(
-          currentIndex: _currentPage.round(),
-          onTap: (i) => _controller.animateToPage(i,
-              curve: Curves.easeInExpo, duration: _animationDuration),
-          items: [
-            BottomNavigationBarItem(
-                label: "Videos", icon: const Icon(Icons.video_label)),
-            BottomNavigationBarItem(
-                label: "Music", icon: const Icon(Icons.headset)),
-            BottomNavigationBarItem(
-                label: "Pictures", icon: const Icon(Icons.image)),
-          ],
-        ),
-        Expanded(
-            child: PageView(
-          controller: _controller,
-          children: [
-            _FilesSourceListScreen(widget._player, 'video'),
-            _FilesSourceListScreen(widget._player, 'music'),
-            _FilesSourceListScreen(widget._player, 'pictures'),
-          ],
-        ))
-      ],
+      backgroundColor: Colors.transparent,
+      body: Column(
+        children: [
+          BottomNavigationBar(
+            backgroundColor: Colors.transparent,
+            currentIndex: _currentPage.round(),
+            onTap: (i) => _controller.animateToPage(i,
+                curve: Curves.easeInExpo, duration: _animationDuration),
+            items: [
+              BottomNavigationBarItem(
+                  label: "Videos", icon: const Icon(Icons.video_label)),
+              BottomNavigationBarItem(
+                  label: "Music", icon: const Icon(Icons.headset)),
+              BottomNavigationBarItem(
+                  label: "Pictures", icon: const Icon(Icons.image)),
+            ],
+          ),
+          Expanded(
+              child: PageView(
+            controller: _controller,
+            children: [
+              _FilesSourceListScreen(widget._player, 'video'),
+              _FilesSourceListScreen(widget._player, 'music'),
+              _FilesSourceListScreen(widget._player, 'pictures'),
+            ],
+          ))
+        ],
     ));
   }
 }
