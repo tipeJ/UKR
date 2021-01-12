@@ -59,7 +59,7 @@ Currently only supports english.
   [[./images/Screenshots_features_1.png][Power options and playback controls]]
 
 * Building
-  Many of the packages that this application use older versions of dart, and you need to have the following flag at the beginning of main.dart (Includede by default) before any imports:
+  Many of the packages that this application use older versions of dart, and you need to have the following flag at the beginning of main.dart (Included by default) before any imports in order to build without [[https://dart.dev/null-safety][Sound Null Safety]]:
   #+BEGIN_SRC dart
     // @dart=2.9
     import ..
