@@ -18,12 +18,8 @@ void main() async {
   await Hive.openBox<Player>(BOX_PLAYERS);
   await Hive.openBox(BOX_CACHED);
 
-  final x =
-      Player(address: "192.168.100.16", port: 8080, name: "ASD", id: "SD");
-  await ApiProvider.getFileMediaSources(x,
-      media: "video",
-      onSuccess: (s) => print("SUCCESS: $s"),
-      onError: (s) => print("ERROR: $s"));
+  // final x =
+  //     Player(address: "192.168.100.16", port: 8080, name: "ASD", id: "SD");
 
   final getIt = GetIt.instance;
   getIt.registerLazySingleton(() => DialogService());

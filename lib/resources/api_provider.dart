@@ -389,7 +389,6 @@ class ApiProvider {
       ]
     });
     final r = await http.post(url(player), headers: headers, body: body);
-    if (content == 'video') print(r.body);
     final parsed = jsonDecode(r.body);
     if (parsed['result']['limits']['total'] == 0) return const [];
     final addons = parsed['result']['addons'] as List<dynamic>;

@@ -83,11 +83,7 @@ class __FilesSourceListScreenState extends State<_FilesSourceListScreen> {
   Future<void> _getSources() async {
     List<File> files = [];
     await ApiProvider.getFileMediaSources(widget.player, media: widget.source,
-        onSuccess: (l) {
-      files = l;
-      print("SUCCESS! : ${widget.source} : LENGTH: ${files.length}");
-      files.forEach((f) => print("F: $f"));
-    });
+      onSuccess: (l) => files = l);
     setState(() {
       _sources = files;
     });
