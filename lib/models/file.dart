@@ -13,10 +13,10 @@ class File {
       required this.type,
       required this.label});
 
-  factory File.fromJson(dynamic j) => File(
+  factory File.fromJson(dynamic j, {FileType? fileType}) => File(
       file: j['file'],
-      fileType: enumFromString(FileType.values, j['filetype']),
-      type: j['type'],
+      fileType: fileType ?? enumFromString(FileType.values, j['filetype']),
+      type: j['type'] ?? "Unknown",
       label: (j['label'] as String).replaceInside('[', ']').replaceAll("Â¤", "").trim()
     );
 

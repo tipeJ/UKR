@@ -71,6 +71,8 @@ class ApiProvider {
         return http.Response(
             '{"result": {"error": {"message": "Request Timed Out"}}}', 404);
       });
+  static Future<dynamic> _postAndParse(Player player, String body) async =>
+      compute(jsonDecode, (await _post(player, body)).body);
 
   static Future<String> _getApplicationProperties(Player player) async {
     final body = jsonEncode({
@@ -413,6 +415,28 @@ class ApiProvider {
     return r.body;
   }
 
+  static Future<String> executeAddon(Player player,
+      {required String addonID}) async {
+    final body = await _encode(
+        "Addons.ExecuteAddon", {"addonid": addonID, "wait": true});
+    return (await http.post(url(player), headers: headers, body: body)).body;
+  }
+
+  static Future<void> getFileMediaSources(Player player,
+      {required String media,
+      Function(List<File>)? onSuccess,
+      Function(String)? onError}) async {
+    final body = await _encode("Files.GetSources", {"media": media});
+    final j = await _postAndParse(player, body);
+    if (j['result']?['error'] != null) {
+      onError?.call(j['result']['error']['message']);
+    } else {
+      onSuccess?.call(j['result']['sources']
+          .map<File>((f) => File.fromJson(f, fileType: FileType.Directory))
+          .toList());
+    }
+  }
+
   static Future<void> getDirectory(Player player,
       {required String path,
       Function(List<File>)? onSuccess,
@@ -422,17 +446,12 @@ class ApiProvider {
     final j = await compute(jsonDecode, r.body);
     if (j['result']?['error'] != null) {
       onError?.call(j['result']['error']['message']);
-    } else {
+    } else if (j['result']['limits']['total'] > 0) {
       var files = j['result']['files'].map<File>((f) => File.fromJson(f));
       onSuccess?.call(files.toList());
+    } else {
+      onSuccess?.call(const []);
     }
-  }
-
-  static Future<String> executeAddon(Player player,
-      {required String addonID}) async {
-    final body = await _encode(
-        "Addons.ExecuteAddon", {"addonid": addonID, "wait": true});
-    return (await http.post(url(player), headers: headers, body: body)).body;
   }
 
   // * External API Endpoints

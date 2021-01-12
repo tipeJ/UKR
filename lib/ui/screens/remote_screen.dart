@@ -259,10 +259,16 @@ class _Router {
           child = AddonDetailsScreen(args);
         }
         break;
+      case ROUTE_CONTENT_FILES:
+        if (args is Player) {
+          child = FilesScreen(args);
+        }
+        break;
       case ROUTE_FILELIST:
         if (args is Tuple3<Player, String, String>) {
           child = ChangeNotifierProvider(
-            create: (_) => FilelistProvider(args.item1, rootPath: args.item2, title: args.item3),
+            create: (_) => FilelistProvider(args.item1,
+                rootPath: args.item2, title: args.item3),
             builder: (_, __) => FilelistScreen(),
           );
         } else {

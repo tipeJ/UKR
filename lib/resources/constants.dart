@@ -9,6 +9,7 @@ const ROUTE_PLAYERS = "route_players_screen";
 const ROUTE_ADD_PLAYER = "route_add_player";
 // ** Content navigation Routes
 const ROUTE_CONTENT_ADDONS = "content_addons";
+const ROUTE_CONTENT_FILES = "content_files";
 const ROUTE_ADDON_DETAILS = "content_addon_details";
 const ROUTE_FILELIST = "content_filelist";
 
@@ -19,6 +20,7 @@ const HERO_CURRENT_ITEM_YEAR = "hero_current_year";
 
 const HERO_CONTENT_ADDONS_HEADER = "hero_content_addons_header";
 const HERO_CONTENT_ADDON_TITLE = "hero_content_addon_title";
+const HERO_CONTENT_FILES_HEADER = "hero_content_files_header";
 
 // * Kodi constants
 // ** Add-On information
