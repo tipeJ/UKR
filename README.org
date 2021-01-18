@@ -53,11 +53,11 @@ Currently only supports english.
    - File downloading to device
 
 * Screenshots
-  [[./images/Screenshot_item.png][Currently Playing Item]]
-  [[./images/Screenshot_addons.png][Addons]]
-  [[./images/Screenshot_content.png][Content Browser]]
-  [[./images/Screenshot_drawer.png][Players]]
-  [[./images/Screenshots_features_1.png][Power options and playback controls]]
+  [[file:images/Screenshot_item.png]]
+  [[./images/Screenshot_addons.png]]
+  [[./images/Screenshot_content.png]]
+  [[./images/Screenshot_drawer.png]]
+  [[./images/Screenshots_features_1.png]]
 
 * Building
   Many of the packages that this application use older versions of dart, and you need to have the following flag at the beginning of main.dart (Included by default) before any imports in order to build without [[https://dart.dev/null-safety][Sound Null Safety]]:
