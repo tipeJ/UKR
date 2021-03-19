@@ -4,7 +4,7 @@ import 'package:UKR/resources/resources.dart';
 import 'package:UKR/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:UKR/models/models.dart';
-import 'package:flutter_reorderable_list/flutter_reorderable_list.dart';
+import 'package:flutter_reorderable_list/flutter_reorderable_list.dart' as roList;
 import 'package:provider/provider.dart';
 import 'package:UKR/ui/providers/providers.dart';
 import 'package:UKR/ui/screens/screens.dart';
@@ -28,7 +28,7 @@ class PlayersScreen extends StatelessWidget {
           },
           child: const Icon(Icons.add),
         ),
-        body: ReorderableList(
+        body: roList.ReorderableList(
           onReorder: (_, __) => false,
           // onReorder: (from, to) {
           //   var fromIndex = _findPlayerIndexByKey(from, players);
@@ -116,7 +116,7 @@ class _ReorderablePlayerListItemState
           _showCustomMenu();
         }
       },
-      child: ReorderableItem(
+      child: roList.ReorderableItem(
         key: Key(widget.player.id),
         childBuilder: (_, buildState) => IntrinsicHeight(
           child: Row(
@@ -131,7 +131,7 @@ class _ReorderablePlayerListItemState
                       compact: widget.compact),
                 ),
               )),
-              ReorderableListener(
+              roList.ReorderableListener(
                 child: Container(
                   padding: const EdgeInsets.only(right: 18.0, left: 18.0),
                   color: Color(0x08000000),

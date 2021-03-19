@@ -36,7 +36,7 @@ dependencies:
   cached_network_image: ^2.3.3
   tuple: ^1.0.3
   get_it: ^5.0.3
-  flutter_reorderable_list: ^0.1.5
+  flutter_reorderable_list: ^1.0.0
   auto_size_text: ^2.1.0
   multicast_dns: ^0.2.2
   mdns_plugin: ^1.1.4

@@ -5,7 +5,7 @@ import 'package:UKR/utils/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_reorderable_list/flutter_reorderable_list.dart';
+import 'package:flutter_reorderable_list/flutter_reorderable_list.dart' as roList;
 
 class PlaylistScreen extends StatelessWidget {
   int _indexOf(Key key, List<PlaylistItemModel> list) =>
@@ -22,7 +22,7 @@ class PlaylistScreen extends StatelessWidget {
               Icon(Icons.playlist_play_rounded, size: 56.0),
               Text("Playlist is Empty", style: TextStyle(color: Colors.grey))
             ],
-          ) : ReorderableList(
+          ) : roList.ReorderableList(
               onReorder: (from, to) {
                 int draggingIndex = _indexOf(from, playList);
                 int newPositionIndex = _indexOf(to, playList);
@@ -61,15 +61,15 @@ class _ReorderablePlaylistItem extends StatelessWidget {
   final bool isFirst;
   final bool isLast;
 
-  Widget _buildChild(BuildContext context, ReorderableItemState state) {
+  Widget _buildChild(BuildContext context, roList.ReorderableItemState state) {
     BoxDecoration decoration;
 
-    if (state == ReorderableItemState.dragProxy ||
-        state == ReorderableItemState.dragProxyFinished) {
+    if (state == roList.ReorderableItemState.dragProxy ||
+        state == roList.ReorderableItemState.dragProxyFinished) {
       // slightly transparent background white dragging (just like on iOS)
       decoration = const BoxDecoration(color: Color(0x55000000));
     } else {
-      bool placeholder = state == ReorderableItemState.placeholder;
+      bool placeholder = state == roList.ReorderableItemState.placeholder;
       decoration = BoxDecoration(
           border: Border(
               top: isFirst && !placeholder
@@ -83,7 +83,7 @@ class _ReorderablePlaylistItem extends StatelessWidget {
 
     // For iOS dragging mode, there will be drag handle on the right that triggers
     // reordering; For android mode it will be just an empty container
-    Widget dragHandle = ReorderableListener(
+    Widget dragHandle = roList.ReorderableListener(
       child: Container(
         padding: const EdgeInsets.only(right: 18.0, left: 18.0),
         color: Color(0x08000000),
@@ -100,7 +100,7 @@ class _ReorderablePlaylistItem extends StatelessWidget {
           bottom: false,
           child: Opacity(
             // hide content for placeholder
-            opacity: state == ReorderableItemState.placeholder ? 0.0 : 1.0,
+            opacity: state == roList.ReorderableItemState.placeholder ? 0.0 : 1.0,
             child: IntrinsicHeight(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -121,7 +121,7 @@ class _ReorderablePlaylistItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ReorderableItem(
+    return roList.ReorderableItem(
         key: data.id, //
         childBuilder: _buildChild);
   }

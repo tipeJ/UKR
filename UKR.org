@@ -140,7 +140,8 @@
 
 ** TODO Content browsing
    
-*** TODO [#C] Add-Ons
+*** DONE [#C] Add-Ons
+    CLOSED: [2021-03-19 pe 14:37]
     Browse All add-ons quickly and efficiently.
     Should be quickly accessible from the remote screen.
     
