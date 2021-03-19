@@ -231,6 +231,7 @@ class _PlayersBar extends StatelessWidget {
 }
 
 class _Router {
+  static const _invalidParams = Text("Invalid parameters");
   static Route generateRoute(RouteSettings settings) {
     final args = settings.arguments;
     Widget child = Center(child: Text("No Router found for ${settings.name}"));
@@ -272,7 +273,17 @@ class _Router {
             builder: (_, __) => FilelistScreen(),
           );
         } else {
-          child = const Text("Invalid parameters");
+          child = _invalidParams;
+        }
+        break;
+      case ROUTE_CONTENT_MOVIES:
+        if (args is Player) {
+          child = ChangeNotifierProvider(
+            create: (_) => MoviesProvider(args),
+            builder: (_, __) => MoviesScreen(),
+          );
+        } else {
+          child = _invalidParams;
         }
         break;
     }

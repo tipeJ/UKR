@@ -9,8 +9,7 @@ class ContentScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        Container(height: 200),
-        _ContentTile(
+        const _ContentTile(
             title: "Addons",
             heroTag: HERO_CONTENT_ADDONS_HEADER,
             iconData: Icons.extension,
@@ -20,6 +19,13 @@ class ContentScreen extends StatelessWidget {
           heroTag: HERO_CONTENT_FILES_HEADER,
           iconData: Icons.folder_open,
           launch: ROUTE_CONTENT_FILES,
+          launchArguments: context.watch<PlayersProvider>().selectedPlayer,
+        ),
+        _ContentTile(
+          title: "Movies",
+          heroTag: HERO_CONTENT_MOVIES_HEADER,
+          iconData: Icons.movie,
+          launch: ROUTE_CONTENT_MOVIES,
           launchArguments: context.watch<PlayersProvider>().selectedPlayer,
         )
       ],

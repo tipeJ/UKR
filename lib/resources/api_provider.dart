@@ -421,14 +421,16 @@ class ApiProvider {
     return (await http.post(url(player), headers: headers, body: body)).body;
   }
 
-  static Future<void> getVideoLibraryItems(Player player,
-      {required String method, Function(String)? onSuccess, Function(String)? onError}) async {
-    final body = await _encode("VideoLibrary.$method", const {});
+  static Future<void> getMovies(Player player,
+    //TODO: Add properties
+      {Function(dynamic)? onSuccess, Function(String)? onError, ListSort sort = ListSort.defaultSort}) async {
+      final body = await _encode("VideoLibrary.GetMovies", {"sort" : sort.toJson(), "properties" : FETCH_MOVIE_PROPERTIES});
     final j = await _postAndParse(player, body);
-    if (j['result']?['error'] != null) {
-      onError?.call(j['result']['error']['message']);
+    final error = j['result']?['error'];
+    if (error != null) {
+      onError?.call(error['message']);
     } else {
-      onSuccess?.call(j.toString());
+      onSuccess?.call(j);
     }
   }
 
