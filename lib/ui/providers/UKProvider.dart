@@ -157,7 +157,7 @@ class UKProvider extends ChangeNotifier {
         return;
       case "Application.OnVolumeChanged":
         if (_volAdjustTimer == null) {
-          currentTemporaryVolume = d['volume'];
+          currentTemporaryVolume = d['volume'].toDouble();
           muted = d['muted'];
         }
         break;
