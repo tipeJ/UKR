@@ -165,6 +165,7 @@
 *** Tests
     Not caused by encoding command being run in an isolate function. The behaviour persists on non-isolate version.
 
+** TODO Cannot load issues from Kodi instances protected by password.
 ** TODO Addons hero animation causes hero tag exception
 
 ** TODO Time and totaltime sometimes not syncing when navigating in the playlist
