@@ -3,17 +3,25 @@ import 'package:UKR/resources/resources.dart';
 import 'package:flutter/widgets.dart';
 
 class MoviesProvider extends ChangeNotifier {
+  /// How many movies are fetched per fetchMovies call
+  static const _span = 30;
+
   final Player player;
   MoviesProvider(this.player) {
     fetchMovies();
   }
 
   List<VideoItem>? movies;
-  void fetchMovies() async => ApiProvider.getMovies(player, onError: (e) {
+  int get _length => (movies ?? []).length;
+
+  void fetchMovies() async => ApiProvider.getMovies(player,
+          limits: ListLimits(start: _length, end: _length + _span),
+          onError: (e) {
         print("ERRR:" + e);
       }, onSuccess: (j) {
-        print(j['result']['movies'][0].toString());
-        movies = j['result']['movies'].map<VideoItem>((m) => VideoItem.fromJson(m)).toList();
+        movies = j
+            .map<VideoItem>((m) => VideoItem.fromJson(m))
+            .toList();
         notifyListeners();
       });
 }

@@ -299,6 +299,7 @@ class ApiProvider {
         parsed['result']['details']['path'];
   }
 
+  /// Retrieve all artwork URLs from player
   static Future<void> _retrieveImageURLs(
       Player player, Map<String, dynamic> item) async {
     var art = item['art'];
@@ -318,6 +319,29 @@ class ApiProvider {
       }
     }
   }
+
+  static void _convertResourceURLs(Player player, Map<String, dynamic> item) {
+    var art = item['art'];
+    if (art != null && art.isNotEmpty) {
+      Map<String, String> alreadyConverted = {};
+      for (int i = 0; i < art.length; i++) {
+        final key = art.keys.elementAt(i);
+        if (art[key].isNotEmpty) {
+          if (alreadyConverted.keys.contains(art[key])) {
+            art[key] = alreadyConverted[art[key]];
+          } else {
+            final previous = art[key];
+            art[key] = _convertResourceToImage(player, art[key]);
+            alreadyConverted[previous] = art[key];
+          }
+        }
+      }
+    }
+  }
+
+  static String _convertResourceToImage(Player player, String resource) =>
+      "http://" +
+      "${player.address}:${player.port}/image/${Uri.encodeComponent(resource)}";
 
   static Future<void> skip(Player player, Map<String, dynamic> params) async {
     final body =
@@ -422,15 +446,25 @@ class ApiProvider {
   }
 
   static Future<void> getMovies(Player player,
-    //TODO: Add properties
-      {Function(dynamic)? onSuccess, Function(String)? onError, ListSort sort = ListSort.defaultSort}) async {
-      final body = await _encode("VideoLibrary.GetMovies", {"sort" : sort.toJson(), "properties" : FETCH_MOVIE_PROPERTIES});
-    final j = await _postAndParse(player, body);
+      //TODO: Add properties
+      {Function(dynamic)? onSuccess,
+      Function(String)? onError,
+      ListSort sort = ListSort.defaultSort,
+      ListLimits limits = const ListLimits()}) async {
+    final body = await _encode("VideoLibrary.GetMovies", {
+      "sort": sort.toJson(),
+      "properties": FETCH_MOVIE_PROPERTIES,
+      ...limits.toJson()
+    });
+    var j = await _postAndParse(player, body);
     final error = j['result']?['error'];
     if (error != null) {
       onError?.call(error['message']);
     } else {
-      onSuccess?.call(j);
+      for (int i = 0; i < j['result']['movies'].length; i++) {
+        _convertResourceURLs(player, j['result']['movies'][i]);
+      }
+      onSuccess?.call(j['result']['movies']);
     }
   }
 

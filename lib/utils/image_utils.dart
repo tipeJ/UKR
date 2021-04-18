@@ -4,11 +4,12 @@ import 'package:UKR/utils/utils.dart';
 String decodeExternalImageUrl(String url) =>
     Uri.decodeComponent(url.replaceFirst("image://", ""));
 
+const movieArtPriority = ['poster', 'fanart', 'thumb', 'banner'];
 String retrieveOptimalImage(Item item) {
   final a = item.artwork;
   switch (item.type) {
     case "movie":
-      return a.getPreferred(const ['poster', 'fanart', 'thumb', 'banner'], "");
+      return a.getPreferred(movieArtPriority, "");
     case "episode":
       return a.getPreferred(const [
         'season.poster',
