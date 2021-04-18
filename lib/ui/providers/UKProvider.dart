@@ -129,7 +129,7 @@ class UKProvider extends ChangeNotifier {
     if (j['params'] == null) return;
     final p = j['params'];
     final d = p['data'];
-    print("RESPONSE: " + j.toString());
+    // print("RESPONSE: " + j.toString());
     switch (j['method']) {
       case "System.OnQuit":
         _timeUpdateTimer?.cancel();
@@ -217,7 +217,6 @@ class UKProvider extends ChangeNotifier {
   // ** Player Item Endpoints
   Future<void> _refreshPlayerItem() async {
     final result = await ApiProvider.getPlayerItem(player);
-    print("ITEM: $result");
     if (result.isNotEmpty) {
       if (result['label'].isEmpty) {
         this.currentItem = null;
@@ -336,7 +335,6 @@ class UKProvider extends ChangeNotifier {
 
   /// Skip ahead (positive) or behind (negative) by the given [amount] of seconds
   void skip(int amount) {
-    print((currentItem as VideoItem).videoStreams);
     var params = {"time": time.increment(amount)};
     ApiProvider.skip(player, params);
   }
