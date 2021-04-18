@@ -8,17 +8,41 @@ import 'package:provider/provider.dart';
 import 'package:UKR/resources/resources.dart';
 
 class MoviesScreen extends StatelessWidget {
+  static const _posterRatio = 9 / 16.0;
   @override
   Widget build(BuildContext context) {
-    return Selector<MoviesProvider, List<VideoItem>?>(
+    return Selector<MoviesProvider, List<VideoItem>>(
         selector: (_, p) => p.movies,
-        builder: (_, movies, __) => movies == null
-            ? const Center(child: CircularProgressIndicator())
-            : MovieGridItem(movies[0]));
-    // : GridView.builder(
-    //     gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-    //         maxCrossAxisExtent: 150.0),
-    //     itemBuilder: (_, i) => MovieGridItem(movies[i])));
+        builder: (_, movies, __) =>
+            NotificationListener<ScrollUpdateNotification>(
+              onNotification: (not) {
+                context.read<MoviesProvider>().fetchMovies();
+                return true;
+              },
+              child: GridView.builder(
+                  itemCount: movies.length + 1,
+                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                      childAspectRatio: _posterRatio, maxCrossAxisExtent: 150.0),
+                  itemBuilder: (_, i) => i == movies.length
+                      ? Container(
+                          height: 75,
+                          alignment: Alignment.center,
+                          child: Selector<MoviesProvider, LoadingState>(
+                              selector: (_, p) => p.state,
+                              builder: (_, state, __) {
+                                switch (state) {
+                                  case LoadingState.Active:
+                                    return CircularProgressIndicator();
+                                  case LoadingState.Error:
+                                    return Text("Error loading movies");
+                                  default:
+                                    // Return an empty container
+                                    return Container();
+                                }
+                              }),
+                        )
+                      : MovieGridItem(movies[i])),
+            ));
   }
 }
 
@@ -36,18 +60,6 @@ class MovieGridItem extends StatelessWidget {
       if (url.isNotEmpty)
         background = CachedNetworkImage(fit: BoxFit.cover, imageUrl: url);
     }
-    return GestureDetector(
-      onTap: () async {
-        final ur = retrieveOptimalImage(movie);
-        final p = Provider.of<PlayersProvider>(context, listen: false).selectedPlayer;
-        final z = await ApiProvider.retrieveCachedImageURL(p!, ur);
-        print("URL: " + movie.artwork.toString());
-      },
-      child: Container(
-          height: 250.0,
-          child: Stack(
-            children: [background, Text(movie.label)],
-          )),
-    );
+    return Container(height: 350.0, child: background);
   }
 }
