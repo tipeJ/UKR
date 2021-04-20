@@ -60,6 +60,9 @@ class MovieGridItem extends StatelessWidget {
       if (url.isNotEmpty)
         background = CachedNetworkImage(fit: BoxFit.cover, imageUrl: url);
     }
-    return Container(height: 350.0, child: background);
+    return InkWell(
+      onTap: () => Navigator.of(context).pushNamed(ROUTE_CONTENT_VIDEOITEM_DETAILS, arguments: movie),
+      child: Container(height: 350.0, child: Hero(tag: HERO_CONTENT_MOVIES_POSTER + movie.fileUrl, child: background))
+    );
   }
 }

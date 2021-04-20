@@ -11,6 +11,7 @@ const ROUTE_ADD_PLAYER = "route_add_player";
 const ROUTE_CONTENT_ADDONS = "content_addons";
 const ROUTE_CONTENT_FILES = "content_files";
 const ROUTE_CONTENT_MOVIES = "content_movies";
+const ROUTE_CONTENT_VIDEOITEM_DETAILS = "content_videoitem_details";
 const ROUTE_ADDON_DETAILS = "content_addon_details";
 const ROUTE_FILELIST = "content_filelist";
 
@@ -23,6 +24,7 @@ const HERO_CONTENT_ADDONS_HEADER = "hero_content_addons_header";
 const HERO_CONTENT_ADDON_TITLE = "hero_content_addon_title";
 const HERO_CONTENT_FILES_HEADER = "hero_content_files_header";
 const HERO_CONTENT_MOVIES_HEADER = "hero_content_movies_header";
+const HERO_CONTENT_MOVIES_POSTER = "hero_content_movies_poster";
 const HERO_CONTENT_TV_HEADER = "hero_content_tv_header";
 
 // * Kodi constants
@@ -72,7 +74,11 @@ const FETCH_MOVIE_PROPERTIES = [
   "director",
   "art",
   "genre",
-  "year"
+  "year",
+  "file",
+  "tagline",
+  "plot",
+  "plotoutline",
   // "cast"
 ];
 

@@ -245,6 +245,13 @@ class _Router {
       case ROUTE_CURRENT_ITEM_DETAILS:
         child = ItemDetailsScreen();
         break;
+      case ROUTE_CONTENT_VIDEOITEM_DETAILS:
+        if (args is VideoItem) {
+          child = VideoDetailsScreen(args);
+        } else {
+          child = _invalidParams;
+        }
+        break;
       case ROUTE_CAST_SCREEN:
         if (args is VideoItem) {
           child = CastScreen(args);

@@ -3,6 +3,7 @@ import 'package:UKR/resources/constants.dart';
 import 'package:UKR/utils/utils.dart';
 import 'package:UKR/models/models.dart';
 import 'package:UKR/ui/widgets/widgets.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -10,59 +11,62 @@ import 'package:flutter/material.dart';
 class VideoDetailsScreen extends StatelessWidget {
   static const _padding = EdgeInsets.symmetric(horizontal: 16.0);
   final VideoItem item;
-  const VideoDetailsScreen(this.item);
+  final bool isCurrentItem;
+  const VideoDetailsScreen(this.item, {this.isCurrentItem = false});
 
   @override
   Widget build(BuildContext context) {
     String image = retrieveOptimalImage(item);
-    final theme = Theme.of(context).textTheme;
+    TextTheme theme = Theme.of(context).textTheme;
     Color background = Color.fromARGB(80, 0, 0, 0);
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(child: Container(height: 100)),
         SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
-            child: Row(
-              children: [
-                image.isNotEmpty
-                    ? Container(
-                        width: 50,
-                        height: 50 * (16.0 / 9.0),
-                        child: CachedNetworkImage(
-                            imageUrl: image, fit: BoxFit.cover),
-                      )
-                    : null,
-                Expanded(child: CurrentItem(alignment: CrossAxisAlignment.start)),
-              ].nonNulls() as List<Widget>,
-            ),
+            child: Padding(
+          padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+          child: Row(
+            children: [
+              image.isNotEmpty
+                  ? Container(
+                      width: 50,
+                      height: 50 * (16.0 / 9.0),
+                      child: CachedNetworkImage(
+                          imageUrl: image, fit: BoxFit.cover),
+                    )
+                  : null,
+              Expanded(child: isCurrentItem ? CurrentItem(alignment: CrossAxisAlignment.start) : _VideoDetailsTitle(item)),
+            ].nonNulls() as List<Widget>,
+          ),
         )),
         SliverToBoxAdapter(
             child: Container(
-              padding: const EdgeInsets.all(16.0),
-              color: background,
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (item.tagline != null) Row(
-                            children: [
-                              Expanded(child: Text(item.tagline!, style: theme.bodyText1)),
-                              if (item.rating != null && item.rating != 0.0)
-                                Text.rich(TextSpan(children: [
-                                  TextSpan(
-                                      text: item.rating!.toStringAsPrecision(3),
-                                      style: theme.subtitle1),
-                                  TextSpan(text: "/10", style: theme.caption)
-                                ]))
-                            ],
-                          ),
-                    if (item.tagline != null) Divider(),
-                    if (item.plot != null) Text(item.plot!, style: theme.caption),
-                    if (item.genres.isNotEmpty) Padding(
-                      padding: const EdgeInsets.only(top: 4),
-                      child: Text(item.genres.separateFold(","), style: theme.caption?.apply(color: Colors.white)),
-                    )
-                  ]),
+          padding: const EdgeInsets.all(16.0),
+          color: background,
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            if (item.tagline != null)
+              Row(
+                children: [
+                  Expanded(child: Text(item.tagline!, style: theme.bodyText1)),
+                  if (item.rating != null && item.rating != 0.0)
+                    Text.rich(TextSpan(children: [
+                      TextSpan(
+                          text: item.rating!.toStringAsPrecision(3),
+                          style: theme.subtitle1),
+                      TextSpan(text: "/10", style: theme.caption)
+                    ]))
+                ],
+              ),
+            if (item.tagline != null) Divider(),
+            if (item.plot != null) Text(item.plot!, style: theme.caption),
+            if (item.genres.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(item.genres.separateFold(","),
+                    style: theme.caption?.apply(color: Colors.white)),
+              )
+          ]),
         )),
         if (item.cast.isNotEmpty)
           SliverToBoxAdapter(
@@ -94,5 +98,56 @@ class VideoDetailsScreen extends StatelessWidget {
           )
       ],
     );
+  }
+}
+
+// A non-animated version of CurrentItem
+class _VideoDetailsTitle extends StatelessWidget {
+  final VideoItem item;
+  const _VideoDetailsTitle(this.item);
+
+  @override
+  Widget build(BuildContext context) {
+    TextTheme theme = Theme.of(context).textTheme;
+    String headline = "Nothing is playing";
+    List<Widget> children = [];
+    if (item.type == "movie") {
+      headline = item.label;
+      children = [
+        item.director.nullIf(
+            Text(item.director.separateFold(', '), style: theme.subtitle1),
+            (d) => d.isNotEmpty),
+        item.year.nullOr(Text(item.year.toString(), style: theme.caption)),
+      ].nonNulls() as List<Widget>;
+    } else if (item.type == "episode") {
+      headline = item.showTitle ?? item.label;
+      children = [
+        Text("S${item.season} E${item.episode} - ${item.label}",
+            style: theme.subtitle1),
+        Text(
+            (item.director.nullIf(item.director.separateFold(', '),
+                        (d) => d.isNotEmpty) ??
+                    "") +
+                (item.year != null ? " - " + item.year.toString() : ""),
+            style: theme.caption)
+      ];
+    } else if (item.type == "unknown") {
+      headline = item.label;
+    } else if (item.type == "song") {
+      headline = item.label;
+    }
+    return Container(
+        padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 10.0),
+        child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AutoSizeText(headline,
+                  style: theme.headline5,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis),
+              ...children
+            ]));
   }
 }

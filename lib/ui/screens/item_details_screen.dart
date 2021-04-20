@@ -13,7 +13,7 @@ class ItemDetailsScreen extends StatelessWidget {
         builder: (_, item, __) {
           switch (item.runtimeType) {
             case VideoItem:
-              return VideoDetailsScreen(item as VideoItem);
+              return VideoDetailsScreen(item as VideoItem, isCurrentItem: true);
             default:
               return const Text("Unknown item");
           }
