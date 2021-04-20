@@ -16,13 +16,17 @@ class MoviesScreen extends StatelessWidget {
         builder: (_, movies, __) =>
             NotificationListener<ScrollUpdateNotification>(
               onNotification: (not) {
-                context.read<MoviesProvider>().fetchMovies();
-                return true;
+                // Detect whether we are closer than 200 pixels to the bottom of the list. If so, fetch more movies from the player.
+                if (not.metrics.maxScrollExtent - not.metrics.pixels < 200) {
+                  context.read<MoviesProvider>().fetchMovies();
+                }
+                return false;
               },
               child: GridView.builder(
                   itemCount: movies.length + 1,
                   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                      childAspectRatio: _posterRatio, maxCrossAxisExtent: 150.0),
+                      childAspectRatio: _posterRatio,
+                      maxCrossAxisExtent: 150.0),
                   itemBuilder: (_, i) => i == movies.length
                       ? Container(
                           height: 75,
@@ -61,8 +65,12 @@ class MovieGridItem extends StatelessWidget {
         background = CachedNetworkImage(fit: BoxFit.cover, imageUrl: url);
     }
     return InkWell(
-      onTap: () => Navigator.of(context).pushNamed(ROUTE_CONTENT_VIDEOITEM_DETAILS, arguments: movie),
-      child: Container(height: 350.0, child: Hero(tag: HERO_CONTENT_MOVIES_POSTER + movie.fileUrl, child: background))
-    );
+        onTap: () => Navigator.of(context)
+            .pushNamed(ROUTE_CONTENT_VIDEOITEM_DETAILS, arguments: movie),
+        child: Container(
+            height: 350.0,
+            child: Hero(
+                tag: HERO_CONTENT_MOVIES_POSTER + movie.fileUrl,
+                child: background)));
   }
 }
