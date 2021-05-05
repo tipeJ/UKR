@@ -1,11 +1,13 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:UKR/resources/constants.dart';
+import 'package:UKR/ui/providers/providers.dart';
 import 'package:UKR/utils/utils.dart';
 import 'package:UKR/models/models.dart';
 import 'package:UKR/ui/widgets/widgets.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
 /// Screen for video details. Includes plot, tagline and cast widgets.
@@ -21,6 +23,11 @@ class VideoDetailsScreen extends StatelessWidget {
     TextTheme theme = Theme.of(context).textTheme;
     Color background = Color.fromARGB(80, 0, 0, 0);
     return Scaffold(
+      floatingActionButton: isCurrentItem ? null : FloatingActionButton.extended(
+        onPressed: () => context.read<UKProvider>().openFile(item.fileUrl),
+        label: const Text("Play"),
+        icon: const Icon(Icons.play_arrow),
+      ),
       body: Stack(
         children: [
           // Blurred image background wrapper.

@@ -383,14 +383,14 @@ class ApiProvider {
   static Future<void> goTo(Player player, dynamic to) async {
     final body =
         await _encode("Player.GoTo", {"playerid": _playerID, "to": to});
-    final r = await http.post(url(player), body: body, headers: headers);
+    await http.post(url(player), body: body, headers: headers);
   }
 
   static Future<void> playFile(Player player, {required String file}) async {
     final body = await _encode("Player.Open", {
       "item": {"file": file}
     });
-    final r = await http.post(url(player), headers: headers, body: body);
+    http.post(url(player), headers: headers, body: body);
   }
 
   // * Sources API Endpoints
