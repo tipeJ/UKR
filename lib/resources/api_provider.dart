@@ -287,6 +287,22 @@ class ApiProvider {
     return response.statusCode;
   }
 
+  static Future<void> setAudioStream(Player player, {required int index}) =>
+      _setPlayerStream(player, "SetAudioStream", index);
+
+  static Future<void> setVideoStream(Player player, {required int index}) =>
+      _setPlayerStream(player, "setVideoStream", index);
+
+  static Future<void> setSubtitle(Player player, {required int index}) =>
+      _setPlayerStream(player, "setSubtitle", index);
+
+  static Future<void> _setPlayerStream(
+      Player player, String method, int index) async {
+    final body = await _encode(
+        "Player.$method", {"playerid": _playerID, "stream": index});
+    http.post(url(player), headers: headers, body: body);
+  }
+
   static Future<String> retrieveCachedImageURL(
       Player player, String source) async {
     final bod = await _encode("Files.PrepareDownload", {"path": source});

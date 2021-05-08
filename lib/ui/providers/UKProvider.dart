@@ -333,6 +333,10 @@ class UKProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setAudioStream(int index) => ApiProvider.setAudioStream(player, index: index);
+  void setVideoStream(int index) => ApiProvider.setVideoStream(player, index: index);
+  void setSubtitle(int index) => ApiProvider.setSubtitle(player, index: index);
+
   /// Skip ahead (positive) or behind (negative) by the given [amount] of seconds
   void skip(int amount) {
     var params = {"time": time.increment(amount)};
