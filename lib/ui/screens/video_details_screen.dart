@@ -116,7 +116,7 @@ class VideoDetailsScreen extends StatelessWidget {
                       (context, i) => Container(
                           padding: const EdgeInsets.only(left: 16.0),
                           color: background,
-                          child: i == min(item.cast.length, 10) + 1
+                          child: i == min(item.cast.length, 11)
                               ? InkWell(
                                   child: Text(
                                       "View Entire Cast (${item.cast.length})",
@@ -126,7 +126,7 @@ class VideoDetailsScreen extends StatelessWidget {
                               : CastItem(
                                   name: item.cast.keys.elementAt(i),
                                   role: item.cast.values.elementAt(i))),
-                      childCount: min(item.cast.length, 10) + 2),
+                      childCount: min(item.cast.length + 1, 11)),
                 )
             ],
           ),
