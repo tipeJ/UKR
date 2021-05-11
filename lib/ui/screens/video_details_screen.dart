@@ -23,11 +23,14 @@ class VideoDetailsScreen extends StatelessWidget {
     TextTheme theme = Theme.of(context).textTheme;
     Color background = Color.fromARGB(80, 0, 0, 0);
     return Scaffold(
-      floatingActionButton: isCurrentItem ? null : FloatingActionButton.extended(
-        onPressed: () => context.read<UKProvider>().openFile(item.fileUrl),
-        label: const Text("Play"),
-        icon: const Icon(Icons.play_arrow),
-      ),
+      floatingActionButton: isCurrentItem ? null : ExpandableFab(distance: 112.0, children: [
+        ExpandableFabButton(
+            onPressed: () => context.read<UKProvider>().openFile(item.fileUrl),
+            icon: const Icon(Icons.play_arrow)),
+        ExpandableFabButton(
+            onPressed: () => print("PRESSED 2"),
+            icon: const Icon(Icons.queue)),
+      ]),
       body: Stack(
         children: [
           // Blurred image background wrapper.

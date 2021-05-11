@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 @immutable
 class ExpandableFab extends StatefulWidget {
   final double distance;
   final List<Widget> children;
-  const ExpandableFab(this.distance, this.children);
+  const ExpandableFab({required this.distance, required this.children});
 
   @override
   _ExpandableFabState createState() => _ExpandableFabState();
@@ -61,6 +62,7 @@ class _ExpandableFabState extends State<ExpandableFab>
       clipBehavior: Clip.none,
       children: [
         _buildTapToCloseFab(),
+        ..._buildExpandingActionButtons(),
         _buildTapToOpenFab()
       ],
     ));
@@ -73,7 +75,7 @@ class _ExpandableFabState extends State<ExpandableFab>
           i < count;
           i++, angleInDegrees += step) {
         children.add(
-          _ExpandingActionButton(
+          ExpandingActionButton(
             directionInDegrees: angleInDegrees,
             maxDistance: widget.distance,
             progress: _expandAnimation,
@@ -143,8 +145,8 @@ class ExpandableFabButton extends StatelessWidget {
 }
 
 @immutable
-class _ExpandingActionButton extends StatelessWidget {
-  _ExpandingActionButton({
+class ExpandingActionButton extends StatelessWidget {
+  ExpandingActionButton({
     Key? key,
     required this.directionInDegrees,
     required this.maxDistance,
@@ -163,7 +165,7 @@ class _ExpandingActionButton extends StatelessWidget {
       animation: progress,
       builder: (BuildContext context, Widget? child) {
         final offset = Offset.fromDirection(
-          directionInDegrees * (math.pi / 180.0),
+          directionInDegrees * (pi / 180.0),
           progress.value * maxDistance,
         );
         var math;
@@ -171,7 +173,7 @@ class _ExpandingActionButton extends StatelessWidget {
           right: 4.0 + offset.dx,
           bottom: 4.0 + offset.dy,
           child: Transform.rotate(
-            angle: (1.0 - progress.value) * math.pi / 2,
+            angle: (1.0 - progress.value) * pi / 2,
             child: child!,
           ),
         );
