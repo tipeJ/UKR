@@ -4,7 +4,7 @@ import 'dart:math';
 @immutable
 class ExpandableFab extends StatefulWidget {
   final double distance;
-  final List<Widget> children;
+  final List<ExpandableFabButton> children;
   const ExpandableFab({required this.distance, required this.children});
 
   @override
@@ -79,7 +79,9 @@ class _ExpandableFabState extends State<ExpandableFab>
             directionInDegrees: angleInDegrees,
             maxDistance: widget.distance,
             progress: _expandAnimation,
-            child: widget.children[i],
+            child: Listener(
+              onPointerDown: (_) => _toggle(),
+              child: widget.children[i]),
           ),
         );
       }
