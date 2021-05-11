@@ -333,8 +333,10 @@ class UKProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setAudioStream(int index) => ApiProvider.setAudioStream(player, index: index);
-  void setVideoStream(int index) => ApiProvider.setVideoStream(player, index: index);
+  void setAudioStream(int index) =>
+      ApiProvider.setAudioStream(player, index: index);
+  void setVideoStream(int index) =>
+      ApiProvider.setVideoStream(player, index: index);
   void setSubtitle(int index) => ApiProvider.setSubtitle(player, index: index);
 
   /// Skip ahead (positive) or behind (negative) by the given [amount] of seconds
@@ -431,6 +433,10 @@ class UKProvider extends ChangeNotifier {
         playlistID: playlistID,
         location: playList.indexWhere((i) => i.id == item));
   }
+
+  /// *** Add item to playlist
+  void addItemToPlaylist({required String source, required String type}) =>
+      ApiProvider.enqueueItem(player, source: source, type: type);
 
   // *** Open a single file
   /// Opens the selected file

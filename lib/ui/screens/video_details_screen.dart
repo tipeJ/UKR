@@ -25,11 +25,11 @@ class VideoDetailsScreen extends StatelessWidget {
     return Scaffold(
       floatingActionButton: isCurrentItem ? null : ExpandableFab(distance: 112.0, children: [
         ExpandableFabButton(
-            onPressed: () => context.read<UKProvider>().openFile(item.fileUrl),
-            icon: const Icon(Icons.play_arrow)),
+          onPressed: () => context.read<UKProvider>().openFile(item.fileUrl),
+          icon: const Icon(Icons.play_arrow)),
         ExpandableFabButton(
-            onPressed: () => print("PRESSED 2"),
-            icon: const Icon(Icons.queue)),
+          onPressed: () => context.read<UKProvider>().addItemToPlaylist(source: item.fileUrl, type: "file"),
+          icon: const Icon(Icons.queue)),
       ]),
       body: Stack(
         children: [

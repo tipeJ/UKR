@@ -49,7 +49,7 @@ class PlaylistScreen extends StatelessWidget {
 }
 
 class _ReorderablePlaylistItem extends StatelessWidget {
-  _ReorderablePlaylistItem({
+  const _ReorderablePlaylistItem({
     required this.data,
     required this.onTap,
     required this.isFirst,

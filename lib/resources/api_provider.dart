@@ -399,12 +399,23 @@ class ApiProvider {
   static Future<void> goTo(Player player, dynamic to) async {
     final body =
         await _encode("Player.GoTo", {"playerid": _playerID, "to": to});
-    await http.post(url(player), body: body, headers: headers);
+    http.post(url(player), body: body, headers: headers);
   }
 
   static Future<void> playFile(Player player, {required String file}) async {
     final body = await _encode("Player.Open", {
       "item": {"file": file}
+    });
+    http.post(url(player), headers: headers, body: body);
+  }
+
+  static Future<void> enqueueItem(Player player,
+      {required String source,
+      String type = "file",
+      int playlistID = 1}) async {
+    final body = await _encode("Playlist.Add", {
+      "playlistid": playlistID,
+      "item": {type: source}
     });
     http.post(url(player), headers: headers, body: body);
   }
