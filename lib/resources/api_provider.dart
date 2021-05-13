@@ -476,11 +476,13 @@ class ApiProvider {
       //TODO: Add properties
       {Function(dynamic)? onSuccess,
       Function(String)? onError,
+      List<ListFilter> filters = const [],
       ListSort sort = ListSort.defaultSort,
       ListLimits limits = const ListLimits()}) async {
     final body = await _encode("VideoLibrary.GetMovies", {
       "sort": sort.toJson(),
       "properties": FETCH_MOVIE_PROPERTIES,
+      ...filters.toJson(),
       ...limits.toJson()
     });
     var j = await _postAndParse(player, body);

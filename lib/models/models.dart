@@ -11,4 +11,5 @@ export 'tmdb_item.dart';
 export 'file.dart';
 export 'list_sort.dart';
 export 'list_limits.dart';
+export 'list_filter.dart';
 export 'loading_state.dart';
