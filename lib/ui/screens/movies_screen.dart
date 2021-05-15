@@ -14,7 +14,7 @@ class MoviesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () => print("PRESSED"),
+        onPressed: () => context.read<MoviesProvider>().fetchMovies(reset: true, searchTitle: "rings"),
         child: const Icon(Icons.search)
       ),
       body: Selector<MoviesProvider, List<VideoItem>>(

@@ -6,8 +6,9 @@ class ListFilter {
   const ListFilter(
       {this.operator = "contains", required this.field, required this.value});
 
-  Map<String, dynamic> toJson() =>
+  Map<String, String> toJson() =>
       {"operator": this.operator, "field": this.field, "value": this.value};
+
 }
 
 extension ListFilterExtensions<ListFilter> on List<ListFilter> {
@@ -16,7 +17,10 @@ extension ListFilterExtensions<ListFilter> on List<ListFilter> {
       return const {};
     } else {
       // TODO: Change workaround when dart team fixes this.
-      return {"and": map((f) => (f as dynamic).toJson())};
+      final lists = map((f) => (f as dynamic).toJson()).toList();
+      return {
+        "filter": {"and": lists}
+      };
     }
   }
 }

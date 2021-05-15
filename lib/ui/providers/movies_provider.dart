@@ -15,13 +15,20 @@ class MoviesProvider extends ChangeNotifier {
   LoadingState state = LoadingState.Inactive;
   int get _length => movies.length;
 
-  void fetchMovies() async {
+  void fetchMovies({bool reset = false, String? searchTitle}) async {
     // Do not load new movies while the provider is already loading.
     if (this.state != LoadingState.Active) {
+      if (reset) {
+        movies = [];
+        notifyListeners();
+      }
       this.state = LoadingState.Active;
+      List<ListFilter> filters = searchTitle != null
+          ? [ListFilter(field: "title", value: searchTitle)]
+          : [];
       await ApiProvider.getMovies(player,
           limits: ListLimits(start: _length, end: _length + _span),
-          onError: (e) {
+          filters: filters, onError: (e) {
         print("ERRR:" + e);
         this.state = LoadingState.Error;
       }, onSuccess: (j) {
