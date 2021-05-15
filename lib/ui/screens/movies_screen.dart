@@ -8,14 +8,86 @@ import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:UKR/resources/resources.dart';
 
+final double _posterRatio = 9 / 16.0;
+
 class MoviesScreen extends StatelessWidget {
-  static const _posterRatio = 9 / 16.0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.read<MoviesProvider>().fetchMovies(reset: true, searchTitle: "rings"),
-        child: const Icon(Icons.search)
+          onPressed: () => Navigator.of(context).pushNamed(ROUTE_CONTENT_MOVIE_SEARCH, arguments: context.read<PlayersProvider>().selectedPlayer),
+          child: const Icon(Icons.search)),
+      body: Selector<MoviesProvider, List<VideoItem>>(
+          selector: (_, p) => p.movies,
+          builder: (_, movies, __) =>
+              NotificationListener<ScrollUpdateNotification>(
+                onNotification: (not) {
+                  // Detect whether we are closer than 200 pixels to the bottom of the list. If so, fetch more movies from the player.
+                  if (not.metrics.maxScrollExtent - not.metrics.pixels < 200) {
+                    context.read<MoviesProvider>().fetchMovies();
+                  }
+                  return false;
+                },
+                child: GridView.builder(
+                    itemCount: movies.length + 1,
+                    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                        childAspectRatio: _posterRatio,
+                        maxCrossAxisExtent: 150.0),
+                    itemBuilder: (_, i) => i == movies.length
+                        ? Container(
+                            height: 75,
+                            alignment: Alignment.center,
+                            child: Selector<MoviesProvider, LoadingState>(
+                                selector: (_, p) => p.state,
+                                builder: (_, state, __) {
+                                  switch (state) {
+                                    case LoadingState.Active:
+                                      return CircularProgressIndicator();
+                                    case LoadingState.Error:
+                                      return Text("Error loading movies");
+                                    default:
+                                      // Return an empty container
+                                      return Container();
+                                  }
+                                }),
+                          )
+                        : MovieGridItem(movies[i])),
+              )),
+    );
+  }
+}
+
+class MoviesSearchScreen extends StatefulWidget {
+  @override
+  _MoviesSearchScreenState createState() => _MoviesSearchScreenState();
+}
+
+class _MoviesSearchScreenState extends State<MoviesSearchScreen> {
+  late final TextEditingController _controller;
+
+  // TODO: Add search timer
+  @override
+  void initState() {
+    _controller = new TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: TextField(
+          controller: _controller,
+          onChanged: (searchTerm) => context
+            .read<MoviesProvider>()
+            .fetchMovies(reset: true, searchTitle: searchTerm)
+        ),
       ),
       body: Selector<MoviesProvider, List<VideoItem>>(
           selector: (_, p) => p.movies,

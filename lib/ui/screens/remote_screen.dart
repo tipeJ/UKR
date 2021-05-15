@@ -293,6 +293,16 @@ class _Router {
           child = _invalidParams;
         }
         break;
+        case ROUTE_CONTENT_MOVIE_SEARCH:
+        if (args is Player) {
+          child = ChangeNotifierProvider(
+            create: (_) => MoviesProvider(args),
+            builder: (_, __) => MoviesSearchScreen(),
+          );
+        } else {
+          child = _invalidParams;
+        }
+        break;
     }
     return MaterialPageRoute(builder: (context) => child);
   }
