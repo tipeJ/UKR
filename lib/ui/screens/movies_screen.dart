@@ -116,7 +116,8 @@ class _MoviesSearchScreenState extends State<MoviesSearchScreen> {
                 onNotification: (not) {
                   // Detect whether we are closer than 200 pixels to the bottom of the list. If so, fetch more movies from the player.
                   if (not.metrics.maxScrollExtent - not.metrics.pixels < 200) {
-                    context.read<MoviesProvider>().fetchMovies();
+                    _timer?.cancel();
+                    context.read<MoviesProvider>().fetchMovies(searchTitle: _controller.text);
                   }
                   return false;
                 },
