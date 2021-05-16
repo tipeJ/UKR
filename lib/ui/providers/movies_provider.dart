@@ -24,7 +24,7 @@ class MoviesProvider extends ChangeNotifier {
       }
       this.state = LoadingState.Active;
       List<ListFilter> filters = searchTitle != null
-          ? ListFilter.comboFields(["title", "plot", "tagline"], value: searchTitle)
+          ? ListFilter.comboFields(const ["title", "plot", "tagline", "director"], value: searchTitle)
           : [];
       await ApiProvider.getMovies(player,
           limits: ListLimits(start: _length, end: _length + _span),
