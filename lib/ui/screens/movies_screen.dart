@@ -70,13 +70,12 @@ class _MoviesSearchScreenState extends State<MoviesSearchScreen> {
   static const _searchDelay = Duration(milliseconds: 750);
 
   late final TextEditingController _controller;
-  // Controls the search functinoality.
+  // Controls the search functinoality. Stars over again when user types on the search field. The function will be triggered when there hasn't been new input within the delay duration.
   Timer? _timer;
 
-  // TODO: Add search timer
   @override
   void initState() {
-    _controller = new TextEditingController();
+    _controller = TextEditingController();
     super.initState();
   }
 
