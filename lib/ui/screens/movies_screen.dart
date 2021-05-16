@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:UKR/models/models.dart';
 import 'package:UKR/ui/providers/providers.dart';
 import 'package:UKR/ui/widgets/widgets.dart';
@@ -15,7 +17,9 @@ class MoviesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-          onPressed: () => Navigator.of(context).pushNamed(ROUTE_CONTENT_MOVIE_SEARCH, arguments: context.read<PlayersProvider>().selectedPlayer),
+          onPressed: () => Navigator.of(context).pushNamed(
+              ROUTE_CONTENT_MOVIE_SEARCH,
+              arguments: context.read<PlayersProvider>().selectedPlayer),
           child: const Icon(Icons.search)),
       body: Selector<MoviesProvider, List<VideoItem>>(
           selector: (_, p) => p.movies,
@@ -63,7 +67,11 @@ class MoviesSearchScreen extends StatefulWidget {
 }
 
 class _MoviesSearchScreenState extends State<MoviesSearchScreen> {
+  static const _searchDelay = Duration(milliseconds: 750);
+
   late final TextEditingController _controller;
+  // Controls the search functinoality.
+  Timer? _timer;
 
   // TODO: Add search timer
   @override
@@ -75,19 +83,30 @@ class _MoviesSearchScreenState extends State<MoviesSearchScreen> {
   @override
   void dispose() {
     _controller.dispose();
+    _timer?.cancel();
     super.dispose();
+  }
+
+  void _refresh() {
+    context
+        .read<MoviesProvider>()
+        .fetchMovies(reset: true, searchTitle: _controller.text);
+    _timer = null;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: TextField(
-          controller: _controller,
-          onChanged: (searchTerm) => context
-            .read<MoviesProvider>()
-            .fetchMovies(reset: true, searchTitle: searchTerm)
-        ),
+            controller: _controller,
+            decoration: InputDecoration(hintText: "Search movies", focusedBorder: InputBorder.none, border: InputBorder.none),
+            onChanged: (searchTerm) {
+              if (_timer == null) {
+                _timer = new Timer(_searchDelay, _refresh);
+              }
+            }),
       ),
       body: Selector<MoviesProvider, List<VideoItem>>(
           selector: (_, p) => p.movies,
