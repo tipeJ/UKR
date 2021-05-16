@@ -101,11 +101,13 @@ class _MoviesSearchScreenState extends State<MoviesSearchScreen> {
         automaticallyImplyLeading: false,
         title: TextField(
             controller: _controller,
-            decoration: InputDecoration(hintText: "Search movies", focusedBorder: InputBorder.none, border: InputBorder.none),
+            decoration: InputDecoration(
+                hintText: "Search movies",
+                focusedBorder: InputBorder.none,
+                border: InputBorder.none),
             onChanged: (searchTerm) {
-              if (_timer == null) {
-                _timer = new Timer(_searchDelay, _refresh);
-              }
+              _timer?.cancel();
+              _timer = new Timer(_searchDelay, _refresh);
             }),
       ),
       body: Selector<MoviesProvider, List<VideoItem>>(
