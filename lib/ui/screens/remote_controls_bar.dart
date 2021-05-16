@@ -446,7 +446,9 @@ class _ChannelControlsBar extends StatelessWidget {
             .toList(),
         value: current,
         onChanged: (current.index != -1 && streams.length > 1)
-            ? (newAudioStream) => context.read<UKProvider>().setAudioStream(newAudioStream?.index ?? 0)
+            ? (newAudioStream) => context
+                .read<UKProvider>()
+                .setAudioStream(newAudioStream?.index ?? 0)
             : null,
       ),
     );
@@ -484,8 +486,10 @@ class _ChannelControlsBar extends StatelessWidget {
               .toList(),
           value: current,
           onChanged: (current.index != -1 && streams.length > 1)
-            ? (newSubtitle) => context.read<UKProvider>().setSubtitle(newSubtitle?.index ?? 0)
-            : null,
+              ? (newSubtitle) => context
+                  .read<UKProvider>()
+                  .setSubtitle(newSubtitle?.index ?? 0)
+              : null,
         ));
   }
 }

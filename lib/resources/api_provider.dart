@@ -293,8 +293,11 @@ class ApiProvider {
   static Future<void> setVideoStream(Player player, {required int index}) =>
       _setPlayerStream(player, "setVideoStream", index);
 
-  static Future<void> setSubtitle(Player player, {required int index}) =>
-      _setPlayerStream(player, "setSubtitle", index);
+  static Future<void> setSubtitle(Player player, {required int index}) async {
+    final body = await _encode(
+        "Player.SetSubtitle", {"playerid": _playerID, "subtitle": index == -1 ? "off" : index});
+    http.post(url(player), headers: headers, body: body);
+  }
 
   static Future<void> _setPlayerStream(
       Player player, String method, int index) async {
