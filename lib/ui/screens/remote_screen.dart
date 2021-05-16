@@ -286,7 +286,7 @@ class _Router {
       case ROUTE_CONTENT_MOVIES:
         if (args is Player) {
           child = ChangeNotifierProvider(
-            create: (_) => MoviesProvider(args),
+            create: (_) => MoviesProvider(args, initialFetch: true),
             builder: (_, __) => MoviesScreen(),
           );
         } else {

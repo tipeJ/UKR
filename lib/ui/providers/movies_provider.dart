@@ -7,8 +7,8 @@ class MoviesProvider extends ChangeNotifier {
   static const _span = 30;
 
   final Player player;
-  MoviesProvider(this.player) {
-    fetchMovies();
+  MoviesProvider(this.player, {bool initialFetch = false}) {
+    if (initialFetch) fetchMovies();
   }
 
   List<VideoItem> movies = [];
