@@ -82,5 +82,17 @@ const FETCH_MOVIE_PROPERTIES = [
   "plotoutline",
   // "cast"
 ];
+const FETCH_SHOW_PROPERTIES = [
+  "title",
+  "genre",
+  "year",
+  "rating",
+  "plot",
+  "studio",
+  "file",
+  "votes"
+  "art",
+  // "cast"
+];
 
 const FETCH_PLAYLIST_ITEMS = ["file"];
