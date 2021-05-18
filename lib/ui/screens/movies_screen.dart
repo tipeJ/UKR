@@ -10,7 +10,7 @@ import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:UKR/resources/resources.dart';
 
-final double _posterRatio = 9 / 16.0;
+const double _posterRatio = 9 / 16.0;
 
 class MoviesScreen extends StatelessWidget {
   @override
