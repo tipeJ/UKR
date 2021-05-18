@@ -27,6 +27,13 @@ class ContentScreen extends StatelessWidget {
           iconData: Icons.movie,
           launch: ROUTE_CONTENT_MOVIES,
           launchArguments: context.watch<PlayersProvider>().selectedPlayer,
+        ),
+        _ContentTile(
+          title: "TV Shows",
+          heroTag: HERO_CONTENT_TV_HEADER,
+          iconData: Icons.movie,
+          launch: ROUTE_CONTENT_SHOWS,
+          launchArguments: context.watch<PlayersProvider>().selectedPlayer,
         )
       ],
     );

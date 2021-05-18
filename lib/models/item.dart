@@ -80,7 +80,7 @@ class VideoItem extends Item {
   factory VideoItem.fromJson(dynamic j) => VideoItem(j,
       plot: (j['plot'] as String).nullIfEmpty()?.replaceAll('â', ""),
       tagline: (j['tagline'] as String).nullIfEmpty(),
-      cast: _parseCast(j['cast']),
+      cast: parseCast(j['cast']),
       rating: j['rating'],
       imdbID: j['imdbnumber'],
       season: j['season'] == -1 ? null : j['season'],
@@ -92,13 +92,6 @@ class VideoItem extends Item {
       videoStreams: j['streamdetails'] != null
           ? VideoStreams.fromJson(j['streamdetails'])
           : null);
-
-  static Map<String, String> _parseCast(List<dynamic>? c) {
-    if (c == null) return const {};
-    Map<String, String> cast = {};
-    c.forEach((i) => cast[i['name']] = i['role']);
-    return cast;
-  }
 }
 
 Map<String, String> _castArt(dynamic j) =>

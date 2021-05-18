@@ -293,7 +293,7 @@ class _Router {
           child = _invalidParams;
         }
         break;
-        case ROUTE_CONTENT_MOVIE_SEARCH:
+      case ROUTE_CONTENT_MOVIE_SEARCH:
         if (args is Player) {
           child = ChangeNotifierProvider(
             create: (_) => MoviesProvider(args),
@@ -303,6 +303,14 @@ class _Router {
           child = _invalidParams;
         }
         break;
+      case ROUTE_CONTENT_SHOWS:
+        if (args is Player) {
+          child = ChangeNotifierProvider(
+              create: (_) => TVShowsProvider(args, initialFetch: true),
+              builder: (_, __) => TVShowsScreen());
+        } else {
+          child = _invalidParams;
+        }
     }
     return MaterialPageRoute(builder: (context) => child);
   }

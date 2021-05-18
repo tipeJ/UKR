@@ -294,8 +294,8 @@ class ApiProvider {
       _setPlayerStream(player, "setVideoStream", index);
 
   static Future<void> setSubtitle(Player player, {required int index}) async {
-    final body = await _encode(
-        "Player.SetSubtitle", {"playerid": _playerID, "subtitle": index == -1 ? "off" : index});
+    final body = await _encode("Player.SetSubtitle",
+        {"playerid": _playerID, "subtitle": index == -1 ? "off" : index});
     http.post(url(player), headers: headers, body: body);
   }
 
@@ -477,7 +477,7 @@ class ApiProvider {
 
   static Future<void> getMovies(Player player,
       //TODO: Add properties
-      {Function(dynamic)? onSuccess,
+      {required Function(dynamic) onSuccess,
       Function(String)? onError,
       List<ListFilter> filters = const [],
       ListSort sort = ListSort.defaultSort,
@@ -497,7 +497,31 @@ class ApiProvider {
         j['result']['movies'][i]['type'] = "movie";
         _convertResourceURLs(player, j['result']['movies'][i]);
       }
-      onSuccess?.call(j['result']['movies']);
+      onSuccess.call(j['result']['movies']);
+    }
+  }
+
+  static Future<void> getTVShows(Player player,
+      {required Function(dynamic) onSuccess,
+      Function(String)? onError,
+      List<ListFilter> filters = const [],
+      ListSort sort = ListSort.defaultSort,
+      ListLimits limits = const ListLimits()}) async {
+    final body = await _encode("VideoLibrary.GetTVShows", {
+      "sort": sort.toJson(),
+      "properties": FETCH_SHOW_PROPERTIES,
+      ...filters.toJson(),
+      ...limits.toJson()
+    });
+    var j = await _postAndParse(player, body);
+    final error = j['result']?['error'];
+    if (error != null) {
+      onError?.call(error['message']);
+    } else {
+      for (int i = 0; i < j['result']['tvshows'].length; i++) {
+        _convertResourceURLs(player, j['result']['tvshows'][i]);
+      }
+      onSuccess.call(j['result']['tvshows']);
     }
   }
 

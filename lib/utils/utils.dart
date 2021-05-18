@@ -1,6 +1,7 @@
 export 'image_utils.dart';
 export 'string_utils.dart';
 export 'platform_utils.dart';
+export 'item_utils.dart';
 
 extension ListExtensions<T> on List<T> {
   /// A version of this list where the null values are filtered.

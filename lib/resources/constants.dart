@@ -12,6 +12,7 @@ const ROUTE_CONTENT_ADDONS = "content_addons";
 const ROUTE_CONTENT_FILES = "content_files";
 const ROUTE_CONTENT_MOVIES = "content_movies";
 const ROUTE_CONTENT_MOVIE_SEARCH = "content_movies_search";
+const ROUTE_CONTENT_SHOWS = "content_tvshows";
 const ROUTE_CONTENT_VIDEOITEM_DETAILS = "content_videoitem_details";
 const ROUTE_ADDON_DETAILS = "content_addon_details";
 const ROUTE_FILELIST = "content_filelist";
@@ -90,7 +91,7 @@ const FETCH_SHOW_PROPERTIES = [
   "plot",
   "studio",
   "file",
-  "votes"
+  // "votes"
   "art",
   // "cast"
 ];
