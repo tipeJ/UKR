@@ -90,6 +90,16 @@ class RemoteRouter {
           child = _invalidParams;
         }
         break;
+      case ROUTE_CONTENT_SHOW_SEARCH:
+        if (args is Player) {
+          child = ChangeNotifierProvider(
+            create: (_) => TVShowsProvider(args),
+            builder: (_, __) => TVShowsSearchScreen(),
+          );
+        } else {
+          child = _invalidParams;
+        }
+        break;
       case ROUTE_CONTENT_TVSHOW_DETAILS:
         if (args is TVShow) {
           child = TVShowDetailsScreen(args);

@@ -1,3 +1,4 @@
+// * Screens
 export 'add_player_dialog.dart';
 export 'add_player_screen.dart';
 export 'players_screen.dart';
@@ -17,3 +18,6 @@ export 'filelist_screen.dart';
 export 'movies_screen.dart';
 export 'tvshows_screen.dart';
 export 'tvshow_details_screen.dart';
+
+// * Routers
+export 'routers/remote_router.dart';

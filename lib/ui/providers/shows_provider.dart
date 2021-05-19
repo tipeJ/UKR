@@ -23,13 +23,19 @@ class TVShowsProvider extends ChangeNotifier {
         notifyListeners();
       }
       this.state = LoadingState.Active;
+      List<ListFilter> filters = searchTitle != null
+          ? ListFilter.comboFields(
+              const ["title", "plot", "director", "tag"],
+              value: searchTitle)
+          : [];
       await ApiProvider.getTVShows(player,
+          filters: filters,
           limits: ListLimits(start: _length, end: _length + _span),
           onSuccess: (j) {
-        shows += j.map<TVShow>((m) => TVShow.fromJson(m)).toList();
-        this.state = LoadingState.Inactive;
-        notifyListeners();
-      });
+            shows += j.map<TVShow>((m) => TVShow.fromJson(m)).toList();
+            this.state = LoadingState.Inactive;
+            notifyListeners();
+          }, onError: (e) => print("ERROR fetching shows: " + e));
     }
   }
 }
