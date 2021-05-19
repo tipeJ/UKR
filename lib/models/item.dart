@@ -2,25 +2,34 @@ import 'models.dart';
 import 'package:UKR/utils/utils.dart';
 
 class Item {
-  final String type;
-  final int duration;
-  final String label;
   final Map<String, String> artwork;
+  final String type;
+  final String label;
+
+  Item(Map<String, dynamic> j)
+      : artwork = _castArt(j),
+      type = j['type'],
+      label = j['label'];
+
+  static Map<String, String> _castArt(dynamic j) =>
+      j['art'] != null ? Map<String, String>.from(j['art']) : const {};
+}
+
+class MediaItem extends Item {
+  final int duration;
   final String fileUrl;
   final int? year;
   final List<String> genres;
 
-  Item(Map<String, dynamic> j)
+  MediaItem(Map<String, dynamic> j)
       : duration = j['duration'],
         year = j['year'] == 1601 ? null : j['year'],
-        type = j['type'],
-        label = j['label'],
-        artwork = _castArt(j),
         genres = j['genre'].map<String>((i) => i.toString()).toList(),
-        fileUrl = j['file'] ?? "";
+        fileUrl = j['file'] ?? "",
+        super(j);
   @override
   bool operator ==(other) =>
-      other is Item &&
+      other is MediaItem &&
       other.duration == duration &&
       other.label == label &&
       other.genres == genres &&
@@ -30,7 +39,7 @@ class Item {
 
 enum AlbumReleaseType { Album, Single }
 
-class AudioItem extends Item {
+class AudioItem extends MediaItem {
   final String albumArtist;
   final AlbumReleaseType releaseType;
   final int disc;
@@ -50,7 +59,7 @@ class AudioItem extends Item {
       releaseType == "album" ? AlbumReleaseType.Album : AlbumReleaseType.Single;
 }
 
-class VideoItem extends Item {
+class VideoItem extends MediaItem {
   final List<String> director;
   final Map<String, String> cast;
   final VideoStreams? videoStreams;
@@ -93,6 +102,3 @@ class VideoItem extends Item {
           ? VideoStreams.fromJson(j['streamdetails'])
           : null);
 }
-
-Map<String, String> _castArt(dynamic j) =>
-    j['art'] != null ? Map<String, String>.from(j['art']) : const {};

@@ -10,6 +10,13 @@ String retrieveOptimalImage(Item item) {
   switch (item.type) {
     case "movie":
       return a.getPreferred(movieArtPriority, "");
+    case "tvshow":
+    return a.getPreferred(const [
+        'poster',
+        'fanart',
+        'banner',
+        'icon'
+    ], "");
     case "episode":
       return a.getPreferred(const [
         'season.poster',
@@ -20,12 +27,12 @@ String retrieveOptimalImage(Item item) {
         'banner'
       ], "");
     default:
-      if (item is VideoItem){
+      if (item is VideoItem) {
         return a.getPreferred(
-              const ['poster', 'season.poster', 'thumb', 'fanart', 'banner'], "");
+            const ['poster', 'season.poster', 'thumb', 'fanart', 'banner'], "");
       } else {
         return a.getPreferred(
-              const ['poster', 'season.poster', 'fanart', 'thumb', 'banner'], "");
+            const ['poster', 'season.poster', 'fanart', 'thumb', 'banner'], "");
       }
   }
 }

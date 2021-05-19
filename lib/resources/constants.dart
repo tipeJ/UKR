@@ -27,6 +27,7 @@ const HERO_CONTENT_ADDON_TITLE = "hero_content_addon_title";
 const HERO_CONTENT_FILES_HEADER = "hero_content_files_header";
 const HERO_CONTENT_MOVIES_HEADER = "hero_content_movies_header";
 const HERO_CONTENT_MOVIES_POSTER = "hero_content_movies_poster";
+const HERO_CONTENT_SERIES_POSTER = "hero_content_series_poster";
 const HERO_CONTENT_TV_HEADER = "hero_content_tv_header";
 
 // * Kodi constants
@@ -97,3 +98,7 @@ const FETCH_SHOW_PROPERTIES = [
 ];
 
 const FETCH_PLAYLIST_ITEMS = ["file"];
+
+// * UI Constants
+const double listPosterRatio = 9 / 16.0;
+const double gridPosterMaxWidth = 150;

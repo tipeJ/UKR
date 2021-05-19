@@ -1,6 +1,7 @@
+import 'package:UKR/models/models.dart';
 import 'package:UKR/utils/utils.dart';
 
-class TVShow {
+class TVShow extends Item{
   final String file;
   final String title;
   final String label;
@@ -9,10 +10,10 @@ class TVShow {
   final int? year;
   final String? plot;
   final double? rating;
-  final Map<String, String> artwork;
   final Map<String, String> cast;
 
-  const TVShow(
+  TVShow(
+      json,
       {required this.file,
       required this.title,
       required this.label,
@@ -22,9 +23,10 @@ class TVShow {
       this.plot,
       this.rating,
       this.cast = const {},
-      this.artwork = const {}});
+      }) : super(json);
 
   factory TVShow.fromJson(dynamic j) => TVShow(
+      j,
       file: j['file'],
       title: j['title'],
       plot: (j['plot'] as String).nullIfEmpty()?.replaceAll('â', ""),
@@ -33,6 +35,5 @@ class TVShow {
       tvshowid: j['tvshowid'],
       year: j['year'],
       rating: j['rating'],
-      artwork: j['art'] != null ? Map<String, String>.from(j['art']) : const {},
       cast: parseCast(j['cast']));
 }

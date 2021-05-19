@@ -10,8 +10,6 @@ import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:UKR/resources/resources.dart';
 
-const double _posterRatio = 9 / 16.0;
-
 class MoviesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -35,8 +33,8 @@ class MoviesScreen extends StatelessWidget {
                 child: GridView.builder(
                     itemCount: movies.length + 1,
                     gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                        childAspectRatio: _posterRatio,
-                        maxCrossAxisExtent: 150.0),
+                        childAspectRatio: listPosterRatio,
+                        maxCrossAxisExtent: gridPosterMaxWidth),
                     itemBuilder: (_, i) => i == movies.length
                         ? Container(
                             height: 75,
@@ -124,8 +122,8 @@ class _MoviesSearchScreenState extends State<MoviesSearchScreen> {
                 child: GridView.builder(
                     itemCount: movies.length + 1,
                     gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                        childAspectRatio: _posterRatio,
-                        maxCrossAxisExtent: 150.0),
+                        childAspectRatio: listPosterRatio,
+                        maxCrossAxisExtent: gridPosterMaxWidth),
                     itemBuilder: (_, i) => i == movies.length
                         ? Container(
                             height: 75,

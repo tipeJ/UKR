@@ -519,6 +519,7 @@ class ApiProvider {
       onError?.call(error['message']);
     } else {
       for (int i = 0; i < j['result']['tvshows'].length; i++) {
+        j['result']['tvshows'][i]['type'] = "tvshow";
         _convertResourceURLs(player, j['result']['tvshows'][i]);
       }
       onSuccess.call(j['result']['tvshows']);
