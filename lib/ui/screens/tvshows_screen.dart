@@ -72,7 +72,7 @@ class ShowGridItem extends StatelessWidget {
     }
     return InkWell(
         onTap: () => Navigator.of(context)
-            .pushNamed(ROUTE_CONTENT_VIDEOITEM_DETAILS, arguments: show),
+            .pushNamed(ROUTE_CONTENT_TVSHOW_DETAILS, arguments: show),
         child: Container(
             height: 350.0,
             child: Hero(

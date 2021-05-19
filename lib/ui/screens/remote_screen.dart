@@ -311,6 +311,14 @@ class _Router {
         } else {
           child = _invalidParams;
         }
+        break;
+      case ROUTE_CONTENT_TVSHOW_DETAILS:
+        if (args is TVShow) {
+          child = TVShowDetailsScreen(args);
+        } else {
+          child = _invalidParams;
+        }
+        break;
     }
     return MaterialPageRoute(builder: (context) => child);
   }

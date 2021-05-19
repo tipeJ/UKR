@@ -16,3 +16,4 @@ export 'files_screen.dart';
 export 'filelist_screen.dart';
 export 'movies_screen.dart';
 export 'tvshows_screen.dart';
+export 'tvshow_details_screen.dart';
