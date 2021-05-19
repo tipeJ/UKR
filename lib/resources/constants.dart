@@ -98,6 +98,14 @@ const FETCH_SHOW_PROPERTIES = [
   "art",
   // "cast"
 ];
+const FETCH_SEASON_PROPERTIES = [
+  "season",
+  "title",
+  "art",
+  "watchedepisodes",
+  "tvshowid",
+  "userrating",
+];
 
 const FETCH_PLAYLIST_ITEMS = ["file"];
 

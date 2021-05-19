@@ -526,6 +526,23 @@ class ApiProvider {
     }
   }
 
+  static Future<void> getTVSeasons(Player player,
+      {required int tvshowID,
+      Function(List<TVSeason>)? onSuccess,
+      Function(String)? onError}) async {
+    final body = await _encode("VideoLibrary.GetSeasons",
+        {"tvshowid": tvshowID, "properties": FETCH_SEASON_PROPERTIES});
+    final j = await _postAndParse(player, body);
+    if (j['result']?['error'] != null) {
+      onError?.call(j['result']['error']['message']);
+    } else {
+      print(j['result']);
+      // onSuccess?.call(j['result']['sources']
+      //     .map<File>((f) => File.fromJson(f, fileType: FileType.Directory))
+      //     .toList());
+    }
+  }
+
   static Future<void> getFileMediaSources(Player player,
       {required String media,
       Function(List<File>)? onSuccess,
