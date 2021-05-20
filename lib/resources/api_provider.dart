@@ -537,9 +537,9 @@ class ApiProvider {
       onError?.call(j['result']['error']['message']);
     } else {
       print(j['result']);
-      // onSuccess?.call(j['result']['sources']
-      //     .map<File>((f) => File.fromJson(f, fileType: FileType.Directory))
-      //     .toList());
+      onSuccess?.call(j['result']['sources']
+          .map<TVSeason>((s) => TVSeason.fromJson(s))
+          .toList());
     }
   }
 
