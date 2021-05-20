@@ -47,6 +47,12 @@ class _TVShowDetailsScreen extends StatelessWidget {
                 builder: (_, title, __) => Text(title),
               ),
               automaticallyImplyLeading: false),
+          SliverToBoxAdapter(
+            child: Selector<_TVShowDetailsProvider, String>(
+              selector: (_, p) => p.show.plot,
+              builder: (_, plot, __) => Text(plot),
+            ),
+          ),
           SliverToBoxAdapter(child: _horizontalSeasonsView())
         ],
       ));
