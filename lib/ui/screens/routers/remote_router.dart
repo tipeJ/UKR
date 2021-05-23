@@ -101,8 +101,8 @@ class RemoteRouter {
         }
         break;
       case ROUTE_CONTENT_TVSHOW_DETAILS:
-        if (args is TVShow) {
-          child = TVShowDetailsScreen(args);
+        if (args is Tuple2<TVShow, Player>) {
+          child = TVShowDetailsScreen(player: args.item2, show: args.item1);
         } else {
           child = _invalidParams;
         }

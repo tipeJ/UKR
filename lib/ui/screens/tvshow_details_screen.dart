@@ -49,7 +49,7 @@ class _TVShowDetailsScreen extends StatelessWidget {
               automaticallyImplyLeading: false),
           SliverToBoxAdapter(
             child: Selector<_TVShowDetailsProvider, String>(
-              selector: (_, p) => p.show.plot,
+              selector: (_, p) => p.show.plot ?? "",
               builder: (_, plot, __) => Text(plot),
             ),
           ),

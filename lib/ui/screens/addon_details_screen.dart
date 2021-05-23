@@ -27,8 +27,9 @@ class AddonDetailsScreen extends StatelessWidget {
                   children: [
                     Container(
                       width: MediaQuery.of(context).size.width,
-                      child: CachedNetworkImage(
-                          fit: BoxFit.cover, imageUrl: addon.thumbnail),
+                      child: addon.thumbnail != null ? CachedNetworkImage(
+                        fit: BoxFit.cover, imageUrl: addon.thumbnail!)
+                        : null,
                     ),
                     Container(color: Colors.black26)
                   ],
@@ -51,7 +52,7 @@ class AddonDetailsScreen extends StatelessWidget {
               if (addon.type == KODI_PLUGIN_TYPE_PLUGINSOURCE) TextButton(
                   child: const Text("Content"),
                   onPressed: () {
-                    var args = Tuple3<Player, String, String>(
+                    var args = Tuple3<Player?, String, String>(
                         context.read<PlayersProvider>().selectedPlayer,
                         "plugin://${addon.addonID}/",
                         addon.name

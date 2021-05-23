@@ -18,10 +18,10 @@ class ApiProvider {
 
   static const defParams = {"jsonrpc": jsonRPCVersion, "id": 27928};
   static const _playerID = 1;
-  static String url(Player p) =>
-      "http://" +
+  static Uri url(Player p) =>
+      Uri.parse("http://" +
       (p.hasCredentials ? "${p.username}:${p.password}@" : "") +
-      "${p.address}:${p.port}/jsonrpc";
+      "${p.address}:${p.port}/jsonrpc");
   static String wsurl(Player p) => "ws://${p.address}:9090";
 
   static Future<WebSocket> getWS(Player player) =>
@@ -536,8 +536,7 @@ class ApiProvider {
     if (j['result']?['error'] != null) {
       onError?.call(j['result']['error']['message']);
     } else {
-      print(j['result']);
-      onSuccess?.call(j['result']['sources']
+      onSuccess?.call(j['result']['seasons']
           .map<TVSeason>((s) => TVSeason.fromJson(s))
           .toList());
     }
@@ -579,7 +578,7 @@ class ApiProvider {
   static Future<TMDBItem> fetchTMDBMovie(String imdbID) async {
     final theaders = {"api_key": _tmdbApiKey};
     final response = await http
-        .get("https://api.themoviedb.org/3/movie/$imdbID?api_key=$_tmdbApiKey");
+      .get(Uri.parse("https://api.themoviedb.org/3/movie/$imdbID?api_key=$_tmdbApiKey"));
     final parsed = await compute(jsonDecode, response.body);
     return TMDBItem.fromJson(parsed);
   }

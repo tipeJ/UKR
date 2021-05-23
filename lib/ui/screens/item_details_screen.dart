@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 class ItemDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Selector<UKProvider, Item>(
+    return Selector<UKProvider, Item?>(
         selector: (_, p) => p.currentItem,
         builder: (_, item, __) {
           switch (item.runtimeType) {

@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:UKR/resources/resources.dart';
 import 'package:UKR/ui/providers/providers.dart';
 import 'package:flutter/material.dart';
+import 'package:tuple/tuple.dart';
 
 
 class TVShowsScreen extends StatelessWidget {
@@ -163,7 +164,7 @@ class ShowGridItem extends StatelessWidget {
     }
     return InkWell(
         onTap: () => Navigator.of(context)
-            .pushNamed(ROUTE_CONTENT_TVSHOW_DETAILS, arguments: show),
+        .pushNamed(ROUTE_CONTENT_TVSHOW_DETAILS, arguments: Tuple2(show, context.read<PlayersProvider>().selectedPlayer)),
         child: Container(
             height: 350.0,
             child: Hero(

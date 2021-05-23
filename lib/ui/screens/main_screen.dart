@@ -33,7 +33,7 @@ class _Router {
               }
               return MultiProvider(
                 providers: [
-                  ChangeNotifierProvider<UKProvider>(create: (_) => ukProvider),
+                  ChangeNotifierProvider<UKProvider>(create: (_) => ukProvider!),
                 ],
                 builder: (context, child) => RemoteScreen(),
               );

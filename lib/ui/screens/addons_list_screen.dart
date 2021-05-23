@@ -66,7 +66,7 @@ class _AddonListTile extends StatelessWidget {
             width: 40,
             height: 40,
             child: CachedNetworkImage(
-                imageUrl: addon.thumbnail,
+                imageUrl: addon.thumbnail!,
               ),
           )
           : null,
