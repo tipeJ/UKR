@@ -10,13 +10,14 @@ String retrieveOptimalImage(Item item) {
   switch (item.type) {
     case "movie":
       return a.getPreferred(movieArtPriority, "");
+    case "season":
     case "tvshow":
-    return a.getPreferred(const [
-        'poster',
-        'fanart',
-        'banner',
-        'icon'
-    ], "");
+      return a.getPreferred(const [
+          'poster',
+          'fanart',
+          'banner',
+          'icon'
+      ], "");
     case "episode":
       return a.getPreferred(const [
         'season.poster',

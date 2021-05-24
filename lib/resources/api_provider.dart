@@ -536,6 +536,10 @@ class ApiProvider {
     if (j['result']?['error'] != null) {
       onError?.call(j['result']['error']['message']);
     } else {
+      for (int i = 0; i < j['result']['seasons'].length; i++) {
+        j['result']['seasons'][i]['type'] = "season";
+        _convertResourceURLs(player, j['result']['seasons'][i]);
+      }
       onSuccess?.call(j['result']['seasons']
           .map<TVSeason>((s) => TVSeason.fromJson(s))
           .toList());

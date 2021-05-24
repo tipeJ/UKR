@@ -33,24 +33,7 @@ class VideoDetailsScreen extends StatelessWidget {
       ]),
       body: Stack(
         children: [
-          // Blurred image background wrapper.
-          Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: NetworkImage(image)
-            )),
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                color: Colors.black.withOpacity(0.45),
-              )
-            ),
-          ),
+          _background(context, image),
           CustomScrollView(
             slivers: [
               SliverToBoxAdapter(child: Container(height: 100)),
@@ -134,6 +117,26 @@ class VideoDetailsScreen extends StatelessWidget {
       ),
     );
   }
+
+  // Blurred image background wrapper.
+  Widget _background(BuildContext context, String image) =>
+    Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          fit: BoxFit.cover,
+          image: NetworkImage(image)
+      )),
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          color: Colors.black.withOpacity(0.45),
+        )
+      ),
+    );
 }
 
 // A non-animated version of CurrentItem
