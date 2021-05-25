@@ -18,8 +18,7 @@ class ApiProvider {
 
   static const defParams = {"jsonrpc": jsonRPCVersion, "id": 27928};
   static const _playerID = 1;
-  static Uri url(Player p) =>
-      Uri.parse("http://" +
+  static Uri url(Player p) => Uri.parse("http://" +
       (p.hasCredentials ? "${p.username}:${p.password}@" : "") +
       "${p.address}:${p.port}/jsonrpc");
   static String wsurl(Player p) => "ws://${p.address}:9090";
@@ -339,6 +338,16 @@ class ApiProvider {
     }
   }
 
+  static void _convertMultipleResourceURLs(Player player, dynamic j,
+      {required String arrayParameter, String? itemType}) {
+    for (int i = 0; i < j['result'][arrayParameter].length; i++) {
+      if (itemType != null) {
+        j['result'][arrayParameter][i]['type'] = itemType;
+      }
+      _convertResourceURLs(player, j['result'][arrayParameter][i]);
+    }
+  }
+
   static void _convertResourceURLs(Player player, Map<String, dynamic> item) {
     var art = item['art'];
     if (art != null && art.isNotEmpty) {
@@ -546,6 +555,27 @@ class ApiProvider {
     }
   }
 
+  static Future<void> getTVEpisodes(Player player,
+      {required int season,
+      required int showID,
+      required Function(List<VideoItem>) onSuccess,
+      Function(String)? onError}) async {
+    final body = await _encode("VideoLibrary.GetEpisodes", {
+      "tvshowid": showID,
+      "season": season,
+      "properties": FETCH_EPISODE_PROPERTIES
+    });
+    final j = await _postAndParse(player, body);
+    if (j['result']?['error'] != null) {
+      onError?.call(j['result']['error']['message']);
+    } else {
+      _convertMultipleResourceURLs(player, j, arrayParameter: "episodes");
+      onSuccess.call(j['result']['episodes']
+          .map<VideoItem>((e) => VideoItem.fromJson(e))
+          .toList());
+    }
+  }
+
   static Future<void> getFileMediaSources(Player player,
       {required String media,
       Function(List<File>)? onSuccess,
@@ -581,8 +611,8 @@ class ApiProvider {
   // * External API Endpoints
   static Future<TMDBItem> fetchTMDBMovie(String imdbID) async {
     final theaders = {"api_key": _tmdbApiKey};
-    final response = await http
-      .get(Uri.parse("https://api.themoviedb.org/3/movie/$imdbID?api_key=$_tmdbApiKey"));
+    final response = await http.get(Uri.parse(
+        "https://api.themoviedb.org/3/movie/$imdbID?api_key=$_tmdbApiKey"));
     final parsed = await compute(jsonDecode, response.body);
     return TMDBItem.fromJson(parsed);
   }

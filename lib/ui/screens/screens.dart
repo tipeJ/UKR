@@ -16,8 +16,11 @@ export 'addon_details_screen.dart';
 export 'files_screen.dart';
 export 'filelist_screen.dart';
 export 'movies_screen.dart';
-export 'tvshows_screen.dart';
-export 'tvshow_details_screen.dart';
+
+// * Shows
+export 'shows/tvshows_screen.dart';
+export 'shows/show_details_screen.dart';
+export 'shows/season_screen.dart';
 
 // * Routers
 export 'routers/remote_router.dart';

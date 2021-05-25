@@ -16,6 +16,7 @@ const ROUTE_CONTENT_SHOWS = "content_tvshows";
 const ROUTE_CONTENT_SHOW_SEARCH = "content_shows_search";
 const ROUTE_CONTENT_VIDEOITEM_DETAILS = "content_videoitem_details";
 const ROUTE_CONTENT_TVSHOW_DETAILS = "content_tvshow_details";
+const ROUTE_CONTENT_SEASON_DETAILS = "content_season_details";
 const ROUTE_ADDON_DETAILS = "content_addon_details";
 const ROUTE_FILELIST = "content_filelist";
 
@@ -105,6 +106,19 @@ const FETCH_SEASON_PROPERTIES = [
   "watchedepisodes",
   "tvshowid",
   "userrating",
+];
+const FETCH_EPISODE_PROPERTIES = [
+  "art",
+  "file",
+  "title",
+  "director",
+  "writer",
+  "streamdetails",
+  "plot",
+  "rating",
+  "season",
+  "episode",
+  "showtitle"
 ];
 
 const FETCH_PLAYLIST_ITEMS = ["file"];

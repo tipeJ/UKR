@@ -24,7 +24,7 @@ class MediaItem extends Item {
   MediaItem(Map<String, dynamic> j)
       : duration = j['duration'],
         year = j['year'] == 1601 ? null : j['year'],
-        genres = j['genre'].map<String>((i) => i.toString()).toList(),
+        genres = j['genre'] != null ? j['genre'].map<String>((i) => i.toString()).toList() : const [],
         fileUrl = j['file'] ?? "",
         super(j);
   @override
@@ -90,7 +90,7 @@ class VideoItem extends MediaItem {
       plot: (j['plot'] as String).nullIfEmpty()?.replaceAll('â', ""),
       tagline: (j['tagline'] as String).nullIfEmpty(),
       cast: parseCast(j['cast']),
-      rating: j['rating'],
+      rating: j['rating'] ?? j['userrating'],
       imdbID: j['imdbnumber'],
       season: j['season'] == -1 ? null : j['season'],
       episode: j['episode'],

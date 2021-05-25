@@ -15,3 +15,4 @@ export 'list_filter.dart';
 export 'loading_state.dart';
 export 'tv_show.dart';
 export 'tv_season.dart';
+export 'tv_episode.dart';

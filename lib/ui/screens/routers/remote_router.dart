@@ -107,6 +107,13 @@ class RemoteRouter {
           child = _invalidParams;
         }
         break;
+      case ROUTE_CONTENT_SEASON_DETAILS:
+        if (args is Tuple2<TVSeason, Player>) {
+          child = SeasonDetailsScreen(player: args.item2, show: args.item1);
+        } else {
+          child = _invalidParams;
+        }
+        break;
     }
     return MaterialPageRoute(builder: (context) => child);
   }

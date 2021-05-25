@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:UKR/models/models.dart';
 import 'package:UKR/resources/resources.dart';
+import 'package:UKR/ui/providers/providers.dart';
+import 'package:UKR/ui/widgets/widgets.dart';
 import 'package:UKR/utils/image_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -52,7 +54,7 @@ class _TVShowDetailsScreen extends StatelessWidget {
     return Scaffold(
         body: Stack(
       children: [
-        _background(context, image),
+        PosterBackground(image: image),
         CustomScrollView(
           slivers: [
             SliverAppBar(
@@ -84,8 +86,8 @@ class _TVShowDetailsScreen extends StatelessWidget {
       child: Selector<_TVShowDetailsProvider,
           Tuple2<List<TVSeason>, LoadingState>>(
         selector: (_, p) => Tuple2(p.seasons, p.seasonsLoadingState),
-        builder: (_, vals, __) {
-          switch (vals.item2) {
+        builder: (_, seasons, __) {
+          switch (seasons.item2) {
             case LoadingState.Error:
               return const Text("Error loading seasons!");
             case LoadingState.Active:
@@ -93,28 +95,12 @@ class _TVShowDetailsScreen extends StatelessWidget {
             default:
               return ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: vals.item1.length,
-                itemBuilder: (_, i) => _SeasonPoster(vals.item1[i]),
+                itemCount: seasons.item1.length,
+                itemBuilder: (_, i) => _SeasonPoster(seasons.item1[i]),
               );
           }
         },
       ));
-
-  // Blurred image background wrapper.
-  Widget _background(BuildContext context, String image) => Container(
-        decoration: BoxDecoration(
-            image:
-                DecorationImage(fit: BoxFit.cover, image: NetworkImage(image))),
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              color: Colors.black.withOpacity(0.45),
-            )),
-      );
 }
 
 class _SeasonPoster extends StatelessWidget {
@@ -131,7 +117,7 @@ class _SeasonPoster extends StatelessWidget {
         background = CachedNetworkImage(fit: BoxFit.cover, imageUrl: url);
     }
     return InkWell(
-        onTap: () => print("CLICKED: " + season.seasonNo.toString()),
+      onTap: () => Navigator.of(context).pushNamed(ROUTE_CONTENT_SEASON_DETAILS, arguments: Tuple2(season, context.read<PlayersProvider>().selectedPlayer)),
         child: Container(
             height: 350.0,
             child: background));
