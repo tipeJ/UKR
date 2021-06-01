@@ -421,13 +421,14 @@ class ApiProvider {
     http.post(url(player), headers: headers, body: body);
   }
 
-  static Future<void> enqueueItem(Player player,
-      {required String source,
+  static Future<void> enqueueItems(Player player,
+      {required List<String> sources,
       String type = "file",
       int playlistID = 1}) async {
+    final items = sources.map<Map>((s) => {type: s});
     final body = await _encode("Playlist.Add", {
       "playlistid": playlistID,
-      "item": {type: source}
+      "item": {type: items}
     });
     http.post(url(player), headers: headers, body: body);
   }
