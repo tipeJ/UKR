@@ -435,8 +435,8 @@ class UKProvider extends ChangeNotifier {
   }
 
   /// *** Add item to playlist
-  void addItemToPlaylist({required String source, required String type}) =>
-      ApiProvider.enqueueItem(player, source: source, type: type);
+  void addItemsToPlaylist({required List<String> sources, required String type}) =>
+      ApiProvider.enqueueItems(player, sources: sources, type: type);
 
   // *** Open a single file
   /// Opens the selected file

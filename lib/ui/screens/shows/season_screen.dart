@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:UKR/models/models.dart';
 import 'package:UKR/resources/resources.dart';
+import 'package:UKR/ui/providers/providers.dart';
 import 'package:UKR/ui/widgets/widgets.dart';
 import 'package:UKR/utils/utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -50,31 +51,42 @@ class _SeasonDetailsProvider extends ChangeNotifier {
 class _SeasonDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final season = context.watch<_SeasonDetailsProvider>().season;
     String image =
-        retrieveOptimalImage(context.watch<_SeasonDetailsProvider>().season);
+        retrieveOptimalImage(season);
     return Scaffold(
-        body: Stack(
-      children: [
-        PosterBackground(image: image),
-        CustomScrollView(
-          slivers: [
-            SliverAppBar(
-                backgroundColor: Colors.transparent,
-                title: Selector<_SeasonDetailsProvider, TVSeason>(
-                  selector: (_, p) => p.season,
-                  builder: (_, season, __) => Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(season.title ?? "Unknown Season"),
-                      Text(season.showTitle, style: Theme.of(context).textTheme.caption)
-                    ],
+      floatingActionButton: ExpandableFab(distance: 112.0, children: [
+                // ExpandableFabButton(
+                //     onPressed: () =>
+                //         context.read<UKProvider>().openFile(item.fileUrl),
+                //     icon: const Icon(Icons.play_arrow)),
+                ExpandableFabButton(
+                    onPressed: () => context
+                        .read<UKProvider>().addItemsToPlaylist(sources: mediaItemsIntoPlaylist(context.read<_SeasonDetailsProvider>().episodes), type: "file"),
+                    icon: const Icon(Icons.queue)),
+              ]),
+      body: Stack(
+        children: [
+          PosterBackground(image: image),
+          CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                  backgroundColor: Colors.transparent,
+                  title: Selector<_SeasonDetailsProvider, TVSeason>(
+                    selector: (_, p) => p.season,
+                    builder: (_, season, __) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(season.title ?? "Unknown Season"),
+                        Text(season.showTitle, style: Theme.of(context).textTheme.caption)
+                      ],
+                    ),
                   ),
-                ),
-                automaticallyImplyLeading: false),
-            _buildEpisodesList()
-          ],
-        ),
-      ],
+                  automaticallyImplyLeading: false),
+              _buildEpisodesList()
+            ],
+          ),
+        ],
     ));
   }
 

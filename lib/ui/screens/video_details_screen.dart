@@ -28,7 +28,7 @@ class VideoDetailsScreen extends StatelessWidget {
           onPressed: () => context.read<UKProvider>().openFile(item.fileUrl),
           icon: const Icon(Icons.play_arrow)),
         ExpandableFabButton(
-          onPressed: () => context.read<UKProvider>().addItemToPlaylist(source: item.fileUrl, type: "file"),
+          onPressed: () => context.read<UKProvider>().addItemsToPlaylist(sources: [item.fileUrl], type: "file"),
           icon: const Icon(Icons.queue)),
       ]),
       body: Stack(
