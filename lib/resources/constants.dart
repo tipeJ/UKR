@@ -104,6 +104,7 @@ const FETCH_SEASON_PROPERTIES = [
   "title",
   "art",
   "watchedepisodes",
+  "showtitle",
   "tvshowid",
   "userrating",
 ];

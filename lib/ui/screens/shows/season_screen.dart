@@ -60,9 +60,15 @@ class _SeasonDetailsScreen extends StatelessWidget {
           slivers: [
             SliverAppBar(
                 backgroundColor: Colors.transparent,
-                title: Selector<_SeasonDetailsProvider, String>(
-                  selector: (_, p) => p.season.title ?? "Unknown Season",
-                  builder: (_, title, __) => Text(title),
+                title: Selector<_SeasonDetailsProvider, TVSeason>(
+                  selector: (_, p) => p.season,
+                  builder: (_, season, __) => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(season.title ?? "Unknown Season"),
+                      Text(season.showTitle, style: Theme.of(context).textTheme.caption)
+                    ],
+                  ),
                 ),
                 automaticallyImplyLeading: false),
             _buildEpisodesList()
