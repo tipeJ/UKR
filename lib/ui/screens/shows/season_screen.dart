@@ -52,45 +52,47 @@ class _SeasonDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final season = context.watch<_SeasonDetailsProvider>().season;
-    String image =
-        retrieveOptimalImage(season);
+    String image = retrieveOptimalImage(season);
     return Scaffold(
-      floatingActionButton: ExpandableFab(distance: 112.0, children: [
-                // ExpandableFabButton(
-                //     onPressed: () =>
-                //         context.read<UKProvider>().openFile(item.fileUrl),
-                //     icon: const Icon(Icons.play_arrow)),
-                ExpandableFabButton(
-                    onPressed: () => context
-                        .read<UKProvider>().addItemsToPlaylist(sources: mediaItemsIntoPlaylist(context.read<_SeasonDetailsProvider>().episodes), type: "file"),
-                    icon: const Icon(Icons.queue)),
-              ]),
-      body: Stack(
-        children: [
-          PosterBackground(image: image),
-          CustomScrollView(
-            slivers: [
-              SliverAppBar(
-                  backgroundColor: Colors.transparent,
-                  title: Selector<_SeasonDetailsProvider, TVSeason>(
-                    selector: (_, p) => p.season,
-                    builder: (_, season, __) => Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(season.title ?? "Unknown Season"),
-                        Text(season.showTitle, style: Theme.of(context).textTheme.caption)
-                      ],
+        floatingActionButton: ExpandableFab(distance: 112.0, children: [
+          // ExpandableFabButton(
+          //     onPressed: () =>
+          //         context.read<UKProvider>().openFile(item.fileUrl),
+          //     icon: const Icon(Icons.play_arrow)),
+          ExpandableFabButton(
+              onPressed: () => context.read<UKProvider>().addItemsToPlaylist(
+                  sources: mediaItemsIntoPlaylist(
+                      context.read<_SeasonDetailsProvider>().episodes),
+                  type: "file"),
+              icon: const Icon(Icons.queue)),
+        ]),
+        body: Stack(
+          children: [
+            PosterBackground(image: image),
+            CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                    backgroundColor: Colors.transparent,
+                    title: Selector<_SeasonDetailsProvider, TVSeason>(
+                      selector: (_, p) => p.season,
+                      builder: (_, season, __) => Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(season.title ?? "Unknown Season"),
+                          Text(season.showTitle,
+                              style: Theme.of(context).textTheme.caption)
+                        ],
+                      ),
                     ),
-                  ),
-                  automaticallyImplyLeading: false),
-              _buildEpisodesList()
-            ],
-          ),
-        ],
-    ));
+                    automaticallyImplyLeading: false),
+                _buildEpisodesList(context)
+              ],
+            ),
+          ],
+        ));
   }
 
-  Widget _buildEpisodesList() =>
+  Widget _buildEpisodesList(BuildContext context) =>
       Selector<_SeasonDetailsProvider, Tuple2<List<VideoItem>, LoadingState>>(
         selector: (_, p) => Tuple2(p.episodes, p.state),
         builder: (_, params, __) {
@@ -106,10 +108,42 @@ class _SeasonDetailsScreen extends StatelessWidget {
             default:
               return SliverList(
                 delegate: SliverChildBuilderDelegate(
-                    (_, i) => ListTile(title: Text(params.item1[i].label)),
+                    (_, i) => ExpansionTile(
+                          title: Text(params.item1[i].label),
+                          trailing: IconButton(
+                              icon: const Icon(Icons.play_arrow),
+                              onPressed: () => print("Pressed")),
+                          children: _buildEpisodeExpandingContent(
+                              context, params.item1[i]),
+                        ),
                     childCount: params.item1.length),
               );
           }
         },
       );
+
+  List<Widget> _buildEpisodeExpandingContent(
+      BuildContext context, VideoItem item) {
+    TextTheme theme = Theme.of(context).textTheme;
+    return [
+      Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              item.plot ?? "",
+              style: theme.caption,
+            ),
+            if (item.rating != null) Text.rich(TextSpan(children: [
+              TextSpan(
+                  text: item.rating?.toStringAsPrecision(3) ?? "",
+                  style: theme.subtitle1),
+              TextSpan(text: "/10", style: theme.caption)
+            ]))
+          ],
+        ),
+      )
+    ];
+  }
 }
