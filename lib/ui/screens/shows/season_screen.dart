@@ -135,7 +135,7 @@ class _SeasonDetailsScreen extends StatelessWidget {
               item.plot ?? "",
               style: theme.caption,
             ),
-            if (item.rating != null) Text.rich(TextSpan(children: [
+            if (item.rating != null && item.rating! > 0.0) Text.rich(TextSpan(children: [
               TextSpan(
                   text: item.rating?.toStringAsPrecision(3) ?? "",
                   style: theme.subtitle1),
