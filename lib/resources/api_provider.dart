@@ -536,6 +536,22 @@ class ApiProvider {
     }
   }
 
+  static Future<void> getTVShowDetails(Player player,
+      {properties = FETCH_SHOW_PROPERTIES,
+      required int showID,
+      required Function(dynamic) onSuccess,
+      Function(String)? onError}) async {
+    final body = await _encode("VideoLibrary.GetTVShowDetails",
+        {"tvshowid": showID, "properties": properties});
+    final j = await _postAndParse(player, body);
+    print(j);
+    if (j['result']?['error'] != null) {
+      onError?.call(j['result']['error']['message']);
+    } else {
+      onSuccess.call(j['result']['tvshowdetails']);
+    }
+  }
+
   static Future<void> getTVSeasons(Player player,
       {required int tvshowID,
       Function(List<TVSeason>)? onSuccess,

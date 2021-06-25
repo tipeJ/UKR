@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:UKR/models/models.dart';
@@ -5,6 +6,7 @@ import 'package:UKR/resources/resources.dart';
 import 'package:UKR/ui/providers/providers.dart';
 import 'package:UKR/ui/widgets/widgets.dart';
 import 'package:UKR/utils/image_utils.dart';
+import 'package:UKR/utils/utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -29,9 +31,11 @@ class _TVShowDetailsProvider extends ChangeNotifier {
 
   List<TVSeason> seasons = [];
   LoadingState seasonsLoadingState = LoadingState.Inactive;
+  LoadingState castLoadingState = LoadingState.Inactive;
 
   _TVShowDetailsProvider(this.player, this.show) {
     refreshSeasons();
+    _fetchCast();
   }
 
   void refreshSeasons() async {
@@ -39,8 +43,19 @@ class _TVShowDetailsProvider extends ChangeNotifier {
     notifyListeners();
     await ApiProvider.getTVSeasons(player, tvshowID: show.tvshowid,
         onSuccess: (seasons) {
-          this.seasons = seasons..sort((f, s) => f.seasonNo.compareTo(s.seasonNo));
-          seasonsLoadingState = LoadingState.Inactive;
+      this.seasons = seasons..sort((f, s) => f.seasonNo.compareTo(s.seasonNo));
+      seasonsLoadingState = LoadingState.Inactive;
+      notifyListeners();
+    });
+  }
+
+  void _fetchCast() async {
+    castLoadingState = LoadingState.Active;
+    notifyListeners();
+    await ApiProvider.getTVShowDetails(player,
+        showID: show.tvshowid, properties: ["cast"], onSuccess: (props) {
+          this.show.cast = parseCast(props['cast']);
+          castLoadingState = LoadingState.Inactive;
           notifyListeners();
     });
   }
@@ -55,27 +70,24 @@ class _TVShowDetailsScreen extends StatelessWidget {
         body: Stack(
       children: [
         PosterBackground(image: image),
-        CustomScrollView(
-          slivers: [
-            SliverAppBar(
-                backgroundColor: Colors.transparent,
-                title: Selector<_TVShowDetailsProvider, String>(
-                  selector: (_, p) => p.show.title,
-                  builder: (_, title, __) => Text(title),
-                ),
-                automaticallyImplyLeading: false),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Selector<_TVShowDetailsProvider, String>(
-                  selector: (_, p) => p.show.plot ?? "",
-                  builder: (_, plot, __) => Text(plot),
-                ),
+        Selector<_TVShowDetailsProvider, Tuple2<TVShow, LoadingState>>(
+          selector: (_, p) => Tuple2(p.show, p.castLoadingState),
+          builder: (_, values, __) => CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                  backgroundColor: Colors.transparent,
+                  title: Text(values.item1.title),
+                  automaticallyImplyLeading: false),
+              SliverToBoxAdapter(
+                child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(values.item1.plot ?? "")),
               ),
-            ),
-            SliverToBoxAdapter(
-                child: Container(child: _horizontalSeasonsView()))
-          ],
+              SliverToBoxAdapter(
+                child: Container(child: _horizontalSeasonsView())),
+              _castList(values.item1, values.item2)
+            ],
+          ),
         ),
       ],
     ));
@@ -101,6 +113,28 @@ class _TVShowDetailsScreen extends StatelessWidget {
           }
         },
       ));
+
+  Widget _castList(TVShow show, LoadingState state) =>
+      state == LoadingState.Active
+          ? SliverToBoxAdapter(
+              child: const Center(child: CircularProgressIndicator()))
+          : SliverList(
+              delegate: SliverChildBuilderDelegate(
+                  (context, i) => Container(
+                      padding: const EdgeInsets.only(left: 16.0),
+                      child: i == min(show.cast.length, 11)
+                          ? InkWell(
+                              child: Text(
+                                  "View Entire Cast (${show.cast.length})",
+                                  style: Theme.of(context).textTheme.subtitle2),
+                              onTap: () => Navigator.of(context).pushNamed(
+                                  ROUTE_CAST_SCREEN,
+                                  arguments: show.cast))
+                          : CastItem(
+                              name: show.cast.keys.elementAt(i),
+                              role: show.cast.values.elementAt(i))),
+                  childCount: min(show.cast.length + 1, 11)),
+            );
 }
 
 class _SeasonPoster extends StatelessWidget {
@@ -117,13 +151,14 @@ class _SeasonPoster extends StatelessWidget {
         background = CachedNetworkImage(fit: BoxFit.cover, imageUrl: url);
     }
     return InkWell(
-      onTap: () => Navigator.of(context).pushNamed(ROUTE_CONTENT_SEASON_DETAILS, arguments: Tuple2(season, context.read<PlayersProvider>().selectedPlayer)),
-        child: Container(
-            height: 350.0,
-            child: background));
-            // child: Hero(
-            //     tag: HERO_CONTENT_MOVIES_POSTER +
-            //         "${show.tvshowid} + ${show.year}",
-            //     child: background)));
+        onTap: () => Navigator.of(context).pushNamed(
+            ROUTE_CONTENT_SEASON_DETAILS,
+            arguments:
+                Tuple2(season, context.read<PlayersProvider>().selectedPlayer)),
+        child: Container(height: 350.0, child: background));
+    // child: Hero(
+    //     tag: HERO_CONTENT_MOVIES_POSTER +
+    //         "${show.tvshowid} + ${show.year}",
+    //     child: background)));
   }
 }

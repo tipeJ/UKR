@@ -31,10 +31,10 @@ class RemoteRouter {
         }
         break;
       case ROUTE_CAST_SCREEN:
-        if (args is VideoItem) {
+        if (args is Map<String, String>) {
           child = CastScreen(args);
         } else {
-          child = const Text("No cast for non-video items");
+          child = const Text("Invalid cast object");
         }
         break;
       case ROUTE_CONTENT_ADDONS:

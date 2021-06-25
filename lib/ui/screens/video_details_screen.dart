@@ -105,7 +105,7 @@ class VideoDetailsScreen extends StatelessWidget {
                                       "View Entire Cast (${item.cast.length})",
                                       style: theme.subtitle2),
                                   onTap: () => Navigator.of(context)
-                                      .pushNamed(ROUTE_CAST_SCREEN, arguments: item))
+                                      .pushNamed(ROUTE_CAST_SCREEN, arguments: item.cast))
                               : CastItem(
                                   name: item.cast.keys.elementAt(i),
                                   role: item.cast.values.elementAt(i))),

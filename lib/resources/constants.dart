@@ -95,9 +95,7 @@ const FETCH_SHOW_PROPERTIES = [
   "plot",
   "studio",
   "file",
-  // "votes"
   "art",
-  // "cast"
 ];
 const FETCH_SEASON_PROPERTIES = [
   "season",

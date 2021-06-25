@@ -10,7 +10,7 @@ class TVShow extends Item{
   final int? year;
   final String? plot;
   final double? rating;
-  final Map<String, String> cast;
+  Map<String, String> cast;
 
   TVShow(
       json,
