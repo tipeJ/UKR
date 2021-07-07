@@ -100,7 +100,7 @@ class _TVShowsSearchScreenState extends State<TVShowsSearchScreen> {
         title: TextField(
             controller: _controller,
             decoration: InputDecoration(
-                hintText: "Search movies",
+                hintText: "Search shows",
                 focusedBorder: InputBorder.none,
                 border: InputBorder.none),
             onChanged: (searchTerm) {
