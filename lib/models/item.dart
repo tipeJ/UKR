@@ -61,7 +61,7 @@ class AudioItem extends MediaItem {
 
 class VideoItem extends MediaItem {
   final List<String> director;
-  final Map<String, String> cast;
+  final List<Map<String, String>> cast;
   final VideoStreams? videoStreams;
   final String? plot;
   final String? tagline;
@@ -76,7 +76,7 @@ class VideoItem extends MediaItem {
   VideoItem(json,
       {required this.director,
       required this.videoStreams,
-      this.cast = const {},
+      this.cast = const [],
       this.plot,
       this.rating,
       this.tagline,
@@ -89,7 +89,7 @@ class VideoItem extends MediaItem {
   factory VideoItem.fromJson(dynamic j) => VideoItem(j,
       plot: (j['plot'] as String).nullIfEmpty()?.replaceAll('â', ""),
       tagline: (j['tagline'] as String).nullIfEmpty(),
-      cast: parseCast(j['cast']),
+      cast: j['cast'],
       rating: j['rating'] ?? j['userrating'],
       imdbID: j['imdbnumber'],
       season: j['season'] == -1 ? null : j['season'],

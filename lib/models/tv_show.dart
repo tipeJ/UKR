@@ -10,7 +10,7 @@ class TVShow extends Item{
   final int? year;
   final String? plot;
   final double? rating;
-  Map<String, String> cast;
+  List<Map<String, String>> cast;
 
   TVShow(
       json,
@@ -22,7 +22,7 @@ class TVShow extends Item{
       this.year,
       this.plot,
       this.rating,
-      this.cast = const {},
+      this.cast = const [],
       }) : super(json);
 
   factory TVShow.fromJson(dynamic j) => TVShow(
@@ -35,5 +35,5 @@ class TVShow extends Item{
       tvshowid: j['tvshowid'],
       year: j['year'],
       rating: j['rating'],
-      cast: parseCast(j['cast']));
+      cast: j['cast']);
 }

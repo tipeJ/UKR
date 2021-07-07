@@ -544,7 +544,6 @@ class ApiProvider {
     final body = await _encode("VideoLibrary.GetTVShowDetails",
         {"tvshowid": showID, "properties": properties});
     final j = await _postAndParse(player, body);
-    print(j);
     if (j['result']?['error'] != null) {
       onError?.call(j['result']['error']['message']);
     } else {

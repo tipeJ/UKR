@@ -4,7 +4,7 @@ import 'package:UKR/ui/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
 class CastScreen extends StatelessWidget {
-  final Map<String, String> cast;
+  final List<Map<String, String>> cast;
   const CastScreen(this.cast);
 
   @override
@@ -14,7 +14,7 @@ class CastScreen extends StatelessWidget {
         itemBuilder: (_, i) => Padding(
             padding: const EdgeInsets.symmetric(horizontal: 5.0),
             child: CastItem(
-                name: cast.keys.elementAt(i),
-                role: cast.values.elementAt(i))));
+                name: cast[i]['name'] ?? "Unknown",
+                role: cast[i]['role'] ?? "Unknown")));
   }
 }

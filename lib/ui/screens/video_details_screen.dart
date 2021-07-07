@@ -107,8 +107,9 @@ class VideoDetailsScreen extends StatelessWidget {
                                   onTap: () => Navigator.of(context)
                                       .pushNamed(ROUTE_CAST_SCREEN, arguments: item.cast))
                               : CastItem(
-                                  name: item.cast.keys.elementAt(i),
-                                  role: item.cast.values.elementAt(i))),
+                                  name: item.cast[i]['name'] ?? "",
+                                  role: item.cast[i]['role'] ?? ""
+                                  )),
                       childCount: min(item.cast.length + 1, 11)),
                 )
             ],

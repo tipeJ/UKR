@@ -131,8 +131,8 @@ class _TVShowDetailsScreen extends StatelessWidget {
                                   ROUTE_CAST_SCREEN,
                                   arguments: show.cast))
                           : CastItem(
-                              name: show.cast.keys.elementAt(i),
-                              role: show.cast.values.elementAt(i))),
+                              name: show.cast[i]['name'] ?? "Unknown",
+                              role: show.cast[i]['role'] ?? "Unknown")),
                   childCount: min(show.cast.length + 1, 11)),
             );
 }
