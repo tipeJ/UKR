@@ -31,7 +31,7 @@ class RemoteRouter {
         }
         break;
       case ROUTE_CAST_SCREEN:
-        if (args is Map<String, String>) {
+        if (args is List<Map<String, String>>) {
           child = CastScreen(args);
         } else {
           child = const Text("Invalid cast object");
