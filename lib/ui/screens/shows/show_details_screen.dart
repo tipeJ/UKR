@@ -54,7 +54,7 @@ class _TVShowDetailsProvider extends ChangeNotifier {
     notifyListeners();
     await ApiProvider.getTVShowDetails(player,
         showID: show.tvshowid, properties: ["cast"], onSuccess: (props) {
-          this.show.cast = parseCast(props['cast']);
+          this.show.cast = props['cast'];
           castLoadingState = LoadingState.Inactive;
           notifyListeners();
     });
