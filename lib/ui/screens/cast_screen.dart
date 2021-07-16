@@ -27,7 +27,7 @@ class CastSliverList extends StatelessWidget {
   const CastSliverList(this.cast);
 
   @override
-  Widget build(BuildContext context) {
+  GridView build(BuildContext context) {
     return GridView.builder(
       itemCount: cast.length > 10 ? cast.length + 1 : cast.length,
       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(

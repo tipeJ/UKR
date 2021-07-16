@@ -115,7 +115,9 @@ class _MoviesSearchScreenState extends State<MoviesSearchScreen> {
                   // Detect whether we are closer than 200 pixels to the bottom of the list. If so, fetch more movies from the player.
                   if (not.metrics.maxScrollExtent - not.metrics.pixels < 200) {
                     _timer?.cancel();
-                    context.read<MoviesProvider>().fetchMovies(searchTitle: _controller.text);
+                    context
+                        .read<MoviesProvider>()
+                        .fetchMovies(searchTitle: _controller.text);
                   }
                   return false;
                 },
@@ -142,7 +144,10 @@ class _MoviesSearchScreenState extends State<MoviesSearchScreen> {
                                   }
                                 }),
                           )
-                        : MovieGridItem(movies[i])),
+                          : MovieGridItem(movies[i], onClick: () => showModalBottomSheet(
+                              context: context,
+                              builder: (context) => _MovieDetailsSheet(movies[i])
+                        ))),
               )),
     );
   }
@@ -163,12 +168,64 @@ class MovieGridItem extends StatelessWidget {
         background = CachedNetworkImage(fit: BoxFit.cover, imageUrl: url);
     }
     return InkWell(
-        onTap: () => Navigator.of(context)
-            .pushNamed(ROUTE_CONTENT_VIDEOITEM_DETAILS, arguments: movie),
+        onTap: this.onClick,
         child: Container(
             height: 350.0,
             child: Hero(
                 tag: HERO_CONTENT_MOVIES_POSTER + movie.fileUrl,
                 child: background)));
+  }
+}
+
+class _MovieDetailsSheet extends StatelessWidget {
+  final VideoItem movie;
+
+  const _MovieDetailsSheet(this.movie);
+
+  @override
+  Widget build(BuildContext context) {
+    String poster = retrieveOptimalImage(movie);
+    return Container(
+        padding: const EdgeInsets.all(5.0),
+        child: Column(children: [
+          Row(children: [
+            if (poster.isNotEmpty)
+              Container(
+                width: 50,
+                height: 50 * (16.0 / 9.0),
+                child: CachedNetworkImage(imageUrl: poster, fit: BoxFit.cover),
+              ),
+            Column(children: [
+              Text(movie.label),
+              if (movie.tagline != null) Text(movie.tagline!),
+              Text.rich(TextSpan(children: [
+                if (movie.year != null) TextSpan(text: movie.year.toString()),
+                if (movie.rating != null && movie.rating! > 0)
+                  TextSpan(children: [
+                    TextSpan(
+                        text: movie.rating!.toString(),
+                        style: TextStyle(fontSize: 5.0)),
+                    TextSpan(text: "/10", style: TextStyle(fontSize: 7.0))
+                  ]),
+              ]))
+            ])
+        ]),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            TextButton(
+              child: Text("Details"),
+              onPressed: () => Navigator.of(context).pushNamed(
+                    ROUTE_CONTENT_VIDEOITEM_DETAILS,
+                    arguments: movie),
+                ),
+            TextButton(
+              child: Text("Play"),
+              onPressed: () => print("Play ${movie.label}"),
+            )
+          ],
+        )
+        ]));
   }
 }
