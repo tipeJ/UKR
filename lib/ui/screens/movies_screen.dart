@@ -4,6 +4,7 @@ import 'package:UKR/models/models.dart';
 import 'package:UKR/ui/providers/providers.dart';
 import 'package:UKR/ui/widgets/widgets.dart';
 import 'package:UKR/utils/utils.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -144,20 +145,16 @@ class _MoviesSearchScreenState extends State<MoviesSearchScreen> {
                                   }
                                 }),
                           )
-                          : MovieGridItem(movies[i], onClick: () => showModalBottomSheet(
-                              context: context,
-                              builder: (context) => _MovieDetailsSheet(movies[i])
-                        ))),
+                        : MovieGridItem(movies[i])),
               )),
     );
   }
 }
 
 class MovieGridItem extends StatelessWidget {
-  final VoidCallback? onClick;
   final VideoItem movie;
 
-  const MovieGridItem(this.movie, {this.onClick});
+  const MovieGridItem(this.movie);
 
   @override
   Widget build(BuildContext context) {
@@ -168,7 +165,9 @@ class MovieGridItem extends StatelessWidget {
         background = CachedNetworkImage(fit: BoxFit.cover, imageUrl: url);
     }
     return InkWell(
-        onTap: this.onClick,
+        onTap: () => showModalBottomSheet(
+            context: context,
+            builder: (context) => _MovieDetailsSheet(this.movie)),
         child: Container(
             height: 350.0,
             child: Hero(
@@ -185,47 +184,65 @@ class _MovieDetailsSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String poster = retrieveOptimalImage(movie);
+    TextTheme theme = Theme.of(context).textTheme;
+    double imageHeight = 50 * (16.0 / 9.0);
     return Container(
         padding: const EdgeInsets.all(5.0),
-        child: Column(children: [
-          Row(children: [
+        height: imageHeight + 45.0,
+        child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             if (poster.isNotEmpty)
               Container(
                 width: 50,
-                height: 50 * (16.0 / 9.0),
+                height: imageHeight,
                 child: CachedNetworkImage(imageUrl: poster, fit: BoxFit.cover),
               ),
-            Column(children: [
-              Text(movie.label),
-              if (movie.tagline != null) Text(movie.tagline!),
-              Text.rich(TextSpan(children: [
-                if (movie.year != null) TextSpan(text: movie.year.toString()),
-                if (movie.rating != null && movie.rating! > 0)
-                  TextSpan(children: [
-                    TextSpan(
-                        text: movie.rating!.toString(),
-                        style: TextStyle(fontSize: 5.0)),
-                    TextSpan(text: "/10", style: TextStyle(fontSize: 7.0))
-                  ]),
-              ]))
-            ])
-        ]),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            TextButton(
-              child: Text("Details"),
-              onPressed: () => Navigator.of(context).pushNamed(
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AutoSizeText(movie.label, minFontSize: 18.0, maxFontSize: 25.0),
+                      if (movie.tagline != null)
+                        Text(movie.tagline!,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                            style: theme.caption),
+                      SizedBox(height: 5.0),
+                      Text.rich(TextSpan(children: [
+                        if (movie.year != null)
+                          TextSpan(text: movie.year.toString(), style: theme.bodyText1),
+                        if (movie.rating != null && movie.rating! > 0)
+                          TextSpan(children: [
+                            TextSpan(
+                                text: "  " + movie.rating!.toStringAsFixed(2),
+                                style: theme.caption),
+                            TextSpan(
+                                text: "/10", style: theme.bodyText2)
+                          ]),
+                      ]))
+                    ]),
+              ),
+            )
+          ]),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              TextButton(
+                child: Text("Details"),
+                onPressed: () => Navigator.of(context).pushNamed(
                     ROUTE_CONTENT_VIDEOITEM_DETAILS,
                     arguments: movie),
-                ),
-            TextButton(
-              child: Text("Play"),
-              onPressed: () => print("Play ${movie.label}"),
-            )
-          ],
-        )
+              ),
+              TextButton(
+                child: Text("Play"),
+                onPressed: () => print("Play ${movie.label}"),
+              )
+            ],
+          )
         ]));
   }
 }

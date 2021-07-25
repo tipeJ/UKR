@@ -85,6 +85,7 @@ const FETCH_MOVIE_PROPERTIES = [
   "tagline",
   "plot",
   "plotoutline",
+  "rating"
   // "cast"
 ];
 const FETCH_SHOW_PROPERTIES = [

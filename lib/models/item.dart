@@ -90,7 +90,7 @@ class VideoItem extends MediaItem {
       plot: (j['plot'] as String).nullIfEmpty()?.replaceAll('â', ""),
       tagline: (j['tagline'] as String).nullIfEmpty(),
       cast: j['cast'],
-      rating: j['rating'] ?? j['userrating'],
+      rating: (j['rating']) ?? j['userrating'],
       imdbID: j['imdbnumber'],
       season: j['season'] == -1 ? null : j['season'],
       episode: j['episode'],
