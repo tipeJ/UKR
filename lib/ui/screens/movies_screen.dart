@@ -184,8 +184,8 @@ class _MovieDetailsSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String poster = retrieveOptimalImage(movie);
-    TextTheme theme = Theme.of(context).textTheme;
-    double imageHeight = 50 * (16.0 / 9.0);
+    double imageWidth = 75.0;
+    double imageHeight = imageWidth * (16.0 / 9.0);
     return Container(
         padding: const EdgeInsets.all(5.0),
         height: imageHeight + 45.0,
@@ -193,37 +193,14 @@ class _MovieDetailsSheet extends StatelessWidget {
           Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             if (poster.isNotEmpty)
               Container(
-                width: 50,
+                width: imageWidth,
                 height: imageHeight,
                 child: CachedNetworkImage(imageUrl: poster, fit: BoxFit.cover),
               ),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(left: 8.0),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      AutoSizeText(movie.label, minFontSize: 18.0, maxFontSize: 25.0),
-                      if (movie.tagline != null)
-                        Text(movie.tagline!,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 2,
-                            style: theme.caption),
-                      SizedBox(height: 5.0),
-                      Text.rich(TextSpan(children: [
-                        if (movie.year != null)
-                          TextSpan(text: movie.year.toString(), style: theme.bodyText1),
-                        if (movie.rating != null && movie.rating! > 0)
-                          TextSpan(children: [
-                            TextSpan(
-                                text: "  " + movie.rating!.toStringAsFixed(2),
-                                style: theme.caption),
-                            TextSpan(
-                                text: "/10", style: theme.bodyText2)
-                          ]),
-                      ]))
-                    ]),
+                child: VideoItemInfo(this.movie),
               ),
             )
           ]),

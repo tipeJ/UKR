@@ -8,8 +8,8 @@ class Item {
 
   Item(Map<String, dynamic> j)
       : artwork = _castArt(j),
-      type = j['type'],
-      label = j['label'];
+        type = j['type'],
+        label = j['label'];
 
   static Map<String, String> _castArt(dynamic j) =>
       j['art'] != null ? Map<String, String>.from(j['art']) : const {};
@@ -24,7 +24,9 @@ class MediaItem extends Item {
   MediaItem(Map<String, dynamic> j)
       : duration = j['duration'],
         year = j['year'] == 1601 ? null : j['year'],
-        genres = j['genre'] != null ? j['genre'].map<String>((i) => i.toString()).toList() : const [],
+        genres = j['genre'] != null
+            ? j['genre'].map<String>((i) => i.toString()).toList()
+            : const [],
         fileUrl = j['file'] ?? "",
         super(j);
   @override
@@ -62,6 +64,7 @@ class AudioItem extends MediaItem {
 class VideoItem extends MediaItem {
   final List<String> director;
   final List<Map<String, String>> cast;
+  final String? mpaa;
   final VideoStreams? videoStreams;
   final String? plot;
   final String? tagline;
@@ -77,6 +80,7 @@ class VideoItem extends MediaItem {
       {required this.director,
       required this.videoStreams,
       this.cast = const [],
+      this.mpaa,
       this.plot,
       this.rating,
       this.tagline,
@@ -90,6 +94,7 @@ class VideoItem extends MediaItem {
       plot: (j['plot'] as String).nullIfEmpty()?.replaceAll('â', ""),
       tagline: (j['tagline'] as String).nullIfEmpty(),
       cast: j['cast'],
+      mpaa: j['mpaa'],
       rating: (j['rating']) ?? j['userrating'],
       imdbID: j['imdbnumber'],
       season: j['season'] == -1 ? null : j['season'],

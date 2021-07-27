@@ -78,6 +78,7 @@ const FETCH_MOVIE_PROPERTIES = [
   "studio",
   "title",
   "director",
+  "duration",
   "art",
   "genre",
   "year",
@@ -85,7 +86,8 @@ const FETCH_MOVIE_PROPERTIES = [
   "tagline",
   "plot",
   "plotoutline",
-  "rating"
+  "rating",
+  "mpaa"
   // "cast"
 ];
 const FETCH_SHOW_PROPERTIES = [
