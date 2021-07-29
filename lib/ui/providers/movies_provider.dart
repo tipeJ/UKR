@@ -13,6 +13,7 @@ class MoviesProvider extends ChangeNotifier {
 
   List<VideoItem> movies = [];
   LoadingState state = LoadingState.Inactive;
+  String error = "";
   int get _length => movies.length;
 
   void fetchMovies({bool reset = false, String? searchTitle}) async {
@@ -24,12 +25,14 @@ class MoviesProvider extends ChangeNotifier {
       }
       this.state = LoadingState.Active;
       List<ListFilter> filters = searchTitle != null
-          ? ListFilter.comboFields(const ["title", "plot", "tagline", "director"], value: searchTitle)
+          ? ListFilter.comboFields(
+              const ["title", "plot", "tagline", "director"],
+              value: searchTitle)
           : [];
       await ApiProvider.getMovies(player,
           limits: ListLimits(start: _length, end: _length + _span),
           filters: filters, onError: (e) {
-        print("ERRR:" + e);
+        this.error = e;
         this.state = LoadingState.Error;
       }, onSuccess: (j) {
         movies += j.map<VideoItem>((m) => VideoItem.fromJson(m)).toList();

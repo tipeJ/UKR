@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:UKR/resources/resources.dart';
+import 'package:tuple/tuple.dart';
 
 class MoviesScreen extends StatelessWidget {
   @override
@@ -20,9 +21,9 @@ class MoviesScreen extends StatelessWidget {
               ROUTE_CONTENT_MOVIE_SEARCH,
               arguments: context.read<PlayersProvider>().selectedPlayer),
           child: const Icon(Icons.search)),
-      body: Selector<MoviesProvider, List<VideoItem>>(
-          selector: (_, p) => p.movies,
-          builder: (_, movies, __) =>
+      body: Selector<MoviesProvider, Tuple2<List<VideoItem>, LoadingState>>(
+          selector: (_, p) => Tuple2(p.movies, p.state),
+          builder: (_, vals, __) =>
               NotificationListener<ScrollUpdateNotification>(
                 onNotification: (not) {
                   // Detect whether we are closer than 200 pixels to the bottom of the list. If so, fetch more movies from the player.
@@ -32,32 +33,32 @@ class MoviesScreen extends StatelessWidget {
                   return false;
                 },
                 child: GridView.builder(
-                    itemCount: movies.length + 1,
+                    itemCount: vals.item1.length + 1,
                     gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                         childAspectRatio: listPosterRatio,
                         maxCrossAxisExtent: gridPosterMaxWidth),
-                    itemBuilder: (_, i) => i == movies.length
+                    itemBuilder: (_, i) => i == vals.item1.length
                         ? Container(
                             height: 75,
                             alignment: Alignment.center,
-                            child: Selector<MoviesProvider, LoadingState>(
-                                selector: (_, p) => p.state,
-                                builder: (_, state, __) {
-                                  switch (state) {
-                                    case LoadingState.Active:
-                                      return CircularProgressIndicator();
-                                    case LoadingState.Error:
-                                      return Text("Error loading movies");
-                                    default:
-                                      // Return an empty container
-                                      return Container();
-                                  }
-                                }),
+                            child: _listTrailingWidget(vals.item2),
                           )
-                        : MovieGridItem(movies[i])),
+                        : MovieGridItem(vals.item1[i])),
               )),
     );
   }
+
+  Widget _listTrailingWidget(LoadingState state) {
+    switch (state) {
+      case LoadingState.Active:
+        return CircularProgressIndicator();
+      case LoadingState.Error:
+        return Text("Error loading movies");
+      default:
+        // Return an empty container
+        return Container();
+      }
+    }
 }
 
 class MoviesSearchScreen extends StatefulWidget {

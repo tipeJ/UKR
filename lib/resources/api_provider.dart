@@ -499,7 +499,7 @@ class ApiProvider {
       ...limits.toJson()
     });
     var j = await _postAndParse(player, body);
-    final error = j['result']?['error'];
+    final error = j['result']?['error'] ?? j['error'];
     if (error != null) {
       onError?.call(error['message']);
     } else {
