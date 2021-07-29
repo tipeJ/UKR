@@ -78,7 +78,7 @@ const FETCH_MOVIE_PROPERTIES = [
   "studio",
   "title",
   "director",
-  "duration",
+  "runtime",
   "art",
   "genre",
   "year",

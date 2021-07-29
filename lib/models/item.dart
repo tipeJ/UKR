@@ -90,20 +90,26 @@ class VideoItem extends MediaItem {
       this.showTitle})
       : super(json);
 
-  factory VideoItem.fromJson(dynamic j) => VideoItem(j,
-      plot: (j['plot'] as String).nullIfEmpty()?.replaceAll('â', ""),
-      tagline: (j['tagline'] as String).nullIfEmpty(),
-      cast: j['cast'],
-      mpaa: j['mpaa'],
-      rating: (j['rating']) ?? j['userrating'],
-      imdbID: j['imdbnumber'],
-      season: j['season'] == -1 ? null : j['season'],
-      episode: j['episode'],
-      showTitle: j['showtitle'],
-      director: j['director'] != null
-          ? j['director'].map<String>((d) => d.toString()).toList()
-          : const [],
-      videoStreams: j['streamdetails'] != null
-          ? VideoStreams.fromJson(j['streamdetails'])
-          : null);
+  factory VideoItem.fromJson(dynamic j) {
+    if (j['duration'] == null) {
+      // For movies.
+      j['duration'] = j['runtime'];
+    }
+    return VideoItem(j,
+        plot: (j['plot'] as String).nullIfEmpty()?.replaceAll('â', ""),
+        tagline: (j['tagline'] as String).nullIfEmpty(),
+        cast: j['cast'],
+        mpaa: j['mpaa'],
+        rating: (j['rating']) ?? j['userrating'],
+        imdbID: j['imdbnumber'],
+        season: j['season'] == -1 ? null : j['season'],
+        episode: j['episode'],
+        showTitle: j['showtitle'],
+        director: j['director'] != null
+            ? j['director'].map<String>((d) => d.toString()).toList()
+            : const [],
+        videoStreams: j['streamdetails'] != null
+            ? VideoStreams.fromJson(j['streamdetails'])
+            : null);
+  }
 }

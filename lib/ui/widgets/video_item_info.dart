@@ -1,4 +1,5 @@
 import 'package:UKR/models/models.dart';
+import 'package:UKR/utils/utils.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
@@ -25,6 +26,7 @@ class VideoItemInfo extends StatelessWidget {
             if (item.year != null)
               TextSpan(
                   text: item.year.toString() + " ", style: theme.bodyText1),
+            TextSpan(text: _getDurationString(item) + " "),
             if (item.mpaa != null)
               TextSpan(text: item.mpaa! + " ", style: theme.bodyText1)
           ])),
@@ -32,7 +34,7 @@ class VideoItemInfo extends StatelessWidget {
             Text.rich(TextSpan(children: [
               TextSpan(children: [
                 TextSpan(
-                    text: "  " + item.rating!.toStringAsFixed(2),
+                    text: item.rating!.toStringAsFixed(2),
                     style: theme.caption),
                 TextSpan(text: "/10", style: theme.bodyText2)
               ]),
@@ -41,10 +43,10 @@ class VideoItemInfo extends StatelessWidget {
   }
 
   static String _getDurationString(VideoItem item) {
-    //   if (item.type == 'movie') {
-    //     final time = ;
-    //     return "${time.hour}"
-    //   }
+    if (item.type == 'movie') {
+      final runtime = getHoursAndMinutes(item.duration);
+      return "${runtime.item1}h ${runtime.item2}m";
+    }
     return "";
   }
 }
