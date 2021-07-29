@@ -34,6 +34,7 @@ class MoviesProvider extends ChangeNotifier {
           filters: filters, onError: (e) {
         this.error = e;
         this.state = LoadingState.Error;
+        notifyListeners();
       }, onSuccess: (j) {
         movies += j.map<VideoItem>((m) => VideoItem.fromJson(m)).toList();
         this.state = LoadingState.Inactive;
