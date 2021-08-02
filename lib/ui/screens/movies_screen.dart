@@ -57,8 +57,8 @@ class MoviesScreen extends StatelessWidget {
       default:
         // Return an empty container
         return Container();
-      }
     }
+  }
 }
 
 class MoviesSearchScreen extends StatefulWidget {
@@ -188,39 +188,44 @@ class _MovieDetailsSheet extends StatelessWidget {
     double imageWidth = 75.0;
     double imageHeight = imageWidth * (16.0 / 9.0);
     return Container(
-        padding: const EdgeInsets.all(5.0),
-        height: imageHeight + 45.0,
-        child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            if (poster.isNotEmpty)
-              Container(
-                width: imageWidth,
-                height: imageHeight,
-                child: CachedNetworkImage(imageUrl: poster, fit: BoxFit.cover),
-              ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: VideoItemInfo(this.movie),
-              ),
-            )
-          ]),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              TextButton(
-                child: Text("Details"),
-                onPressed: () => Navigator.of(context).pushNamed(
-                    ROUTE_CONTENT_VIDEOITEM_DETAILS,
-                    arguments: movie),
-              ),
-              TextButton(
-                child: Text("Play"),
-                onPressed: () => print("Play ${movie.label}"),
+      height: imageHeight,
+      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        if (poster.isNotEmpty)
+          Container(
+            width: imageWidth,
+            height: imageHeight,
+            child: CachedNetworkImage(imageUrl: poster, fit: BoxFit.cover),
+          ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: VideoItemInfo(this.movie, trailing: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  TextButton(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                      child: Text("Details"),
+                    ),
+                    onPressed: () => Navigator.of(context).pushNamed(
+                        ROUTE_CONTENT_VIDEOITEM_DETAILS,
+                        arguments: movie),
+                  ),
+                  TextButton(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                      child: Text("Play"),
+                    ),
+                    onPressed: () => print("Play ${movie.label}"),
+                  )
+                ],
               )
-            ],
-          )
-        ]));
+            ]),
+          ),
+        )
+      ]),
+    );
   }
 }
