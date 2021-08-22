@@ -11,28 +11,42 @@ import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
 class RemoteScreen extends StatelessWidget {
-  final GlobalKey<NavigatorState> _key = GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(context),
-      drawer: Drawer(child: _PlayersBar()),
-      bottomSheet: RemoteControlsBar(),
-      body: Stack(
-        children: [
-          BackgroundImageWrapper(),
-          Padding(
-            padding: const EdgeInsets.only(bottom: kBottomNavigationBarHeight),
-            child: Navigator(
-              observers: [HeroController()],
-              key: _key,
-              initialRoute: ROUTE_PAGES_SCREEN,
-              onGenerateRoute: RemoteRouter.generateRoute,
-            ),
+    return WillPopScope(
+        onWillPop: _onWillPop,
+        child: Scaffold(
+          appBar: _buildAppBar(context),
+          drawer: Drawer(child: _PlayersBar()),
+          bottomSheet: RemoteControlsBar(),
+          body: Stack(
+            children: [
+              BackgroundImageWrapper(),
+              Padding(
+                padding:
+                    const EdgeInsets.only(bottom: kBottomNavigationBarHeight),
+                child: Navigator(
+                  observers: [HeroController()],
+                  key: navKey,
+                  initialRoute: ROUTE_PAGES_SCREEN,
+                  onGenerateRoute: RemoteRouter.generateRoute,
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        ));
+  }
+
+  // Function for willpop
+  Future<bool> _onWillPop() async {
+    bool popped = await navKey.currentState?.maybePop() ?? false;
+    if (!popped && navKey.currentContext != null) {
+      // We do not want to exit the app via the back button. Instead, we want to
+      // pop the route or open the drawer.
+      Scaffold.of(navKey.currentContext!).openDrawer();
+    }
+    return Future.value(false);
   }
 
   AppBar _buildAppBar(BuildContext context) {
@@ -118,11 +132,7 @@ class RemoteScreen extends StatelessWidget {
         leading: IconButton(
             // TODO: Add animated icon for menu/ back button.
             icon: const Icon(Icons.arrow_back),
-            onPressed: () async {
-              bool popped = await _key.currentState?.maybePop() ?? false;
-              if (!popped && _key.currentContext != null)
-                Scaffold.of(_key.currentContext!).openDrawer();
-            }),
+            onPressed: _onWillPop),
         centerTitle: true,
         title: title,
         actions: actions);
@@ -229,4 +239,3 @@ class _PlayersBar extends StatelessWidget {
     );
   }
 }
-
