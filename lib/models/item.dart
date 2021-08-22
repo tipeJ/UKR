@@ -91,7 +91,7 @@ class VideoItem extends MediaItem {
       : super(json);
 
   factory VideoItem.fromJson(dynamic j) {
-    if (j.containsKey('duration')) {
+    if (!j.containsKey('duration')) {
       // For movies.
       j['duration'] = j['runtime'] ?? 0;
     }

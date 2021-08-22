@@ -17,11 +17,15 @@ class VideoItemInfo extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AutoSizeText(item.label,
-              minFontSize: 18.0, maxFontSize: 25.0, style: theme.headline5),
+              minFontSize: 18.0,
+              maxFontSize: 25.0,
+              style: theme.headline5,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1),
           if (item.tagline != null)
             Text(item.tagline!,
                 overflow: TextOverflow.ellipsis,
-                maxLines: 2,
+                maxLines: 1,
                 style: theme.caption),
           SizedBox(height: 5.0),
           Text.rich(TextSpan(children: [
