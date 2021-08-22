@@ -91,14 +91,14 @@ class VideoItem extends MediaItem {
       : super(json);
 
   factory VideoItem.fromJson(dynamic j) {
-    if (j['duration'] == null) {
+    if (j.containsKey('duration')) {
       // For movies.
-      j['duration'] = j['runtime'];
+      j['duration'] = j['runtime'] ?? 0;
     }
     return VideoItem(j,
         plot: (j['plot'] as String).nullIfEmpty()?.replaceAll('â', ""),
         tagline: (j['tagline'] as String).nullIfEmpty(),
-        cast: j['cast'],
+        cast: j['cast'] != null && j['cast'].isNotEmpty ? j['cast'] : [],
         mpaa: j['mpaa'],
         rating: (j['rating']) ?? j['userrating'],
         imdbID: j['imdbnumber'],
