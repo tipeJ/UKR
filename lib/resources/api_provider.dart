@@ -503,6 +503,7 @@ class ApiProvider {
     if (error != null) {
       onError?.call(error['message']);
     } else {
+      if (j['result']['limits']['total'] == 0) return;
       for (int i = 0; i < j['result']['movies'].length; i++) {
         j['result']['movies'][i]['type'] = "movie";
         _convertResourceURLs(player, j['result']['movies'][i]);
@@ -528,6 +529,7 @@ class ApiProvider {
     if (error != null) {
       onError?.call(error['message']);
     } else {
+      if (j['result']['limits']['total'] == 0) return;
       for (int i = 0; i < j['result']['tvshows'].length; i++) {
         j['result']['tvshows'][i]['type'] = "tvshow";
         _convertResourceURLs(player, j['result']['tvshows'][i]);
