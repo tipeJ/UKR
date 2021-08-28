@@ -218,7 +218,8 @@ class _MovieDetailsSheet extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 12.0),
                       child: Text("Play"),
                     ),
-                    onPressed: () => print("Play ${movie.label}"),
+                    onPressed: () =>
+                        context.read<UKProvider>().openFile(movie.fileUrl),
                   )
                 ],
               )
