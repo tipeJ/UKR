@@ -48,3 +48,5 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 .vscode/launch.json
+.vscode/settings.json
+linux/flutter/CMakeLists.txt
