@@ -128,3 +128,7 @@ const FETCH_PLAYLIST_ITEMS = ["file"];
 // * UI Constants
 const double listPosterRatio = 9 / 16.0;
 const double gridPosterMaxWidth = 150;
+
+const PLAYLIST_VIDEOS_ID = 0;
+const PLAYLIST_MUSIC_ID = 1;
+const PLAYLIST_PICTURES_ID = 2;
