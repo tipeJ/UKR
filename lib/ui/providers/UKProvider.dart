@@ -59,6 +59,7 @@ class UKProvider extends ChangeNotifier {
   /// Call this function every time the player object should change.
   void initialize(Player player) async {
     this._player = player;
+    this.playlist = Playlist(player);
     connectionStatus = ConnectionStatus.Disconnected;
     notifyListeners();
     final ping = await ApiProvider.testPlayerConnection(player);
@@ -135,7 +136,7 @@ class UKProvider extends ChangeNotifier {
         _timeUpdateTimer?.cancel();
         this.currentItem = null;
         this.canSeek = false;
-        this.playList = [];
+        this.playlist = null;
         connectionStatus = ConnectionStatus.Disconnected;
         break;
       case "Other.PlaybackStarted":
@@ -198,16 +199,20 @@ class UKProvider extends ChangeNotifier {
         _updateTimeTimer();
         break;
       case "Playlist.OnClear":
-        this.playList = [];
+        // TODO: CHECK IF WORKS
+        this.playlist?.getPlaylistById(d['playlistid'])?.clear();
         break;
       case "Playlist.OnRemove":
-        this.playList.removeAt(d['position']);
+        this
+            .playlist
+            ?.getPlaylistById(d['playlistid'])
+            ?.removeAt(d['position']);
         break;
       case "Playlist.OnAdd":
         int pos = d['position'];
         var list = await ApiProvider.getPlayList(player,
             id: d['playlistid'], lowerLimit: pos, upperLimit: pos + 1);
-        this.playList.add(list.first);
+        this.playlist?.addItemToPlaylist(list.first, d['playlistid']);
         break;
     }
     notifyListeners();
@@ -230,7 +235,9 @@ class UKProvider extends ChangeNotifier {
   // ** Playlist Endpoints
   Future<void> _refreshPlayList() async {
     if (playlistID != -1) {
-      this.playList = await ApiProvider.getPlayList(player, id: playlistID);
+      await this
+          .playlist
+          ?.refreshPlaylist(id: this.playlist!.currentPlaylistID);
       notifyListeners();
     }
   }
@@ -397,13 +404,16 @@ class UKProvider extends ChangeNotifier {
 
   // *** Move Playlist Item
   /// Move item in the current playlist. NOTE: Call syncPlaylistMove after the swap has been finished in the widget tree. This function does not sync the change with the remote Player.
-  void movePlaylistItem(int from, int to) {
+  void movePlaylistItem(int from, int to, {id: int}) {
     if (from != -1 && to != -1 && from != to) {
-      final draggedItem = playList[from];
-      playList.removeAt(from);
-      playList.insert(to, draggedItem);
-      if (_oldLocation == null) _oldLocation = from;
-      notifyListeners();
+      var playlist = this.playlist?.getPlaylistById(id);
+      if (playlist != null) {
+        final draggedItem = playlist[from];
+        playlist.removeAt(from);
+        playlist.insert(to, draggedItem);
+        if (_oldLocation == null) _oldLocation = from;
+        notifyListeners();
+      }
     }
   }
 
@@ -428,14 +438,17 @@ class UKProvider extends ChangeNotifier {
 
   /// *** Remove item from playlist
   /// Removes the given item from the current playlist.
-  void removePlaylistItem(Key item) async {
-    ApiProvider.removePlaylistItem(player,
-        playlistID: playlistID,
-        location: playList.indexWhere((i) => i.id == item));
+  void removePlaylistItem(Key item, {id: int}) async {
+    var playlist = this.playlist?.getPlaylistById(id);
+    if (playlist != null) {
+      ApiProvider.removePlaylistItem(player,
+          playlistID: id, location: playlist.indexWhere((i) => i.id == item));
+    }
   }
 
   /// *** Add item to playlist
-  void addItemsToPlaylist({required List<String> sources, required String type}) =>
+  void addItemsToPlaylist(
+          {required List<String> sources, required String type}) =>
       ApiProvider.enqueueItems(player, sources: sources, type: type);
 
   // *** Open a single file
@@ -476,7 +489,7 @@ class UKProvider extends ChangeNotifier {
   Item? currentItem;
 
   // ** Playlist Properties
-  List<PlaylistItemModel> playList = [];
+  Playlist? playlist;
 }
 
 Map<String, dynamic> _convertJsonData(String json) =>
