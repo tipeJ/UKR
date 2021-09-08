@@ -3,13 +3,15 @@ import 'package:UKR/resources/resources.dart';
 
 class Playlist {
   final Player player;
+  int currentPlaylistID;
   List<PlaylistItemModel>? videos;
   List<PlaylistItemModel>? audios;
   List<PlaylistItemModel>? images;
 
-  Playlist(this.player);
+  Playlist(this.player, {this.currentPlaylistID = PLAYLIST_VIDEOS_ID});
 
   List<PlaylistItemModel>? getPlaylistById(int id) {
+    // TODO: Unknown ID error handling
     switch (id) {
       case PLAYLIST_VIDEOS_ID:
         return videos;
@@ -18,6 +20,11 @@ class Playlist {
       case PLAYLIST_PICTURES_ID:
         return images;
     }
+  }
+
+  // Get current playlist.
+  List<PlaylistItemModel>? get currentPlaylist {
+    return getPlaylistById(currentPlaylistID);
   }
 
   // Refresh playlist
