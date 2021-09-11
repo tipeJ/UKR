@@ -421,15 +421,13 @@ class UKProvider extends ChangeNotifier {
 
   // *** Sync Playlist Move
   /// Syncronizes the most recent move event (As determined by the private variable oldLocation) with the remote Player instance.
-  void syncMovePlaylistItem(int newLocation) async {
+  void syncMovePlaylistItem(int newLocation, {id: int}) async {
     if (_oldLocation != null) {
       // Notify the Kodi instance.
       while (_oldLocation! != newLocation) {
         var step = _oldLocation! < newLocation ? 1 : -1;
         await ApiProvider.swapPlaylistItems(player,
-            playListID: playlistID,
-            from: _oldLocation!,
-            to: _oldLocation! + step);
+            playListID: id, from: _oldLocation!, to: _oldLocation! + step);
         _oldLocation = _oldLocation! + step;
       }
       _oldLocation = null;

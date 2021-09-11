@@ -1,50 +1,112 @@
 import 'package:UKR/models/models.dart';
+import 'package:UKR/resources/constants.dart';
 import 'package:UKR/ui/providers/providers.dart';
 import 'package:UKR/ui/widgets/widgets.dart';
 import 'package:UKR/utils/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_reorderable_list/flutter_reorderable_list.dart' as roList;
+import 'package:flutter_reorderable_list/flutter_reorderable_list.dart'
+    as roList;
+
+class PlaylistsScreen extends StatefulWidget {
+  @override
+  _PlaylistsScreenState createState() => _PlaylistsScreenState();
+}
+
+class _PlaylistsScreenState extends State<PlaylistsScreen> {
+  int _selectedPlaylistID = PLAYLIST_VIDEOS_ID;
+
+  void changePlaylist(int playlistID) {
+    setState(() {
+      _selectedPlaylistID = playlistID;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        bottomNavigationBar: BottomAppBar(
+            child: Container(
+                height: 50.0,
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      IconButton(
+                        icon: const Icon(Icons.movie_sharp),
+                        tooltip: "Videos",
+                        onPressed: () => changePlaylist(PLAYLIST_VIDEOS_ID),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.headphones),
+                        tooltip: "Audio",
+                        onPressed: () => changePlaylist(PLAYLIST_MUSIC_ID),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.album),
+                        tooltip: "Images",
+                        onPressed: () => changePlaylist(PLAYLIST_PICTURES_ID),
+                      )
+                    ]))),
+        body: Selector<UKProvider, Playlist?>(
+            selector: (context, provider) => provider.playlist,
+            builder: (_, playlist, __) {
+              if (playlist == null) {
+                return Center(
+                  child: Text("No Player Selected."),
+                );
+              }
+              return PlaylistScreen(
+                playList: playlist.getPlaylistById(_selectedPlaylistID) ?? [],
+                playlistId: _selectedPlaylistID,
+              );
+            }));
+  }
+}
 
 class PlaylistScreen extends StatelessWidget {
+  final List<PlaylistItemModel> playList;
+  final int playlistId;
+
+  const PlaylistScreen({required this.playList, required this.playlistId});
+
   int _indexOf(Key key, List<PlaylistItemModel> list) =>
       list.indexWhere((i) => i.id == key);
 
   @override
   Widget build(BuildContext context) {
-    return Selector<UKProvider, List<PlaylistItemModel>>(
-        selector: (_, p) => p.playList.toList(),
-        builder: (_, playList, __) {
-          return playList.isEmpty ? Column(
+    return playList.isEmpty
+        ? Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: const [
               Icon(Icons.playlist_play_rounded, size: 56.0),
               Text("Playlist is Empty", style: TextStyle(color: Colors.grey))
             ],
-          ) : roList.ReorderableList(
-              onReorder: (from, to) {
-                int draggingIndex = _indexOf(from, playList);
-                int newPositionIndex = _indexOf(to, playList);
-                context
-                    .read<UKProvider>()
-                    .movePlaylistItem(draggingIndex, newPositionIndex);
-                return true;
-              },
-              onReorderDone: (item) {
-                int newIndex = _indexOf(item, playList);
-                context.read<UKProvider>().syncMovePlaylistItem(newIndex);
-              },
-              child: ListView.builder(
-                  itemCount: playList.length,
-                  itemBuilder: (_, i) => _ReorderablePlaylistItem(
-                      data: playList[i],
-                      onTap: () {
-                        context.read<UKProvider>().goto(i);
-                      },
-                      isFirst: i == 0,
-                      isLast: i == playList.length - 1)));
-        });
+          )
+        : roList.ReorderableList(
+            onReorder: (from, to) {
+              int draggingIndex = _indexOf(from, playList);
+              int newPositionIndex = _indexOf(to, playList);
+              context
+                  .read<UKProvider>()
+                  .movePlaylistItem(draggingIndex, newPositionIndex);
+              return true;
+            },
+            onReorderDone: (item) {
+              int newIndex = _indexOf(item, playList);
+              context
+                  .read<UKProvider>()
+                  .syncMovePlaylistItem(newIndex, id: playlistId);
+            },
+            child: ListView.builder(
+                itemCount: playList.length,
+                itemBuilder: (_, i) => _ReorderablePlaylistItem(
+                    data: playList[i],
+                    onTap: () {
+                      context.read<UKProvider>().goto(i);
+                    },
+                    isFirst: i == 0,
+                    isLast: i == playList.length - 1)));
   }
 }
 
@@ -100,7 +162,8 @@ class _ReorderablePlaylistItem extends StatelessWidget {
           bottom: false,
           child: Opacity(
             // hide content for placeholder
-            opacity: state == roList.ReorderableItemState.placeholder ? 0.0 : 1.0,
+            opacity:
+                state == roList.ReorderableItemState.placeholder ? 0.0 : 1.0,
             child: IntrinsicHeight(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
