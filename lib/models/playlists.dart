@@ -29,8 +29,18 @@ class Playlist {
 
   // Refresh playlist
   Future<void> refreshPlaylist({id: int}) async {
-    var list = getPlaylistById(id);
-    list = await ApiProvider.getPlayList(this.player, id: id);
+    var list = await ApiProvider.getPlayList(this.player, id: id);
+    switch (id) {
+      case PLAYLIST_VIDEOS_ID:
+        videos = list;
+        break;
+      case PLAYLIST_MUSIC_ID:
+        audios = list;
+        break;
+      case PLAYLIST_PICTURES_ID:
+        images = list;
+        break;
+    }
   }
 
   // Add item to playlist
