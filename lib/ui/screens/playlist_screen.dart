@@ -26,6 +26,7 @@ class _PlaylistsScreenState extends State<PlaylistsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.transparent,
         bottomNavigationBar: BottomAppBar(
             child: Container(
                 height: 50.0,
@@ -33,17 +34,26 @@ class _PlaylistsScreenState extends State<PlaylistsScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
                       IconButton(
-                        icon: const Icon(Icons.movie_sharp),
+                        icon: Icon(Icons.movie_sharp,
+                            color: _selectedPlaylistID == PLAYLIST_VIDEOS_ID
+                                ? Colors.white
+                                : Colors.grey),
                         tooltip: "Videos",
                         onPressed: () => changePlaylist(PLAYLIST_VIDEOS_ID),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.headphones),
+                        icon: Icon(Icons.headphones,
+                            color: _selectedPlaylistID == PLAYLIST_MUSIC_ID
+                                ? Colors.white
+                                : Colors.grey),
                         tooltip: "Audio",
                         onPressed: () => changePlaylist(PLAYLIST_MUSIC_ID),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.album),
+                        icon: Icon(Icons.photo_album,
+                            color: _selectedPlaylistID == PLAYLIST_PICTURES_ID
+                                ? Colors.white
+                                : Colors.grey),
                         tooltip: "Images",
                         onPressed: () => changePlaylist(PLAYLIST_PICTURES_ID),
                       )
