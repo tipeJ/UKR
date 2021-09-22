@@ -63,7 +63,7 @@ class AudioItem extends MediaItem {
 
 class VideoItem extends MediaItem {
   final List<String> director;
-  final List<Map<String, String>> cast;
+  final List<Map<String, dynamic>> cast;
   final String? mpaa;
   final VideoStreams? videoStreams;
   final String? plot;
@@ -98,7 +98,9 @@ class VideoItem extends MediaItem {
     return VideoItem(j,
         plot: (j['plot'] as String).nullIfEmpty()?.replaceAll('â', ""),
         tagline: (j['tagline'] as String).nullIfEmpty(),
-        cast: j['cast'] != null && j['cast'].isNotEmpty ? j['cast'] : [],
+        cast: j['cast'] != null && j['cast'].isNotEmpty
+            ? List<Map<String, dynamic>>.from(j['cast'])
+            : [],
         mpaa: j['mpaa'],
         rating: (j['rating']) ?? j['userrating'],
         imdbID: j['imdbnumber'],
