@@ -59,7 +59,7 @@ class _PagesScreenState extends State<PagesScreen> {
             child: _RemotePage(),
           ),
         ),
-        PlaylistScreen()
+        PlaylistsScreen()
       ],
     );
   }
@@ -75,9 +75,9 @@ class _RemotePage extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         children: [
           InkWell(
-            onTap: () => Navigator.of(context).pushNamed(ROUTE_CURRENT_ITEM_DETAILS),
-            child: CurrentItem()
-          ),
+              onTap: () =>
+                  Navigator.of(context).pushNamed(ROUTE_CURRENT_ITEM_DETAILS),
+              child: CurrentItem()),
           RemoteButtons(),
         ],
       ),

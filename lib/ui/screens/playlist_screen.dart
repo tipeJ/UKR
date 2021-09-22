@@ -30,7 +30,7 @@ class _PlaylistsScreenState extends State<PlaylistsScreen> {
             child: Container(
                 height: 50.0,
                 child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
                       IconButton(
                         icon: const Icon(Icons.movie_sharp),
@@ -76,13 +76,16 @@ class PlaylistScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return playList.isEmpty
-        ? Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Icon(Icons.playlist_play_rounded, size: 56.0),
-              Text("Playlist is Empty", style: TextStyle(color: Colors.grey))
-            ],
-          )
+        ? Container(
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: const [
+                Icon(Icons.playlist_play_rounded, size: 56.0),
+                Text("Playlist is Empty", style: TextStyle(color: Colors.grey))
+              ],
+            ))
         : roList.ReorderableList(
             onReorder: (from, to) {
               int draggingIndex = _indexOf(from, playList);
