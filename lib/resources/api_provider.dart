@@ -277,10 +277,9 @@ class ApiProvider {
 
   static Future<int> seek(Player player, {required double percentage}) async {
     final percent = (percentage * 100).round();
-    final body = jsonEncode({
-      "method": "Player.Seek",
-      "params": {"playerid": _playerID, "value": percent},
-      ...defParams
+    final body = await _encode("Player.Seek", {
+      "playerid": _playerID,
+      "value": {"percentage": percent}
     });
     final response = await http.post(url(player), headers: headers, body: body);
     return response.statusCode;
