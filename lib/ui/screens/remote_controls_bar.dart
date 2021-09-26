@@ -435,14 +435,23 @@ class _ChannelControlsBar extends StatelessWidget {
   static Widget _buildAudioStreamsTile(
       BuildContext context, AudioStream current, List<AudioStream> streams) {
     return ListTile(
-      title: const Text("Audio Stream"),
-      subtitle: Text(current.index == -1
-          ? "None"
-          : "${current.bitrate.toKbps()}kbps ${current.codec?.toUpperCase()}"),
+      title:
+          const Text("Audio Stream", maxLines: 1, overflow: TextOverflow.clip),
+      subtitle: Text(
+          current.index == -1
+              ? "None"
+              : "${current.bitrate.toKbps()}kbps ${current.codec?.toUpperCase()}",
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis),
       trailing: DropdownButton<AudioStream>(
         items: streams
             .map<DropdownMenuItem<AudioStream>>((i) => DropdownMenuItem(
-                child: Text(i.name ?? i.index.toString()), value: i))
+                child: Container(
+                    constraints: BoxConstraints(
+                        maxWidth: MediaQuery.of(context).size.width * 0.5),
+                    child: Text(i.name ?? i.index.toString(),
+                        overflow: TextOverflow.ellipsis)),
+                value: i))
             .toList(),
         value: current,
         onChanged: (current.index != -1 && streams.length > 1)
@@ -457,12 +466,18 @@ class _ChannelControlsBar extends StatelessWidget {
   static Widget _buildVideoStreamsTile(
       BuildContext context, VideoStream current, List<VideoStream> streams) {
     return ListTile(
-      title: const Text("Video Stream"),
-      subtitle: Text(current.index == -1 ? "None" : "$current"),
+      title: const Text("Video Stream",
+          maxLines: 1, overflow: TextOverflow.ellipsis),
+      subtitle: Text(current.index == -1 ? "None" : "$current",
+          maxLines: 1, overflow: TextOverflow.clip),
       trailing: DropdownButton<VideoStream>(
         items: streams
-            .map<DropdownMenuItem<VideoStream>>(
-                (i) => DropdownMenuItem(child: Text("$i"), value: i))
+            .map<DropdownMenuItem<VideoStream>>((i) => DropdownMenuItem(
+                child: Container(
+                    constraints: BoxConstraints(
+                        maxWidth: MediaQuery.of(context).size.width * 0.5),
+                    child: Text("$i", overflow: TextOverflow.ellipsis)),
+                value: i))
             .toList(),
         value: current,
         onChanged: (current.index != -1 && streams.length > 1)
@@ -477,12 +492,20 @@ class _ChannelControlsBar extends StatelessWidget {
   static Widget _buildSubtitlesTile(
       BuildContext context, Subtitle current, List<Subtitle> streams) {
     return ListTile(
-        title: const Text("Subtitles"),
-        subtitle: Text(current.index == -1 ? "None" : "$current"),
+        title: const Text("Subtitles",
+            maxLines: 1, overflow: TextOverflow.ellipsis),
+        subtitle: Text(current.index == -1 ? "None" : "$current",
+            maxLines: 1, overflow: TextOverflow.clip),
         trailing: DropdownButton<Subtitle>(
           items: streams
               .map<DropdownMenuItem<Subtitle>>((i) => DropdownMenuItem(
-                  child: Text(i.index == -1 ? "None" : "$i"), value: i))
+                  child: Container(
+                    constraints: BoxConstraints(
+                        maxWidth: MediaQuery.of(context).size.width * 0.5),
+                    child: Text(i.index == -1 ? "None" : "$i",
+                        overflow: TextOverflow.ellipsis),
+                  ),
+                  value: i))
               .toList(),
           value: current,
           onChanged: (current.index != -1 && streams.length > 1)
