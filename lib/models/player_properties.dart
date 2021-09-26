@@ -48,7 +48,7 @@ class PlayerTime {
   final int seconds;
 
   /// Returns the time in seconds
-  int get inSeconds => (((hours * minutes) + minutes) * 60) + seconds;
+  int get inSeconds => (hours * 3600) + (minutes * 60) + seconds;
 
   /// Returns a new PlayerTime, with time adjusted according to the number of seconds as set by the variable [seconds]
   PlayerTime increment(int seconds) {
