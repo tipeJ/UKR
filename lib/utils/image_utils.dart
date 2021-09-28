@@ -1,8 +1,14 @@
 import 'package:UKR/models/models.dart';
 import 'package:UKR/utils/utils.dart';
 
-String decodeExternalImageUrl(String url) =>
-    Uri.decodeComponent(url.replaceFirst("image://", ""));
+String decodeExternalImageUrl(String url) {
+  String component = Uri.decodeComponent(url.replaceFirst("image://", ""));
+  // If the image has a trailing slash after file type, remove it
+  if (component.endsWith("/")) {
+    component = component.substring(0, component.length - 1);
+  }
+  return component;
+}
 
 const movieArtPriority = ['poster', 'fanart', 'thumb', 'banner'];
 String retrieveOptimalImage(Item item) {
@@ -12,12 +18,7 @@ String retrieveOptimalImage(Item item) {
       return a.getPreferred(movieArtPriority, "");
     case "season":
     case "tvshow":
-      return a.getPreferred(const [
-          'poster',
-          'fanart',
-          'banner',
-          'icon'
-      ], "");
+      return a.getPreferred(const ['poster', 'fanart', 'banner', 'icon'], "");
     case "episode":
       return a.getPreferred(const [
         'season.poster',

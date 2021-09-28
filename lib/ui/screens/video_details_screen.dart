@@ -23,14 +23,20 @@ class VideoDetailsScreen extends StatelessWidget {
     TextTheme theme = Theme.of(context).textTheme;
     Color background = Color.fromARGB(80, 0, 0, 0);
     return Scaffold(
-      floatingActionButton: isCurrentItem ? null : ExpandableFab(distance: 112.0, children: [
-        ExpandableFabButton(
-          onPressed: () => context.read<UKProvider>().openFile(item.fileUrl),
-          icon: const Icon(Icons.play_arrow)),
-        ExpandableFabButton(
-          onPressed: () => context.read<UKProvider>().addItemsToPlaylist(sources: [item.fileUrl], type: "file"),
-          icon: const Icon(Icons.queue)),
-      ]),
+      floatingActionButton: isCurrentItem
+          ? null
+          : ExpandableFab(distance: 112.0, children: [
+              ExpandableFabButton(
+                  onPressed: () =>
+                      context.read<UKProvider>().openFile(item.fileUrl),
+                  icon: const Icon(Icons.play_arrow)),
+              ExpandableFabButton(
+                  onPressed: () => context
+                      .read<UKProvider>()
+                      .addItemsToPlaylist(
+                          sources: [item.fileUrl], type: "file"),
+                  icon: const Icon(Icons.queue)),
+            ]),
       body: Stack(
         children: [
           _background(context, image),
@@ -39,7 +45,8 @@ class VideoDetailsScreen extends StatelessWidget {
               SliverToBoxAdapter(child: Container(height: 100)),
               SliverToBoxAdapter(
                   child: Padding(
-                padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+                padding:
+                    const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
                 child: Row(
                   children: [
                     image.isNotEmpty
@@ -50,7 +57,10 @@ class VideoDetailsScreen extends StatelessWidget {
                                 imageUrl: image, fit: BoxFit.cover),
                           )
                         : null,
-                    Expanded(child: isCurrentItem ? CurrentItem(alignment: CrossAxisAlignment.start) : _VideoDetailsTitle(item)),
+                    Expanded(
+                        child: isCurrentItem
+                            ? CurrentItem(alignment: CrossAxisAlignment.start)
+                            : _VideoDetailsTitle(item)),
                   ].nonNulls() as List<Widget>,
                 ),
               )),
@@ -58,30 +68,34 @@ class VideoDetailsScreen extends StatelessWidget {
                   child: Container(
                 padding: const EdgeInsets.all(16.0),
                 color: background,
-                child:
-                    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  if (item.tagline != null)
-                    Row(
-                      children: [
-                        Expanded(child: Text(item.tagline!, style: theme.bodyText1)),
-                        if (item.rating != null && item.rating != 0.0)
-                          Text.rich(TextSpan(children: [
-                            TextSpan(
-                                text: item.rating!.toStringAsPrecision(3),
-                                style: theme.subtitle1),
-                            TextSpan(text: "/10", style: theme.caption)
-                          ]))
-                      ],
-                    ),
-                  if (item.tagline != null) Divider(),
-                  if (item.plot != null) Text(item.plot!, style: theme.caption),
-                  if (item.genres.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4),
-                      child: Text(item.genres.separateFold(","),
-                          style: theme.caption?.apply(color: Colors.white)),
-                    )
-                ]),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (item.tagline != null)
+                        Row(
+                          children: [
+                            Expanded(
+                                child: Text(item.tagline!,
+                                    style: theme.bodyText1)),
+                            if (item.rating != null && item.rating != 0.0)
+                              Text.rich(TextSpan(children: [
+                                TextSpan(
+                                    text: item.rating!.toStringAsPrecision(3),
+                                    style: theme.subtitle1),
+                                TextSpan(text: "/10", style: theme.caption)
+                              ]))
+                          ],
+                        ),
+                      if (item.tagline != null) Divider(),
+                      if (item.plot != null)
+                        Text(item.plot!, style: theme.caption),
+                      if (item.genres.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Text(item.genres.separateFold(","),
+                              style: theme.caption?.apply(color: Colors.white)),
+                        )
+                    ]),
               )),
               if (item.cast.isNotEmpty)
                 SliverToBoxAdapter(
@@ -104,12 +118,18 @@ class VideoDetailsScreen extends StatelessWidget {
                                   child: Text(
                                       "View Entire Cast (${item.cast.length})",
                                       style: theme.subtitle2),
-                                  onTap: () => Navigator.of(context)
-                                      .pushNamed(ROUTE_CAST_SCREEN, arguments: item.cast))
-                              : CastItem(
+                                  onTap: () => Navigator.of(context).pushNamed(
+                                      ROUTE_CAST_SCREEN,
+                                      arguments: item.cast))
+                              : CastItemWithThumbnail(
                                   name: item.cast[i]['name'] ?? "",
-                                  role: item.cast[i]['role'] ?? ""
-                                  )),
+                                  role: item.cast[i]['role'] ?? "",
+                                  thumbnailUrl:
+                                      (item.cast[i]['thumbnail'] != null)
+                                          ? decodeExternalImageUrl(
+                                              item.cast[i]['thumbnail'])
+                                          : "",
+                                )),
                       childCount: min(item.cast.length + 1, 11)),
                 )
             ],
@@ -120,24 +140,20 @@ class VideoDetailsScreen extends StatelessWidget {
   }
 
   // Blurred image background wrapper.
-  Widget _background(BuildContext context, String image) =>
-    Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          fit: BoxFit.cover,
-          image: NetworkImage(image)
-      )),
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          color: Colors.black.withOpacity(0.45),
-        )
-      ),
-    );
+  Widget _background(BuildContext context, String image) => Container(
+        decoration: BoxDecoration(
+            image:
+                DecorationImage(fit: BoxFit.cover, image: NetworkImage(image))),
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              color: Colors.black.withOpacity(0.45),
+            )),
+      );
 }
 
 // A non-animated version of CurrentItem
