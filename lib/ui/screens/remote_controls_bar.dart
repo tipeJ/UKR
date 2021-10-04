@@ -425,9 +425,15 @@ class _ChannelControlsBar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                _buildAudioStreamsTile(context, value.item1, value.item2),
-                _buildVideoStreamsTile(context, value.item3, value.item4),
-                _buildSubtitlesTile(context, value.item5, value.item6)
+                value.item2.length != 0
+                    ? _buildAudioStreamsTile(context, value.item1, value.item2)
+                    : Container(),
+                value.item4.length != 0
+                    ? _buildVideoStreamsTile(context, value.item3, value.item4)
+                    : Container(),
+                value.item6.length != 0
+                    ? _buildSubtitlesTile(context, value.item5, value.item6)
+                    : Container(),
               ]);
         });
   }
