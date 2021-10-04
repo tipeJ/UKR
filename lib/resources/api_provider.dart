@@ -407,10 +407,22 @@ class ApiProvider {
     await http.post(url(player), headers: headers, body: body);
   }
 
-  static Future<void> goTo(Player player, dynamic to) async {
+  static Future<bool> goTo(Player player, dynamic to) async {
     final body =
         await _encode("Player.GoTo", {"playerid": _playerID, "to": to});
-    http.post(url(player), body: body, headers: headers);
+    final response = await http.post(url(player), body: body, headers: headers);
+    // print(response.body);
+    dynamic result = jsonDecode(response.body);
+    return (result['result'] ?? "Error") == 'OK';
+  }
+
+  static Future<bool> openPlaylist(Player player, int playlistID) async {
+    final body = await _encode("Player.Open", {
+      "item": {"playlistid": playlistID}
+    });
+    final response = await http.post(url(player), body: body, headers: headers);
+    dynamic result = jsonDecode(response.body);
+    return (result['result'] ?? "Error") == 'OK';
   }
 
   static Future<void> playFile(Player player, {required String file}) async {

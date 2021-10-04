@@ -319,7 +319,13 @@ class UKProvider extends ChangeNotifier {
   void playPause() => ApiProvider.playPause(player);
 
   /// Navigate forward/backwards in the playlist. False for previous, true for next
-  void goto(dynamic to) async => ApiProvider.goTo(player, to);
+  void goto(dynamic to) async {
+    bool result = await ApiProvider.goTo(player, to);
+    if (result && playlistID != -1) {
+      // Not playing anything, we need to open the playlist
+      ApiProvider.openPlaylist(player, playlistID);
+    }
+  }
 
   void stopPlayback() => ApiProvider.stop(player);
 
