@@ -28,6 +28,7 @@ class _PlaylistsScreenState extends State<PlaylistsScreen> {
     return Scaffold(
         backgroundColor: Colors.transparent,
         bottomNavigationBar: BottomAppBar(
+            color: Colors.transparent,
             child: Container(
                 height: 50.0,
                 child: Row(
