@@ -1,7 +1,8 @@
 import 'package:UKR/models/models.dart';
 import 'package:UKR/resources/resources.dart';
+import 'package:flutter/material.dart';
 
-class Playlist {
+class Playlist extends ChangeNotifier {
   final Player player;
   int currentPlaylistID;
   List<PlaylistItemModel>? videos;
@@ -41,11 +42,13 @@ class Playlist {
         images = list;
         break;
     }
+    notifyListeners();
   }
 
   // Add item to playlist
   void addItemToPlaylist(PlaylistItemModel item, int playlist) {
     var list = getPlaylistById(playlist);
     list?.add(item);
+    notifyListeners();
   }
 }

@@ -136,6 +136,7 @@ class UKProvider extends ChangeNotifier {
         _timeUpdateTimer?.cancel();
         this.currentItem = null;
         this.canSeek = false;
+        this.playlist?.dispose();
         this.playlist = null;
         connectionStatus = ConnectionStatus.Disconnected;
         break;

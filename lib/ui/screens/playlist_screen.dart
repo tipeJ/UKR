@@ -66,11 +66,14 @@ class _PlaylistsScreenState extends State<PlaylistsScreen> {
                 return Center(
                   child: Text("No Player Selected."),
                 );
+              } else {
+                playlist.addListener(
+                    () => changePlaylist(this._selectedPlaylistID));
+                return PlaylistScreen(
+                  playList: playlist.getPlaylistById(_selectedPlaylistID) ?? [],
+                  playlistId: _selectedPlaylistID,
+                );
               }
-              return PlaylistScreen(
-                playList: playlist.getPlaylistById(_selectedPlaylistID) ?? [],
-                playlistId: _selectedPlaylistID,
-              );
             }));
   }
 }
