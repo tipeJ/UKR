@@ -54,9 +54,9 @@ class _TVShowDetailsProvider extends ChangeNotifier {
     notifyListeners();
     await ApiProvider.getTVShowDetails(player,
         showID: show.tvshowid, properties: ["cast"], onSuccess: (props) {
-          this.show.cast = props['cast'];
-          castLoadingState = LoadingState.Inactive;
-          notifyListeners();
+      this.show.cast = List<Map<String, dynamic>>.from(props['cast']);
+      castLoadingState = LoadingState.Inactive;
+      notifyListeners();
     });
   }
 }
@@ -84,7 +84,7 @@ class _TVShowDetailsScreen extends StatelessWidget {
                     child: Text(values.item1.plot ?? "")),
               ),
               SliverToBoxAdapter(
-                child: Container(child: _horizontalSeasonsView())),
+                  child: Container(child: _horizontalSeasonsView())),
               _castList(values.item1, values.item2)
             ],
           ),
@@ -130,9 +130,14 @@ class _TVShowDetailsScreen extends StatelessWidget {
                               onTap: () => Navigator.of(context).pushNamed(
                                   ROUTE_CAST_SCREEN,
                                   arguments: show.cast))
-                          : CastItem(
+                          : CastItemWithThumbnail(
                               name: show.cast[i]['name'] ?? "Unknown",
-                              role: show.cast[i]['role'] ?? "Unknown")),
+                              role: show.cast[i]['role'] ?? "Unknown",
+                              thumbnailUrl: (show.cast[i]['thumbnail'] != null)
+                                  ? decodeExternalImageUrl(
+                                      show.cast[i]['thumbnail'])
+                                  : "",
+                            )),
                   childCount: min(show.cast.length + 1, 11)),
             );
 }
