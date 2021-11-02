@@ -9,7 +9,6 @@ import 'package:UKR/ui/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:tuple/tuple.dart';
 
-
 class TVShowsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -21,7 +20,8 @@ class TVShowsScreen extends StatelessWidget {
           child: const Icon(Icons.search)),
       body: Selector<TVShowsProvider, List<TVShow>>(
         selector: (_, p) => p.shows,
-        builder: (_, shows, __) => NotificationListener<ScrollUpdateNotification>(
+        builder: (_, shows, __) =>
+            NotificationListener<ScrollUpdateNotification>(
                 onNotification: (not) {
                   // Detect whether we are closer than 200 pixels to the bottom of the list. If so, fetch more movies from the player.
                   if (not.metrics.maxScrollExtent - not.metrics.pixels < 200) {
@@ -30,12 +30,11 @@ class TVShowsScreen extends StatelessWidget {
                   return false;
                 },
                 child: GridView.builder(
-                  itemCount: shows.length + 1,
-                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                    childAspectRatio: listPosterRatio,
-                    maxCrossAxisExtent: gridPosterMaxWidth
-                  ),
-                  itemBuilder: (_, i) => i == shows.length
+                    itemCount: shows.length + 1,
+                    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                        childAspectRatio: listPosterRatio,
+                        maxCrossAxisExtent: gridPosterMaxWidth),
+                    itemBuilder: (_, i) => i == shows.length
                         ? Container(
                             height: 75,
                             alignment: Alignment.center,
@@ -53,13 +52,12 @@ class TVShowsScreen extends StatelessWidget {
                                   }
                                 }),
                           )
-                          : ShowGridItem(shows[i])
-                )
-        ),
-        ),
+                        : ShowGridItem(shows[i]))),
+      ),
     );
   }
 }
+
 class TVShowsSearchScreen extends StatefulWidget {
   @override
   _TVShowsSearchScreenState createState() => _TVShowsSearchScreenState();
@@ -116,7 +114,9 @@ class _TVShowsSearchScreenState extends State<TVShowsSearchScreen> {
                   // Detect whether we are closer than 200 pixels to the bottom of the list. If so, fetch more movies from the player.
                   if (not.metrics.maxScrollExtent - not.metrics.pixels < 200) {
                     _timer?.cancel();
-                    context.read<TVShowsProvider>().fetchShows(searchTitle: _controller.text);
+                    context
+                        .read<TVShowsProvider>()
+                        .fetchShows(searchTitle: _controller.text);
                   }
                   return false;
                 },
@@ -160,15 +160,23 @@ class ShowGridItem extends StatelessWidget {
     Widget? background = Container(color: Colors.red);
     if (show.artwork.isNotEmpty) {
       String url = retrieveOptimalImage(show);
-      if (url.isNotEmpty) background = CachedNetworkImage(fit: BoxFit.cover, imageUrl: url);
+      if (url.isNotEmpty)
+        background = CachedNetworkImage(
+            fit: BoxFit.cover,
+            imageUrl: url,
+            errorWidget: (context, error, _) =>
+                Center(child: Text(show.title)));
     }
     return InkWell(
-        onTap: () => Navigator.of(context)
-        .pushNamed(ROUTE_CONTENT_TVSHOW_DETAILS, arguments: Tuple2(show, context.read<PlayersProvider>().selectedPlayer)),
+        onTap: () => Navigator.of(context).pushNamed(
+            ROUTE_CONTENT_TVSHOW_DETAILS,
+            arguments:
+                Tuple2(show, context.read<PlayersProvider>().selectedPlayer)),
         child: Container(
             height: 350.0,
             child: Hero(
-                tag: HERO_CONTENT_MOVIES_POSTER + "${show.tvshowid} + ${show.year}",
+                tag: HERO_CONTENT_MOVIES_POSTER +
+                    "${show.tvshowid} + ${show.year}",
                 child: background)));
   }
 }
