@@ -1,7 +1,7 @@
 import 'package:UKR/models/models.dart';
 import 'package:UKR/utils/utils.dart';
 
-class TVShow extends Item{
+class TVShow extends Item {
   final String file;
   final String title;
   final String label;
@@ -10,23 +10,22 @@ class TVShow extends Item{
   final int? year;
   final String? plot;
   final double? rating;
-  List<Map<String, String>> cast;
+  List<Map<String, dynamic>> cast;
 
   TVShow(
-      json,
-      {required this.file,
-      required this.title,
-      required this.label,
-      required this.studio,
-      this.tvshowid = -1,
-      this.year,
-      this.plot,
-      this.rating,
-      this.cast = const [],
-      }) : super(json);
+    json, {
+    required this.file,
+    required this.title,
+    required this.label,
+    required this.studio,
+    this.tvshowid = -1,
+    this.year,
+    this.plot,
+    this.rating,
+    this.cast = const [],
+  }) : super(json);
 
-  factory TVShow.fromJson(dynamic j) => TVShow(
-      j,
+  factory TVShow.fromJson(dynamic j) => TVShow(j,
       file: j['file'],
       title: j['title'],
       plot: (j['plot'] as String).nullIfEmpty()?.replaceAll('â', ""),
