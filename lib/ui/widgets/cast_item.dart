@@ -34,8 +34,21 @@ class CastItemWithThumbnail extends StatelessWidget {
       child: Row(children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(4.0),
-          child: Image.network(thumbnailUrl,
-              width: 50.0, height: 50.0, fit: BoxFit.cover),
+          child: Image.network(
+            thumbnailUrl,
+            width: 50.0,
+            height: 50.0,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              // Handle Image fetch error. Display an icon instead.
+              return Container(
+                width: 50.0,
+                height: 50.0,
+                color: Colors.grey,
+                child: const Center(child: Icon(Icons.person)),
+              );
+            },
+          ),
         ),
         SizedBox(width: 8.0),
         Expanded(
