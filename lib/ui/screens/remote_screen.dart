@@ -232,7 +232,10 @@ class _PlayersBar extends StatelessWidget {
               children: [
                 const Text("UKR (ALPHA)",
                     style: TextStyle(fontWeight: FontWeight.w200)),
-                IconButton(icon: const Icon(Icons.settings), onPressed: () {})
+                IconButton(
+                    icon: const Icon(Icons.settings),
+                    onPressed: () =>
+                        Navigator.of(context).pushNamed(ROUTE_SETTINGS))
               ],
             ))
       ],

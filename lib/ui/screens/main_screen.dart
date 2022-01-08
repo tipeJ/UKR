@@ -54,6 +54,9 @@ class _Router {
       case ROUTE_ADD_PLAYER:
         child = AddPlayerScreen();
         break;
+      case ROUTE_SETTINGS:
+        child = SettingsScreen();
+        break;
     }
     return MaterialPageRoute(builder: (context) => child);
   }
