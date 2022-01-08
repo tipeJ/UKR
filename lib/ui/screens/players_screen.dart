@@ -4,7 +4,8 @@ import 'package:UKR/resources/resources.dart';
 import 'package:UKR/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:UKR/models/models.dart';
-import 'package:flutter_reorderable_list/flutter_reorderable_list.dart' as roList;
+import 'package:flutter_reorderable_list/flutter_reorderable_list.dart'
+    as roList;
 import 'package:provider/provider.dart';
 import 'package:UKR/ui/providers/providers.dart';
 import 'package:UKR/ui/screens/screens.dart';
@@ -212,7 +213,7 @@ class PlayerListItemState extends State<PlayerListItem> {
         onTapDown: widget.onTapDown,
         onLongPress: widget.onLongPress,
         child: Container(
-            padding: const EdgeInsets.all(5.0),
+            padding: const EdgeInsets.all(10.0),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
