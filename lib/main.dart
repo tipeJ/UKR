@@ -2,6 +2,7 @@
 // Uncomment above to build with sound null safety.
 import 'package:flutter/material.dart';
 import 'package:UKR/resources/resources.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:UKR/ui/screens/screens.dart';
@@ -39,7 +40,17 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider.value(
       value: settingsProvider,
       builder: (context, _) => Consumer<SettingsProvider>(
-        builder: (context, settingsProvider, _) => MaterialApp(
+        builder: (context, settingsProvider, _) {
+          Brightness brightness = Brightness.dark;
+          switch (settingsProvider.brightness) {
+            case SETTINGS_THEME_AUTO:
+              brightness = SchedulerBinding.instance?.window.platformBrightness ?? Brightness.light;
+              break;
+            case SETTINGS_THEME_LIGHT:
+              brightness = Brightness.light;
+              break;
+          }
+          return MaterialApp(
           title: 'UKR DEMO',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
@@ -52,10 +63,11 @@ class MyApp extends StatelessWidget {
             // or simply save your changes to "hot reload" in a Flutter IDE).
             // Notice that the counter didn't reset back to zero; the application
             // is not restarted.
-            brightness: settingsProvider.brightness,
+            brightness: brightness,
             primarySwatch: Colors.blue,
           ),
-          home: DialogManager(child: MyHomePage())),
+          home: DialogManager(child: MyHomePage()));
+        }
         ),
       );
   }
