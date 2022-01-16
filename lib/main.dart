@@ -17,6 +17,8 @@ void main() async {
   await Hive.initFlutter();
   await Hive.openBox<Player>(BOX_PLAYERS);
   await Hive.openBox(BOX_CACHED);
+  SettingsProvider settingsProvider = SettingsProvider();
+  await settingsProvider.initialize();
 
   // final x =
   //     Player(address: "192.168.100.16", port: 8080, name: "ASD", id: "SD");
@@ -24,30 +26,38 @@ void main() async {
 
   final getIt = GetIt.instance;
   getIt.registerLazySingleton(() => DialogService());
-  runApp(MyApp());
+  runApp(MyApp(settingsProvider: settingsProvider));
 }
 
 class MyApp extends StatelessWidget {
+  final SettingsProvider settingsProvider;
+
+  const MyApp({Key key, this.settingsProvider}) : super(key: key);
   // This widget is the root of your application.  @override
 
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'UKR DEMO',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          // This is the theme of your application.
-          //
-          // Try running your application with "flutter run". You'll see the
-          // application has a blue toolbar. Then, without quitting the app, try
-          // changing the primarySwatch below to Colors.green and then invoke
-          // "hot reload" (press "r" in the console where you ran "flutter run",
-          // or simply save your changes to "hot reload" in a Flutter IDE).
-          // Notice that the counter didn't reset back to zero; the application
-          // is not restarted.
-          brightness: Brightness.dark,
-          primarySwatch: Colors.blue,
+    return ChangeNotifierProvider.value(
+      value: settingsProvider,
+      builder: (context, _) => Consumer<SettingsProvider>(
+        builder: (context, settingsProvider, _) => MaterialApp(
+          title: 'UKR DEMO',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            // This is the theme of your application.
+            //
+            // Try running your application with "flutter run". You'll see the
+            // application has a blue toolbar. Then, without quitting the app, try
+            // changing the primarySwatch below to Colors.green and then invoke
+            // "hot reload" (press "r" in the console where you ran "flutter run",
+            // or simply save your changes to "hot reload" in a Flutter IDE).
+            // Notice that the counter didn't reset back to zero; the application
+            // is not restarted.
+            brightness: settingsProvider.brightness,
+            primarySwatch: Colors.blue,
+          ),
+          home: DialogManager(child: MyHomePage())),
         ),
-        home: DialogManager(child: MyHomePage()));
+      );
   }
 }
 

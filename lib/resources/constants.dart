@@ -46,6 +46,9 @@ const BOX_PLAYERS = "box_players";
 const BOX_CACHED = "box_cached";
 const DATA_MOST_RECENT_PLAYERID = "mostRecentPlayerID";
 
+// * Settings
+const BOX_SETTINGS = "box_settings";
+
 // * Fetching data
 const FETCH_ITEM_PROPERTIES = [
   "director",
