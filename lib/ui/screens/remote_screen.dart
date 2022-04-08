@@ -16,26 +16,36 @@ class RemoteScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return WillPopScope(
         onWillPop: _onWillPop,
-        child: Scaffold(
-          appBar: _buildAppBar(context),
-          drawer: Drawer(child: _PlayersBar()),
-          bottomSheet: RemoteControlsBar(),
-          body: Stack(
-            children: [
-              BackgroundImageWrapper(),
-              Padding(
-                padding:
-                    const EdgeInsets.only(bottom: kBottomNavigationBarHeight),
-                child: Navigator(
-                  observers: [HeroController()],
-                  key: navKey,
-                  initialRoute: ROUTE_PAGES_SCREEN,
-                  onGenerateRoute: RemoteRouter.generateRoute,
-                ),
-              ),
-            ],
-          ),
-        ));
+        child: Selector<UKProvider, double>(
+            selector: (p0, p1) => p1.currentTemporaryVolume,
+            builder: (_, data, __) => Theme(
+                data: Theme.of(context).copyWith(
+                    // TODO: Add dynamic color logic here.
+                    // canvasColor: Colors.green.withOpacity(data / 100),
+                    // backgroundColor: Colors.blue.withOpacity(data / 100),
+                    // appBarTheme:
+                    //     AppBarTheme(color: Colors.red.withOpacity(data / 100))
+                    ),
+                child: Scaffold(
+                  appBar: _buildAppBar(context),
+                  drawer: Drawer(child: _PlayersBar()),
+                  bottomSheet: RemoteControlsBar(),
+                  body: Stack(
+                    children: [
+                      BackgroundImageWrapper(),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            bottom: kBottomNavigationBarHeight),
+                        child: Navigator(
+                          observers: [HeroController()],
+                          key: navKey,
+                          initialRoute: ROUTE_PAGES_SCREEN,
+                          onGenerateRoute: RemoteRouter.generateRoute,
+                        ),
+                      ),
+                    ],
+                  ),
+                ))));
   }
 
   // Function for willpop
