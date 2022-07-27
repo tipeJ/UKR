@@ -5,6 +5,7 @@ import 'package:UKR/ui/providers/providers.dart';
 import 'package:UKR/ui/screens/screens.dart';
 import 'package:UKR/ui/widgets/widgets.dart';
 import 'package:UKR/utils/utils.dart';
+import 'package:desktop_drop/desktop_drop.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
@@ -12,40 +13,65 @@ import 'package:tuple/tuple.dart';
 
 class RemoteScreen extends StatelessWidget {
   static final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
+
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-        onWillPop: _onWillPop,
-        child: Selector<UKProvider, double>(
-            selector: (p0, p1) => p1.currentTemporaryVolume,
-            builder: (_, data, __) => Theme(
-                data: Theme.of(context).copyWith(
-                    // TODO: Add dynamic color logic here.
-                    // canvasColor: Colors.green.withOpacity(data / 100),
-                    // backgroundColor: Colors.blue.withOpacity(data / 100),
-                    // appBarTheme:
-                    //     AppBarTheme(color: Colors.red.withOpacity(data / 100))
-                    ),
-                child: Scaffold(
-                  appBar: _buildAppBar(context),
-                  drawer: Drawer(child: _PlayersBar()),
-                  bottomSheet: RemoteControlsBar(),
-                  body: Stack(
-                    children: [
-                      BackgroundImageWrapper(),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            bottom: kBottomNavigationBarHeight),
-                        child: Navigator(
-                          observers: [HeroController()],
-                          key: navKey,
-                          initialRoute: ROUTE_PAGES_SCREEN,
-                          onGenerateRoute: RemoteRouter.generateRoute,
+    return DropTarget(
+        onDragEntered: (details) {
+          print("drag entered");
+        },
+        onDragDone: (details) {
+          print("drag done");
+          // Reveal dialog
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text("File"),
+              actions: <Widget>[
+                TextButton(
+                  child: Text("Enqueue"),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+                TextButton(
+                  child: Text("Play"),
+                  onPressed: () {},
+                ),
+              ],
+            ),
+          );
+        },
+        child: WillPopScope(
+            onWillPop: _onWillPop,
+            child: Selector<UKProvider, double>(
+                selector: (p0, p1) => p1.currentTemporaryVolume,
+                builder: (_, data, __) => Theme(
+                    data: Theme.of(context).copyWith(
+                        // TODO: Add dynamic color logic here.
+                        // canvasColor: Colors.green.withOpacity(data / 100),
+                        // backgroundColor: Colors.blue.withOpacity(data / 100),
+                        // appBarTheme:
+                        //     AppBarTheme(color: Colors.red.withOpacity(data / 100))
                         ),
+                    child: Scaffold(
+                      appBar: _buildAppBar(context),
+                      drawer: Drawer(child: _PlayersBar()),
+                      bottomSheet: RemoteControlsBar(),
+                      body: Stack(
+                        children: [
+                          BackgroundImageWrapper(),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                bottom: kBottomNavigationBarHeight),
+                            child: Navigator(
+                              observers: [HeroController()],
+                              key: navKey,
+                              initialRoute: ROUTE_PAGES_SCREEN,
+                              onGenerateRoute: RemoteRouter.generateRoute,
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ))));
+                    )))));
   }
 
   // Function for willpop
